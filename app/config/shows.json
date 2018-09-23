@@ -1,0 +1,9 @@
+{
+  "activeShow": "",
+  "shows": [
+    "app/shows/test",
+    "app/shows/123",
+    "app/shows/1234",
+    "app/shows/testing the test software"
+  ]
+}

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<link href="../css/style.css" rel="stylesheet" id="style" />
+<link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+
+
+<body>
+    <span class="headertext">Show</span>
+    <br>
+    <br>
+
+    <table id="table">
+        <thead>
+            <caption>Show Files:</caption>
+                <tr>
+                    <th onclick="sortTableCheckbox(0)">Selected</th>
+                    <th onclick="sortTable(1)">Name</th>
+                </tr>
+        </thead>
+        <tbody id="tableBody">
+        </tbody>
+    </table>
+    <button id='addShow'>Add element</button>
+</body>
+    <script type="text/javascript" src="../js/addShow.js"></script>
+    <script>
+        const button = document.getElementById('addShow');
+        button.onclick = function () {popWindow()};
+    </script> 
+</html>

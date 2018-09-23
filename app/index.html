@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+
+<html style="overflow: hidden">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Gallium</title>
+</head>
+
+<link href="css/style.css" rel="stylesheet" id="style" />
+<link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+
+<body>
+    <div class="sideNavIFrameWrapper">
+        <div class="sidenav">
+            <img src="img/teslaworks_name_with_logo.png" id="logo" />
+
+            <div class="tools" style="overflow-y:auto;">
+                <a onclick='changeFrame("html/shows.html")' class="dropdown-btn">Show </a>
+                <a onclick='changeFrame("html/dmx.html")' class="dropdown-btn">DMX</a>
+                <a onclick='changeFrame("html/layout.html")' class="dropdown-btn">Layout</a>
+                <div id='settings'>
+                    <a onclick='changeFrame("html/settings.html")' style="padding-left: 16px;">Settings</a>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="content">
+            <iframe id="frame" src="html/default.html" style="overflow: hidden"></iframe>
+        </div>
+    </div>
+
+
+</body>
+<script>
+    var frame = document.getElementById("frame");
+
+    function changeFrame(src) {
+        frame.src = src;
+    }
+
+    var logo = document.getElementById('logo');
+
+    logo.onclick = function () {
+        changeFrame("html/default.html");
+    }
+
+</script>
+
+</html>

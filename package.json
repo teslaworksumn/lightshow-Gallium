@@ -1,0 +1,19 @@
+{
+  "name": "gallium",
+  "version": "1.0.0",
+  "description": "Gui for running a Light Show event",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "package-darwin": "electron-packager . 'Gallium' --platform=darwin --icon app/img/teslaworks.png --out ./build --overwrite",
+    "package-linux": "electron-packager . 'Gallium' --platform=linux --icon app/img/teslaworks.jpg --out ./build --overwrite",
+    "package-win32": "electron-packager . 'Gallium' --platform=win32 --icon app/img/teslaworks.ico --out ./build --overwrite",
+    "package": "npm run package-darwin && npm run package-linux && npm run package-win32"
+  },
+  "author": "Byron Ambright and Josh Guldberg",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^2.0.10",
+    "electron-packager": "^12.1.2"
+  }
+}
