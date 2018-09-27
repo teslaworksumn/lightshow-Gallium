@@ -6,9 +6,9 @@ Directory structure:
 
 * `app/` houses the app and all the files needed.
 * `app/config` contains config files.
-* `app/css` contains css files that are used in Gallium.
-* `app/html` contains html files that are used in Gallium.
-* `app/js` contains javascript files that are used in Gallium.
+* `app/css` contains CSS files that are used in Gallium.
+* `app/html` contains HTML files that are used in Gallium.
+* `app/js` contains JavaScript files that are used in Gallium.
 * `app/img` contains image files that are used in Gallium.
 
 ## Pre-requisites
@@ -18,16 +18,16 @@ Directory structure:
 ## Dev Environment Setup and Running
 
 1. Run `npm install` from the root directory
-2. Run `./setupRepo` from the root directory
+2. Run `node setupRepo.js` from the root directory
 3. Run `npm start`
 
 ## Application Packaging
 
 1. Run `npm install` from the root directory
-2. Run `./setupRepo` from the root directory
+2. Run `node setupRepo.js` from the root directory
 3. Run `npm run-script package`
 
-NOTE: If you are on Mac or Linux you need wine installed to package a Windows Build.
+NOTE: If you are on Mac or Linux you need Wine installed to package a Windows Build.
 
 ## Scripts
 
@@ -41,7 +41,7 @@ NOTE: If you are on Mac or Linux you need wine installed to package a Windows Bu
 
 ## Styles
 
-We are using a modified version of the airbnb javascript style guide. One major change from the airbnb guide is that we are using 4 space indents instead of 2. Run `npm run-script lint` to lint our code and `npm run-script lint-fix` to fix common errors. So error might need to be done fixed manually.
+We are using a modified version of the [Airbnb JavaScript Style Guide](https://github.com/airbnb/javascript). One major change from the Airbnb guide is that we are using 4 space indents instead of 2. Run `npm run-script lint` to lint our code and `npm run-script lint-fix` to fix common errors. Some errors might need to be fixed manually.
 
 ## Authors
 
