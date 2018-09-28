@@ -11,9 +11,9 @@
     "start": "electron .",
     "lint": "eslint .",
     "lint-fix": "eslint . --fix",
-    "package-darwin": "electron-packager . 'Gallium' --platform=darwin --icon app/img/teslaworks.png --out ./build --overwrite",
-    "package-linux": "electron-packager . 'Gallium' --platform=linux --icon app/img/teslaworks.jpg --out ./build --overwrite",
-    "package-win32": "electron-packager . 'Gallium' --platform=win32 --icon app/img/teslaworks.ico --out ./build --overwrite",
+    "package-darwin": "electron-packager . 'Gallium' --platform=darwin --icon=app/img/tesla_gear.icns --out ./build --overwrite",
+    "package-linux": "electron-packager . 'Gallium' --platform=linux --icon=app/img/tesla_gear.png --out ./build --overwrite",
+    "package-win32": "electron-packager . 'Gallium' --platform=win32 --icon=app/img/tesla_gear.ico --out ./build --overwrite",
     "package": "npm run package-darwin && npm run package-linux && npm run package-win32"
   },
   "author": "Byron Ambright and Josh Guldberg",
@@ -26,6 +26,7 @@
     "eslint-plugin-import": "^2.14.0"
   },
   "dependencies": {
+    "ajv": "^6.5.4",
     "fs-extra": "^7.0.0"
   }
 }
