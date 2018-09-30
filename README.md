@@ -4,6 +4,16 @@ Gallium is a GUI Application for running Tesla Works Light Show Events.
 
 Directory structure:
 
+```
+app
+├── config
+├── css
+├── html
+├── js
+└── img
+```
+
+
 * `app/` houses the app and all the files needed.
 * `app/config` contains config files.
 * `app/css` contains CSS files that are used in Gallium.
@@ -13,13 +23,17 @@ Directory structure:
 
 ## Pre-requisites
 
-1. [Node.js installed and in PATH.](https://nodejs.org/en/)
+1. [Node.js installed and in PATH.](https://nodejs.org/en/download/current/)
+
+We are supporting Node.js version 10.11.0 with the plan to update to the LTS version when it comes out. Installing via your operating system's [package manager](https://nodejs.org/en/download/package-manager/) is an easy way to make sure it is set up correctly. Simply paste the command line options into the terminal and Node.js will be installed. Be sure to install Node.js version 10.x.
 
 ## Dev Environment Setup and Running
 
 1. Run `npm install` from the root directory
 2. Run `node setupRepo.js` from the root directory
 3. Run `npm start`
+
+NOTE: If you get an error that looks like `error while loading shared libraries: libgconf-2.so.4: cannot open shared object file: No such file or directory` while running `npm start`, you will have to install this shared library. This is fixed with `sudo apt-get install libgconf-2-4`.
 
 ## Application Packaging
 
