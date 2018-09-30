@@ -12,7 +12,7 @@ function createWindow() {
         backgroundColor: '#000000',
         minHeight: 600,
         minWidth: 800,
-        icon: path.join(__dirname, 'app/img/tesla_gear.png')
+        icon: path.join(__dirname, 'app/img/tesla_gear.png'),
     });
 
 
