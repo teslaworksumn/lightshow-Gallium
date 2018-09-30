@@ -63,7 +63,7 @@ We are using a modified version of the [Airbnb JavaScript Style Guide](https://g
 * [**Joshua Guldberg**](https://github.com/theeldestelder)
 * [**Julie Weber**](https://github.com/jewel2536)
 * [**Alex Pelletier**](https://github.com/Naapple)
-
+* [**Ashmita Sarma**](https://github.com/schmiter)
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
