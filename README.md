@@ -62,6 +62,9 @@ We are using a modified version of the [Airbnb JavaScript Style Guide](https://g
 * [**Byron Ambright**](https://github.com/ByronAmbright)
 * [**Joshua Guldberg**](https://github.com/theeldestelder)
 * [**Nick Schatz**](https://github.com/nickschatz)
+* [**Julie Weber**](https://github.com/jewel2536)
+* [**Alex Pelletier**](https://github.com/Naapple)
+* [**Ashmita Sarma**](https://github.com/schmiter)
 * [**Bengt Symstad**](https://github.com/bsymstad)
 * [**Chris Walaszek**](https://github.com/walas013)
 
