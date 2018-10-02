@@ -48,7 +48,7 @@ NOTE: If you are on Mac or Linux you need Wine installed to package a Windows Bu
 * `npm start` - Start an instance of the developer build.
 * `npm run-script lint` - Lint our code
 * `npm run-script lint-fix` - Fix common linting errors
-* `npm run-script package` - Package app for Windows 64 bit, Mac OS, and Linux. 
+* `npm run-script package` - Package app for Windows 64 bit, Mac OS, and Linux.
 * `npm run-script package-win32` - Package app for Windows 64 bit.
 * `npm run-script package-darwin` - Package app for Mac OS.
 * `npm run-script package-linux` - Package app for Linux.
@@ -63,6 +63,9 @@ We are using a modified version of the [Airbnb JavaScript Style Guide](https://g
 * [**Joshua Guldberg**](https://github.com/theeldestelder)
 * [**Nick Schatz**](https://github.com/nickschatz)
 * [**Julie Weber**](https://github.com/jewel2536)
+* [**Kayla Engelstad**](https://github.com/kayla-e774)
+* [**Alex Pelletier**](https://github.com/Naapple)
+* [**Bengt Symstad**](https://github.com/bsymstad)
 * [**David Ma**](https://github.com/DavidThe4sian)
 * [**Alex Pelletier**](https://github.com/Naapple)
 * [**Ashmita Sarma**](https://github.com/schmiter)
