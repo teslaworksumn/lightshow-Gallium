@@ -71,6 +71,7 @@ We are using a modified version of the [Airbnb JavaScript Style Guide](https://g
 * [**Ashmita Sarma**](https://github.com/schmiter)
 * [**Bengt Symstad**](https://github.com/bsymstad)
 * [**Chris Walaszek**](https://github.com/walas013)
+* [**Ryan Fredlund**](https://github.com/bookdude13)
 
 ## License
 
