@@ -11,22 +11,29 @@
     "start": "electron .",
     "lint": "eslint .",
     "lint-fix": "eslint . --fix",
-    "package-darwin": "electron-packager . 'Gallium' --platform=darwin --icon=app/img/tesla_gear.icns --out ./build --overwrite",
-    "package-linux": "electron-packager . 'Gallium' --platform=linux --icon=app/img/tesla_gear.png --out ./build --overwrite",
-    "package-win32": "electron-packager . 'Gallium' --platform=win32 --icon=app/img/tesla_gear.ico --out ./build --overwrite",
-    "package": "npm run package-darwin && npm run package-linux && npm run package-win32"
+    "pack": "electron-builder --dir",
+    "build": "electron-builder",
+    "buildall": "electron-builder -mwl",
+    "buildlinux": "electron-builder -l",
+    "buildosx": "electron-builder -m",
+    "buildwin": "electron-builder -w",
+    "test": "mocha"
   },
   "author": "Byron Ambright and Josh Guldberg",
   "license": "MIT",
   "devDependencies": {
     "electron": "^2.0.10",
+    "electron-builder": "^20.28.4",
     "electron-packager": "^12.1.2",
     "eslint": "^5.6.0",
     "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-plugin-import": "^2.14.0"
+    "eslint-plugin-import": "^2.14.0",
+    "mocha": "^5.2.0",
+    "spectron": "^4.0.0"
   },
   "dependencies": {
     "ajv": "^6.5.4",
+    "chromedriver": "^2.42.0",
     "fs-extra": "^7.0.0"
   }
 }

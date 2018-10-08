@@ -1,0 +1,12 @@
+
+steps:
+  - task: NodeTool@0
+    displayName: 'Install Node.js'
+    inputs:
+      versionSpec: '8.x'
+
+  - script: npm install
+  - script: npm test
+  - script: npm run-script pack
+  - task: PublishBuildArtifacts@1
+
