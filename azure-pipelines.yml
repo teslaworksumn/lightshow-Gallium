@@ -3,14 +3,26 @@
 # Add steps that analyze code, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
 
-pool:
-  vmImage: 'Ubuntu 16.04'
 
-steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '8.x'
-  displayName: 'Install Node.js'
-
-- script: npm install
-- script: npm run-script lint
+jobs:
+    - job: Lint
+      pool:
+        vmImage: 'macOS 10.13'
+      steps:
+        - task: NodeTool@0
+          displayName: 'Install Node.js'
+          inputs:
+            versionSpec: '8.x'
+        - script: npm install
+        - script: npm run-script lint
+          displayName: "Lint Code"
+    - job: macOS_Unit
+      pool:
+        vmImage: 'macOS-10.13'
+      steps:
+      - template: azure-pipelines.test.yml
+    - job: Windows_Unit
+      pool:
+        vmImage: 'VS2017-Win2016'
+      steps:
+      - template: azure-pipelines.test.yml
