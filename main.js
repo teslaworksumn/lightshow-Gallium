@@ -1,5 +1,8 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
+const firstRun = require('electron-first-run');
+const group = require('./app/js/linuxAddUserToDialoutGroup.js');
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
@@ -21,6 +24,11 @@ function createWindow() {
 
     // Open the DevTools.
     // win.webContents.openDevTools()
+
+    const isFirstRun = firstRun();
+    if (isFirstRun) {
+        group.addUserToGroup();
+    }
 
     // Emitted when the window is closed.
     win.on('closed', () => {

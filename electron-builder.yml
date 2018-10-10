@@ -1,26 +1,16 @@
-appId: org.codeforscience.sciencefair
+appId: net.teslaworks
 productName: Gallium
 artifactName: "${productName}-${os}-${arch}-${version}.${ext}"
 files:
   - "**/*"
 asar: true
 compression: maximum
+
 mac:
   category: public.app-category.reference
-  icon: "./app/img/tesla_gear.png"
-win:
-  icon: "./app/img/tesla_gear.png"
-linux:
-  category: "GNOME;GTK"
-  icon: "./app/img/tesla_gear.png"
-  packageCategory: "GNOME;GTK"
-  description: "Gallium - Application to run the Light Show"
-  target:
-    - deb
-  maintainer: "Byron Ambright <ambri011@umn.edu>"
-  
+  icon: "app/img/tesla_gear.png"
 dmg:
-  icon: "./app/img/tesla_gear.png"
+  icon: "app/img/tesla_gear.png"
   iconSize: 128
   contents:
     - x: 532
@@ -31,3 +21,15 @@ dmg:
       y: 249
       type: file
 
+win:
+  icon: "app/img/tesla_gear.png"
+
+linux:
+  category: "GNOME;GTK"
+  icon: "app/img/tesla_gear.png"
+  packageCategory: "GNOME;GTK"
+  description: "Gallium - Application to run the Light Show"
+  target:
+    - deb
+  maintainer: "Byron Ambright <ambri011@umn.edu>"
+  
