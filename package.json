@@ -34,6 +34,9 @@
   "dependencies": {
     "ajv": "^6.5.4",
     "chromedriver": "^2.42.0",
-    "fs-extra": "^7.0.0"
+    "dmx": "^0.1.1",
+    "electron-first-run": "^2.0.0",
+    "fs-extra": "^7.0.0",
+    "sudo-prompt": "^8.2.3"
   }
 }

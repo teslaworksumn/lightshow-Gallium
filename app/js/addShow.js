@@ -18,19 +18,18 @@ function addShowToConfig(showPath) {
 }
 
 function addNewShow() {
-    const inputText = document.getElementById('showName').value;
+    const showName = document.getElementById('showName').value;
     const showsDir = path.resolve('app', 'shows');
-
-    const showPath = path.join(showsDir, inputText);
+    const showPath = path.join(showsDir, showName);
 
     // path.join makes Windows path correct
-    const emptyShowPath = path.join('./app/config/emptyShow.json');
+    const emptyShowPath = path.join(path.resolve(), 'app/config/emptyShow.json');
 
     if (fse.existsSync(showPath)) {
-        alert(`Yo, show ${inputText} already exists`);
+        alert(`Yo, show ${showName} already exists`);
     } else {
         fse.mkdirSync(showPath);
-        alert(`New show ${inputText} added`);
+        alert(`New show ${showName} added`);
         fse.copyFileSync(emptyShowPath, path.join(showPath, 'show.json'));
         addShowToConfig(showPath);
     }

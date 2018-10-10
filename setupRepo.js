@@ -9,11 +9,11 @@ const path = require('path');
 const currentDir = path.resolve();
 const repoRoot = currentDir.split('app')[0];
 
-// removes everything in directory but leaves direcory intact OR creates
-// directory if it doesn't exist
-fse.ensureDirSync(path.join(repoRoot, '/app/shows'));
+fse.ensureDirSync(path.join(repoRoot, 'app/shows'));
+fse.ensureDirSync(path.join(repoRoot, 'app/config'));
+fse.ensureFileSync(path.join(repoRoot, 'app/config/emptyShow.json'));
 
-const showsJsonPath = path.join(repoRoot, '/app/config/shows.json');
+const showsJsonPath = path.join(repoRoot, 'app/config/shows.json');
 const data = JSON.stringify({ activeShow: '', shows: [] }, null, 2);
 
 if (!fse.existsSync(showsJsonPath)) {

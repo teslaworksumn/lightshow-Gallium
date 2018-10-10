@@ -1,2 +1,5 @@
 # Ignore built files
 build/*
+
+# Ignore packaged files directory
+dist/*
