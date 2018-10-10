@@ -7,11 +7,15 @@
 <body>
     <input class="credentialFormInput" style="width:69%" placeholder="Show Name" id="showName" type="text">
     <button id='submit'>OK</button>
+    <button id='cancel'>Cancel</button>
 </body>
     <script type="text/javascript" src="../js/addShow.js"></script>
     <script>
-        const button = document.getElementById('submit');
-        button.onclick = function () {addNewShow()};
+        document.getElementById('showName').focus();
+        const submitButton = document.getElementById('submit');
+        const cancelButton = document.getElementById('cancel');
+        submitButton.onclick = function () {addNewShow()};
+        cancelButton.onclick = function () {returnToShows()};
 
         window.addEventListener("keydown", function (event) {
             if (event.defaultPrevented) {

@@ -25,50 +25,5 @@
     <button id='addShow'>Add Show</button>
 </body>
     <script type="text/javascript" src="../js/addShow.js"></script>
-    <script>
-        const button = document.getElementById('addShow');
-        button.onclick = function () {
-            popWindow();
-        };
-
-        var fs = parent.require('fs');
-        var path = parent.require('path');
-
-        var appConfigPath = path.join(parent.__dirname, './config/shows.json');
-        var appConfig = JSON.parse(fs.readFileSync(appConfigPath));
-
-        var activeShow = appConfig.activeShow;
-        var shows = appConfig.shows;
-        var table = document.getElementById('tableBody');
-        if (JSON.stringify(shows) === JSON.stringify([])) {
-            document.getElementById("noShows").style.display = "block";
-        } else {
-            document.getElementById('table').style.display = "block";
-
-            for(i in shows){
-                if (shows[i]) {
-                    var tableItem = document.createElement('tr');
-                    tableItem.onmousedown = function () {
-                        onShowClick(shows[i]);
-                    }
-                    var showName = document.createElement('td');
-                    showName.innerText = shows[i].split(path.sep)[2];
-                    tableItem.appendChild(showName);
-                    table.appendChild(tableItem);
-                }
-            } 
-        }
-
-        function onShowClick(newActiveShow) {
-            console.log('here')
-            var appConfigPath = path.join(parent.__dirname, './config/shows.json');
-            var appConfig = JSON.parse(fs.readFileSync(appConfigPath));
-            var activeShow = appConfig.activeShow;
-            activeShow = newActiveShow;
-            fs.writeFileSync(appConfigPath, JSON.stringify(appConfig, null, 2));
-            parent.document.getElementById("frame").src = "html/show.html"
-        }
-        
-
-    </script>
+    <script type="text/javascript" src="../js/shows.js"></script>
 </html>
