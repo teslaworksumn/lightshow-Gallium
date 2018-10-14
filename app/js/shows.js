@@ -29,7 +29,7 @@ if (JSON.stringify(shows) === JSON.stringify([])) {
             };
             const showName = document.createElement('td');
             const showSplitName = shows[i].split(path.sep);
-            const pathShowName = showSplitName[showSplitName.length - 1];           
+            const pathShowName = showSplitName[showSplitName.length - 1];
             showName.innerText = pathShowName;
             tableItem.appendChild(showName);
             table.appendChild(tableItem);
