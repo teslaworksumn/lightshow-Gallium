@@ -28,7 +28,9 @@ if (JSON.stringify(shows) === JSON.stringify([])) {
                 onShowClick(shows[i]);
             };
             const showName = document.createElement('td');
-            showName.innerText = shows[i].split('app')[1].split(path.sep)[2];
+            const showSplitName = shows[i].split(path.sep);
+            const pathShowName = showSplitName[showSplitName.length - 1];           
+            showName.innerText = pathShowName;
             tableItem.appendChild(showName);
             table.appendChild(tableItem);
         }
