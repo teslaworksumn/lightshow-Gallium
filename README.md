@@ -72,7 +72,7 @@ We are using a modified version of the [Airbnb JavaScript Style Guide](https://g
 * [**Bengt Symstad**](https://github.com/bsymstad)
 * [**Chris Walaszek**](https://github.com/walas013)
 * [**Ryan Fredlund**](https://github.com/bookdude13)
-
+* [**David Hwang**](https://github.com/hwangdav000)
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
