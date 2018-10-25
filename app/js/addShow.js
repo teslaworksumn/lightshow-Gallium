@@ -31,6 +31,9 @@ function addNewShow() {
         fse.mkdirSync(showPath);
         alert(`New show ${showName} added`);
         fse.copyFileSync(emptyShowPath, path.join(showPath, 'show.json'));
+        const showJson = JSON.parse(fse.readFileSync(path.join(showPath, 'show.json')));
+        showJson.Name = `${showName}`;
+        fse.writeFileSync(path.join(showPath, 'show.json'), JSON.stringify(showJson,null,2));
         addShowToConfig(showPath);
     }
 
