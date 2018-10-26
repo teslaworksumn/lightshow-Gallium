@@ -13,16 +13,24 @@
     <p id="noShows" style="display: none">
         There are no shows to display.  Create one
     </p>
-    <table id="table" style="display: none">
-        <thead>
-            <tr>
-                <th onclick="sortTable(0)">Name</th>
-            </tr>
-        </thead>
-        <tbody id="tableBody">
-        </tbody>
-    </table>
-    <button id='addShow'>Add Show</button>
+    <div style="display: flex">
+        <div style="flex: 50%">
+            <table id="table" style="display: none">
+                <thead>
+                    <tr>
+                        <th onclick="sortTable(0)">Name</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                </tbody>
+            </table>
+        </div>
+        <div style="flex: 50%">
+            <button id='addShowFromCSV'>Add from CSV</button>
+            <button id='addShowFromProfile'>Add from Profile</button>
+            <button id='manuallyAddShow'>Manually Add Show</button>
+        </div>
+    </div>
 </body>
     <script type="text/javascript" src="../js/addShow.js"></script>
     <script type="text/javascript" src="../js/shows.js"></script>

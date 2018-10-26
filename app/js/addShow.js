@@ -2,13 +2,19 @@ const parent = window.parent;
 const fse = parent.require('fs-extra');
 const path = parent.require('path');
 
+let visibleShowPath = '';
+
 function returnToShows() {
     window.parent.document.getElementById('frame').src = './html/shows.html';
 }
 
+/*
+ * Adds the path of a show to the config file kept by the program
+ */
 function addShowToConfig(showPath) {
     const appConfigPath = path.join(path.resolve(), 'app/config/shows.json');
     const data = JSON.parse(fse.readFileSync(appConfigPath));
+    visibleShowPath = showPath;
 
     if (data) {
         const shows = data.shows;
@@ -26,13 +32,15 @@ function addNewShow() {
     const emptyShowPath = path.join(path.resolve(), 'app/config/emptyShow.json');
 
     if (fse.existsSync(showPath)) {
-        alert(`Yo, show ${showName} already exists`);
+        alert(`Yo, show '${showName}' already exists`);
     } else {
         fse.mkdirSync(showPath);
-        alert(`New show ${showName} added`);
+        alert(`New show '${showName}' added`);
         fse.copyFileSync(emptyShowPath, path.join(showPath, 'show.json'));
+        const showJson = JSON.parse(fse.readFileSync(path.join(showPath, 'show.json')));
+        showJson.Name = `${showName}`;
+        fse.writeFileSync(path.join(showPath, 'show.json'), JSON.stringify(showJson, null, 2));
         addShowToConfig(showPath);
+        document.getElementById('validName').style.display = 'table';
     }
-
-    returnToShows();
 }
