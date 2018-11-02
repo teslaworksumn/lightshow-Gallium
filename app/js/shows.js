@@ -24,7 +24,7 @@ if (JSON.stringify(shows) === JSON.stringify([])) {
     for (let i = 0; i < shows.length; i += 1) {
         if (shows[i]) {
             const tableItem = document.createElement('tr');
-            tableItem.onmousedown = function writeShowToConfigFile() {
+            tableItem.onmousedown = function writeShowToConfigFile() { //when user clicks on show, change to show window
                 onShowClick(shows[i]);
             };
             const showName = document.createElement('td');
