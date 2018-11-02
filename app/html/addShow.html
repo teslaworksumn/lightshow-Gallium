@@ -14,10 +14,10 @@
         document.getElementById('showName').focus();
         const submitButton = document.getElementById('submit');
         const cancelButton = document.getElementById('cancel');
-        submitButton.onclick = function () {addNewShow()};
+        submitButton.onclick = function () {addNewShow()}; //lambda function
         cancelButton.onclick = function () {returnToShows()};
 
-        window.addEventListener("keydown", function (event) {
+        window.addEventListener("keydown", function (event) { //addEventListener(type of event, function to call if event is triggered(with parameter: event), state of event to call trigger)
             if (event.defaultPrevented) {
                 return; // Do nothing if the event was already processed
             }

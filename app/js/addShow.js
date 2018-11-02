@@ -5,6 +5,13 @@ const path = parent.require('path');
 function returnToShows() {
     window.parent.document.getElementById('frame').src = './html/shows.html';
 }
+function popWindow(){
+    //File explorer code goes here
+    alert(`Yay, things are looking good!`)
+}
+function addSequence(){
+    //Adding the Sequence to show config? which one? Is it different from shows.json?
+}
 
 function addShowToConfig(showPath) {
     const appConfigPath = path.join(path.resolve(), 'app/config/shows.json');
