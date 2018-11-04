@@ -26,6 +26,14 @@
     </div>
     <br>
 
+    <!-- Full box -->
+    <div class="section">
+        <input id="boxNumber" type="text" value="0"/>
+        <button id='rangeOn'>Box On</button>
+        <button id='rangeOff'>Box Off</button>
+    </div>
+    <br>
+
     <!-- All channels -->
     <div class="section">
         <button id='allOn'>All On</button>
@@ -84,6 +92,17 @@
             if (end == -1) return;
 
             setRange(start, end, 0);
+        };
+
+        /* Box */
+
+        document.getElementById('boxNumber').onclick = function () {
+            const boxIdx = getIntFromElementById("boxNumber", -1);
+            if (boxIdx != -1) {
+                const startIdx = boxIdx * 16;
+                const endIdx = startIdx + 15;
+                setRange(startIdx, endIdx, 255);
+            }
         };
 
         /* All channels */
