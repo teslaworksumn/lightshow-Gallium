@@ -2,11 +2,93 @@
 <html>
 
 <link href="../css/style.css" rel="stylesheet" id="style" />
+<link href="../css/dmx.css" rel="stylesheet" id="style" />
 
 <body>
     <span class="headertext"> DMX </span>
     <br>
     <br>
-</body>
 
+    <!-- Individual channel -->
+    <div class="section">
+        <input id="singleChannel" type="text" value="0"/>
+        <button id='channelOn'>Channel On</button>
+        <button id='channelOff'>Channel Off</button>
+    </div>
+    <br>
+
+    <!-- Range of channels (inclusive) -->
+    <div class="section">
+        <input id="rangeStart" type="text" value="0"/>
+        <input id="rangeEnd" type="text" value="511"/>
+        <button id='rangeOn'>Range On</button>
+        <button id='rangeOff'>Range Off</button>
+    </div>
+    <br>
+
+    <!-- All channels -->
+    <div class="section">
+        <button id='allOn'>All On</button>
+        <button id='allOff'>All Off</button>
+    </div>
+    <br>
+
+
+</body>
+    <script type="text/javascript" src="../js/dmx.js"></script>
+    <script>
+        // Returns the value for the element with the given id, parsed as an int.
+        // If failed to parse or find, returns default value
+        function getIntFromElementById(id, defaultVal) {
+            const val = parseInt(document.getElementById(id).value);
+
+            if (isNaN(val)) {
+                alert("Hey, " + val + " isn't an int! (" + id + ")");
+                return defaultVal;
+            }
+
+            return val;
+        }
+
+        /* Single channels */
+
+        document.getElementById('channelOn').onclick = function () {
+            const channel = getIntFromElementById("singleChannel", -1);
+            if (channel != -1) {
+                setChannel(channel, 255);
+            }
+        };
+        document.getElementById('channelOff').onclick = function () {
+            const channel = getIntFromElementById("singleChannel", -1);
+            if (channel != -1) {
+                setChannel(channel, 0);
+            }
+        };
+
+        /* Range of channels */
+
+        document.getElementById('rangeOn').onclick = function () {
+            const start = getIntFromElementById("rangeStart", -1);
+            if (start == -1) return;
+
+            const end = getIntFromElementById("rangeEnd", -1);
+            if (end == -1) return;
+
+            setRange(start, end, 255);
+        };
+        document.getElementById('rangeOff').onclick = function () {
+            const start = getIntFromElementById("rangeStart", -1);
+            if (start == -1) return;
+
+            const end = getIntFromElementById("rangeEnd", -1);
+            if (end == -1) return;
+
+            setRange(start, end, 0);
+        };
+
+        /* All channels */
+
+        document.getElementById('allOn').onclick = function () { setAll(255); };
+        document.getElementById('allOff').onclick = function () { setAll(0); };
+    </script>
 </html>
