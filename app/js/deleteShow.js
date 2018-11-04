@@ -12,15 +12,14 @@ function deleteShowInConfig(showPath) {
 
     if (data) {
         const shows = data.shows;
-        //iterates until it finds existing path and deletes it
-        var i = shows.length;
-            while(i--){
-              if( shows[i] && shows[i] === showPath){
-                shows.splice(i,1);
-              }
+        // iterates until it finds existing path and deletes it
+        for (let i = 0; i < shows.length; i += 1) {
+            if (shows[i] && shows[i] === showPath) {
+                shows.splice(i, 1);
             }
-        fse.writeFileSync(appConfigPath, JSON.stringify(data, null, 2));
+        }
 
+        fse.writeFileSync(appConfigPath, JSON.stringify(data, null, 2));
     }
 }
 
@@ -29,21 +28,16 @@ function deleteShow() {
     const showsDir = path.resolve('app', 'shows');
 
     const showPath = path.join(showsDir, inputText);
-    /*reference
-    fse.mkdirSync(showPath);
-    alert(`New show ${inputText} added`);
-    fse.copyFileSync(emptyShowPath, path.join(showPath, 'show.json'));
-    addShowToConfig(showPath);
-    */
+
     // path.join makes Windows path correct
     const emptyShowPath = path.join('./app/config/emptyShow.json');
     if (fse.existsSync(showPath)) {
         alert(`Deleting show ${inputText}`);
         fse.remove(showPath);
         deleteShowInConfig(showPath);
+
+        returnToShows();
     } else {
         alert(`show ${inputText} doesn't exist`);
     }
-
-    returnToShows();
 }
