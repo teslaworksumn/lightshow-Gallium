@@ -1,6 +1,7 @@
 const csvButton = document.getElementById('addShowFromCSV');
 const profileButton = document.getElementById('addShowFromProfile');
 const manualButton = document.getElementById('manuallyAddShow');
+const deleteShowButton = document.getElementById('deleteShow');
 
 csvButton.onclick = function addShowCSV() {
     window.parent.document.getElementById('frame').src = './html/csvAddShow.html';
@@ -10,8 +11,10 @@ profileButton.onclick = function addShowProfile() {
 };
 manualButton.onclick = function addShowManual() {
     window.parent.document.getElementById('frame').src = './html/manualAddShow.html';
+deleteShowButton.onclick = function changePageSource() {
+    window.parent.document.getElementById('frame').src = './html/deleteShow.html';
 };
-
+};
 const appConfigPath = path.resolve('app/config/shows.json');
 const appConfig = JSON.parse(fse.readFileSync(appConfigPath));
 let activeShow = appConfig.activeShow;

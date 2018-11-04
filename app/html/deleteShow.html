@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<link href="../css/style.css" rel="stylesheet" id="style" />
+<link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+
+<body>
+    <input class="credentialFormInput" style="width:69%" placeholder="Show Name" id="showName" type="text">
+    <button id='submit'>OK</button>
+    <button id='cancel'>Cancel</button>
+</body>
+    <script type="text/javascript" src="../js/deleteShow.js"></script>
+    <script>
+        document.getElementById('showName').focus();
+        const submitButton = document.getElementById('submit');
+        const cancelButton = document.getElementById('cancel');
+        submitButton.onclick = function () {deleteShow()};
+        cancelButton.onclick = function () {returnToShows()};
+
+        window.addEventListener("keydown", function (event) {
+            if (event.defaultPrevented) {
+                return; // Do nothing if the event was already processed
+            }
+
+            switch (event.key) {
+                case "Enter":
+                    deleteShow();
+
+                default:
+                    return; // Quit when this doesn't handle the key event
+            }
+
+            // Cancel the default action to avoid it being handled twice
+            event.preventDefault();
+        }, true);
+    </script>
+
+</html>
