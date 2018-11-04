@@ -1,4 +1,7 @@
 {
   "activeShow": "",
-  "shows": []
+  "shows": [
+    "/home/ryan/git/lightshow-Gallium/app/shows/asdf",
+    "/home/ryan/git/lightshow-Gallium/app/shows/fdsa"
+  ]
 }
