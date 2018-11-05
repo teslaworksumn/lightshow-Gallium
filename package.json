@@ -14,9 +14,9 @@
     "pack": "electron-builder --dir",
     "build": "electron-builder",
     "buildall": "electron-builder -mwl",
-    "buildlinux": "electron-builder -l",
     "buildosx": "electron-builder -m",
     "buildwin": "electron-builder -w",
+    "buildlinux": "electron-builder -l",
     "test": "mocha"
   },
   "author": "Byron Ambright and Josh Guldberg",
