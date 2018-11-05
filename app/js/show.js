@@ -1,4 +1,5 @@
 const table = document.getElementById('tableBody');
+const playButton = document.getElementById('runShow');
 
 // the directory of the current show is contained in the iframe.value attribute
 const showDir = window.parent.document.getElementById('frame').value;
@@ -36,4 +37,21 @@ for (let i = 0; i < playlistElements.length; i += 1) {
     }
 
     table.appendChild(tableItem);
+}
+
+playButton.onclick = function() {
+    // value property contains the boolean isPlaying
+    if (playButton.value === 'notPlaying') {
+        playButton.innerText = "Stop";
+        playButton.value = 'playing';
+
+        playButton.style.backgroundColor = "red";
+        playButton.style.borderColor = "red";
+    } else {
+        playButton.innerText = "Play";
+        playButton.value = 'notPlaying';
+
+        playButton.style.backgroundColor = "green";
+        playButton.style.borderColor = "green";
+    }
 }
