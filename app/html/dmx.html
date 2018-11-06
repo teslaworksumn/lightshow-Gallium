@@ -38,6 +38,8 @@
     <div class="section">
         <button id='allOn'>All On</button>
         <button id='allOff'>All Off</button>
+        <button id='fadeOn'>Fade On</button>
+        <button id='fadeOff'>Fade Off</button>
     </div>
     <br>
 
@@ -45,6 +47,31 @@
 </body>
     <script type="text/javascript" src="../js/dmx.js"></script>
     <script>
+        /* Fading setup */
+        var isFading = false;
+        var currentFade = 0;
+        const fadeDuration = 5000;
+        const fadeInterval = 50;
+        var fadeChange = 255.0 * fadeInterval / fadeDuration;
+
+        setInterval(function() {
+            if (isFading) {
+                currentFade += fadeChange;
+
+                if (currentFade < 0) {
+                    currentFade = 0;
+                    fadeChange = -fadeChange;
+                }
+                if (currentFade > 255) {
+                    currentFade = 255;
+                    fadeChange = -fadeChange;
+                }
+
+                // Divide by 1 to make it an int
+                setAll(parseInt(currentFade));
+            }
+        }, fadeInterval);
+
         // Returns the value for the element with the given id, parsed as an int.
         // If failed to parse or find, returns default value
         function getIntFromElementById(id, defaultVal) {
@@ -118,5 +145,15 @@
 
         document.getElementById('allOn').onclick = function () { setAll(255); };
         document.getElementById('allOff').onclick = function () { setAll(0); };
+        document.getElementById('fadeOn').onclick = function () {
+            // Reset and enable fade
+            currentFade = 0;
+            isFading = true;
+        };
+        document.getElementById('fadeOff').onclick = function () {
+            // Reset and disable fade
+            currentFade = 0;
+            isFading = false;
+        };
     </script>
 </html>
