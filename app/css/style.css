@@ -186,3 +186,6 @@ tr:hover {
     padding:  10px;
 }
 
+select {
+    min-width: 100px;
+}

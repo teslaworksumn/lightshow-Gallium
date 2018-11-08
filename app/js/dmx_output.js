@@ -9,7 +9,7 @@ const DRIVER = 'enttec-usb-dmx-pro';
 const SERIAL_PORT = '/dev/ttyUSB0';
 
 // Create a universe
-const universe = dmx.addUniverse('demo', DRIVER, SERIAL_PORT);
+const universe = dmx.addUniverse('DMX Output', DRIVER, SERIAL_PORT);
 
 // Sets a range of channels to be on or off. Range is inclusive on both ends
 // channelStart is an int, channelEnd is an int, value is an int in range [0, 255]

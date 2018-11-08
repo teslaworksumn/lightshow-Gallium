@@ -8,12 +8,14 @@
     <br>
 
     <label for="dmxDeviceSelection">DMX devices</label>
-    <select id="dmxDeviceSelection">
-        <!-- The values are the index in the devices[] array in settings.js. "No selection" is -1-->
-        <option value="-1">None</option>
+    <select id="dmxDeviceSelection" onchange="dmxDeviceOnChange();">
     </select>
     <button onclick="getDmxDevices();">Refresh</button>
+    <br>
     
 </body>
-<script type="text/javascript" src="../js/settingsDmx.js"></script>
+<script type="text/javascript" src="../js/settingsDmx.js">
+	// Initial load for combo box
+	getDmxDevices();
+</script>
 </html>
