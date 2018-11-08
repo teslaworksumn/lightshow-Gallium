@@ -10,6 +10,7 @@
   "scripts": {
     "start": "electron .",
     "install": "electron-rebuild",
+    "postinstall": "electron-builder install-app-deps",
     "lint": "eslint .",
     "lint-fix": "eslint . --fix",
     "pack": "electron-builder --dir",
