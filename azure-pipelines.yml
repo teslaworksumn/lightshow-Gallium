@@ -14,6 +14,7 @@ jobs:
           inputs:
             versionSpec: '8.x'
         - task: UsePythonVersion@0
+          displayName: 'Install Python 2.x'
           inputs:
               versionSpec: '2.x'
         - script: npm install
