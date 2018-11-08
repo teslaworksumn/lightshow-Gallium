@@ -40,6 +40,7 @@
     "dmx": "^0.1.1",
     "electron-first-run": "^2.0.0",
     "fs-extra": "^7.0.0",
+    "serialport": "^7.0.2",
     "sudo-prompt": "^8.2.3"
   }
 }
