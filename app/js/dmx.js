@@ -7,13 +7,18 @@ const fadeDuration = 5000;
 const fadeInterval = 50;
 let fadeChange = 255.0 * fadeInterval / fadeDuration;
 
+// Limits
+const MAX_CHANNEL = 511;
+
 // Returns the value for the element with the given id, parsed as an int.
 // If failed to parse or find, returns default value
 function getIntFromElementById(id, defaultVal) {
-    const val = parseInt(document.getElementById(id).value, 10);
+    let element = document.getElementById(id);
+    const val = parseInt(element.value, 10);
 
-    if (Number.isNaN(val)) {
-        alert(`Hey, ${val} isn't an int! (${id})`);
+    // Check for invalid input (non-integers). The equality check catches floats
+    if (Number.isNaN(val) || val !== element.value) {
+        // Fail by passing the default value back. It will be handled by the caller
         return defaultVal;
     }
 
@@ -39,78 +44,95 @@ function updateFade() {
     }
 }
 
-// Sets up all of the button.onclick methods for the DMX page
+// Sets the background color for an element with the given id
+function setBackground(id, color) {
+    document.getElementById(id).style.backgroundColor = color;
+}
+
+// Sets a single DMX channel to the given value
+function setSingleChannel(value) {
+    const channel = getIntFromElementById('singleChannel', -1);
+    if (channel < 0  || channel > MAX_CHANNEL) {
+        setBackground('singleChannel', 'red');
+        return;
+    }
+
+    setChannel(channel, value);
+}
+
+// Sets a range of DMX channels to the given value
+function setChannelRange(value) {
+    const start = getIntFromElementById('rangeStart', -1);
+
+    if (start === -1) {
+        setBackground('rangeStart', 'red');
+        return;
+    }
+
+    const end = getIntFromElementById('rangeEnd', -1);
+    if (end === -1) {
+        setBackground('rangeEnd', 'red');
+        return;
+    }
+
+    setRange(start, end, value);
+}
+
+// Sets the channels in a box to the given value
+function setBox(value) {
+    const boxIdx = getIntFromElementById('boxNumber', -1);
+    if (boxIdx === -1) {
+        setBackground('boxNumber', 'red');
+        return;
+    }
+
+    const startIdx = boxIdx * 16;
+    const endIdx = startIdx + 15;
+    setRange(startIdx, endIdx, value);
+}
+
+// Sets whether we are fading or not
+function setFade(newIsFading) {
+    // Reset and enable fade
+    currentFade = 0;
+    isFading = newIsFading;
+}
+
+// Handles when a text input's value changes
+function onInputChange(id) {
+    // If the user starts typing in a text box, reset the background from red to white
+    setBackground(id, 'white');
+}
+
+// Sets up all of the button hooks for the DMX page
 function setupButtons() {
-    /* Single channels */
+    /* Clicking */
 
-    document.getElementById('channelOn').onclick = function channelOn() {
-        const channel = getIntFromElementById('singleChannel', -1);
-        if (channel !== -1) {
-            setChannel(channel, 255);
-        }
-    };
-    document.getElementById('channelOff').onclick = function channelOff() {
-        const channel = getIntFromElementById('singleChannel', -1);
-        if (channel !== -1) {
-            setChannel(channel, 0);
-        }
-    };
+    // Single channels
+    document.getElementById('channelOn').onclick = function channelOn() { setSingleChannel(255); };
+    document.getElementById('channelOff').onclick = function channelOff() { setSingleChannel(0); };
 
-    /* Range of channels */
+    // Range of channels
+    document.getElementById('rangeOn').onclick = function rangeOn() { setChannelRange(255); };
+    document.getElementById('rangeOff').onclick = function rangeOff() { setChannelRange(0); };
 
-    document.getElementById('rangeOn').onclick = function rangeOn() {
-        const start = getIntFromElementById('rangeStart', -1);
-        if (start === -1) return;
+    // Box
+    document.getElementById('boxOn').onclick = function boxOn() { setBox(255); };
+    document.getElementById('boxOff').onclick = function boxOff() { setBox(0); };
 
-        const end = getIntFromElementById('rangeEnd', -1);
-        if (end === -1) return;
-
-        setRange(start, end, 255);
-    };
-    document.getElementById('rangeOff').onclick = function rangeOff() {
-        const start = getIntFromElementById('rangeStart', -1);
-        if (start === -1) return;
-
-        const end = getIntFromElementById('rangeEnd', -1);
-        if (end === -1) return;
-
-        setRange(start, end, 0);
-    };
-
-    /* Box */
-
-    document.getElementById('boxOn').onclick = function boxOn() {
-        const boxIdx = getIntFromElementById('boxNumber', -1);
-        if (boxIdx === -1) return;
-
-        const startIdx = boxIdx * 16;
-        const endIdx = startIdx + 15;
-        setRange(startIdx, endIdx, 255);
-    };
-
-    document.getElementById('boxOff').onclick = function boxOff() {
-        const boxIdx = getIntFromElementById('boxNumber', -1);
-        if (boxIdx === -1) return;
-
-        const startIdx = boxIdx * 16;
-        const endIdx = startIdx + 15;
-        setRange(startIdx, endIdx, 0);
-    };
-
-    /* All channels */
-
+    // All channels
     document.getElementById('allOn').onclick = function allOn() { setAll(255); };
     document.getElementById('allOff').onclick = function allOff() { setAll(0); };
-    document.getElementById('fadeOn').onclick = function fadeOn() {
-        // Reset and enable fade
-        currentFade = 0;
-        isFading = true;
-    };
-    document.getElementById('fadeOff').onclick = function fadeOff() {
-        // Reset and disable fade
-        currentFade = 0;
-        isFading = false;
-    };
+
+    document.getElementById('fadeOn').onclick = function fadeOn() { setFade(true); };
+    document.getElementById('fadeOff').onclick = function fadeOff() { setFade(false); };
+
+    /* Changing inputs */
+
+    document.getElementById('singleChannel').oninput = function singleChannelOnChange() { onInputChange('singleChannel'); };
+    document.getElementById('rangeStart').oninput = function rangeStartOnChange() { onInputChange('rangeStart'); };
+    document.getElementById('rangeEnd').oninput = function rangeEndOnChange() { onInputChange('rangeEnd') };
+    document.getElementById('boxNumber').oninput = function boxNumberOnChange() { onInputChange('boxNumber') };
 }
 
 // Sets up the page
