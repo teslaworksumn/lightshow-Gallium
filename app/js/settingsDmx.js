@@ -96,3 +96,11 @@ function getDmxDevices() {
             throw err;
         });
 }
+
+// If this is being run in the browser, module isn't defined.
+// We want the module.exports though for other pieces to get the settings.
+if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
+    module.exports = {
+        getCurrentDmxDevice,
+    };
+}
