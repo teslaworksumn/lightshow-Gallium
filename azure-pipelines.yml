@@ -13,6 +13,9 @@ jobs:
           displayName: 'Install Node.js'
           inputs:
             versionSpec: '8.x'
+        - task: UsePythonVersion@0
+          inputs:
+              versionSpec: '2.x'
         - script: npm install
         - script: npm run-script lint
           displayName: "Lint Code"
