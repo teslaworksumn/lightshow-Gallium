@@ -8,7 +8,7 @@ const fadeInterval = 50;
 let fadeChange = 255.0 * fadeInterval / fadeDuration;
 
 // Limits
-const MAX_CHANNEL = 511;
+const MAX_CHANNEL = 511; // Inclusive
 
 // Returns the value for the element with the given id, parsed as an int.
 // If failed to parse or find, returns default value
@@ -17,7 +17,7 @@ function getIntFromElementById(id, defaultVal) {
     const val = parseInt(element.value, 10);
 
     // Check for invalid input (non-integers). The equality check catches floats
-    if (Number.isNaN(val) || val !== element.value) {
+    if (Number.isNaN(val) || val != element.value) {
         // Fail by passing the default value back. It will be handled by the caller
         return defaultVal;
     }
@@ -52,7 +52,7 @@ function setBackground(id, color) {
 // Sets a single DMX channel to the given value
 function setSingleChannel(value) {
     const channel = getIntFromElementById('singleChannel', -1);
-    if (channel < 0  || channel > MAX_CHANNEL) {
+    if (channel < 0 || channel > MAX_CHANNEL) {
         setBackground('singleChannel', 'red');
         return;
     }
@@ -64,13 +64,19 @@ function setSingleChannel(value) {
 function setChannelRange(value) {
     const start = getIntFromElementById('rangeStart', -1);
 
-    if (start === -1) {
+    if (start < 0 || start > MAX_CHANNEL) {
         setBackground('rangeStart', 'red');
         return;
     }
 
     const end = getIntFromElementById('rangeEnd', -1);
-    if (end === -1) {
+    if (end < 0 || end > MAX_CHANNEL) {
+        setBackground('rangeEnd', 'red');
+        return;
+    }
+
+    if (end < start) {
+        setBackground('rangeStart', 'red');
         setBackground('rangeEnd', 'red');
         return;
     }
@@ -81,7 +87,7 @@ function setChannelRange(value) {
 // Sets the channels in a box to the given value
 function setBox(value) {
     const boxIdx = getIntFromElementById('boxNumber', -1);
-    if (boxIdx === -1) {
+    if (boxIdx < 0 || boxIdx > MAX_CHANNEL) {
         setBackground('boxNumber', 'red');
         return;
     }
