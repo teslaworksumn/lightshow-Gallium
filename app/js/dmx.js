@@ -13,11 +13,11 @@ const MAX_CHANNEL = 511; // Inclusive
 // Returns the value for the element with the given id, parsed as an int.
 // If failed to parse or find, returns default value
 function getIntFromElementById(id, defaultVal) {
-    let element = document.getElementById(id);
+    const element = document.getElementById(id);
     const val = parseInt(element.value, 10);
 
     // Check for invalid input (non-integers). The equality check catches floats
-    if (Number.isNaN(val) || val != element.value) {
+    if (Number.isNaN(val) || val !== Number(element.value)) {
         // Fail by passing the default value back. It will be handled by the caller
         return defaultVal;
     }
@@ -137,8 +137,8 @@ function setupButtons() {
 
     document.getElementById('singleChannel').oninput = function singleChannelOnChange() { onInputChange('singleChannel'); };
     document.getElementById('rangeStart').oninput = function rangeStartOnChange() { onInputChange('rangeStart'); };
-    document.getElementById('rangeEnd').oninput = function rangeEndOnChange() { onInputChange('rangeEnd') };
-    document.getElementById('boxNumber').oninput = function boxNumberOnChange() { onInputChange('boxNumber') };
+    document.getElementById('rangeEnd').oninput = function rangeEndOnChange() { onInputChange('rangeEnd'); };
+    document.getElementById('boxNumber').oninput = function boxNumberOnChange() { onInputChange('boxNumber'); };
 }
 
 // Sets up the page
