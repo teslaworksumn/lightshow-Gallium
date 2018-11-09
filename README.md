@@ -5,12 +5,13 @@ Gallium is a GUI Application for running Tesla Works Light Show Events.
 Directory structure:
 
 ```
-app
-├── config
-├── css
-├── html
-├── js
-└── img
+└── app
+    ├── config
+    ├── css
+    ├── html
+    ├── js
+    └── img
+└── test
 ```
 
 
@@ -20,6 +21,7 @@ app
 * `app/html` contains HTML files that are used in Gallium.
 * `app/js` contains JavaScript files that are used in Gallium.
 * `app/img` contains image files that are used in Gallium.
+* `test/` contains the test suite for Gallium.
 
 ## Pre-requisites
 
@@ -29,29 +31,36 @@ We are supporting Node.js version 10.11.0 with the plan to update to the LTS ver
 
 ## Dev Environment Setup and Running
 
-1. Run `npm install` from the root directory
-2. Run `node setupRepo.js` from the root directory
-3. Run `npm start`
+1. Change directory to the repo root directory (`.../lightshow-Gallium`)
+1. Run `npm install` to install npm dependencies
+1. Run `node setupRepo.js` to initialize certain directories and files
+
+### Running the app
+1. Run `npm start`
 
 NOTE: If you get an error that looks like `error while loading shared libraries: libgconf-2.so.4: cannot open shared object file: No such file or directory` while running `npm start`, you will have to install this shared library. This is fixed with `sudo apt-get install libgconf-2-4`.
 
 ## Application Packaging
 
-1. Run `npm install` from the root directory
-2. Run `node setupRepo.js` from the root directory
-3. Run `npm run-script package`
+1. Change directory to the repo root directory (`.../lightshow-Gallium`)
+1. Run `npm install`
+1. Run `node setupRepo.js`
+1. Run `npm run-script package`
 
-NOTE: If you are on Mac or Linux you need Wine installed to package a Windows Build.
+NOTE: If you are on Mac or Linux, you will need [Wine](https://www.winehq.org/) installed to package a Windows Build.
 
 ## Scripts
 
-* `npm start` - Start an instance of the developer build.
-* `npm run-script lint` - Lint our code
-* `npm run-script lint-fix` - Fix common linting errors
-* `npm run-script package` - Package app for Windows 64 bit, Mac OS, and Linux.
-* `npm run-script package-win32` - Package app for Windows 64 bit.
-* `npm run-script package-darwin` - Package app for Mac OS.
-* `npm run-script package-linux` - Package app for Linux.
+* `npm start` - Start an instance of the developer build
+* `npm run-script lint` - Lint the code
+* `npm run-script lint-fix` - Automatically fix common linting errors
+* `npm run-script pack` - Generates the package directory without really packaging it
+* `npm run-script build` - Package app in a distributable format for the current OS
+* `npm run-script buildall` - Package app in a distributable format for Windows, MacOS, and Linux
+* `npm run-script buildosx` - Package app in a distributable format for MacOS
+* `npm run-script buildwin` - Package app in a distributable format for Windows
+* `npm run-script buildlinux` - Package app in a distributable format for Linux
+* `npm run-script test` - Run the test suite contained in `test/`
 
 ## Styles
 

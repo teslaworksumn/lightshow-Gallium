@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+<html>
+
+<link href="../css/style.css" rel="stylesheet" id="style" />
+<link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+
+<body>
+    <input class="credentialFormInput" style="width:69%" placeholder="New Show Name" id="showName" type="text">
+    <button id='submit'>OK</button>
+    <button id='cancel'>Cancel</button>
+    <br><br>
+
+    <div id="validName" style="display: none">
+        <input type="button" value="Choose CSV Sequence File" id="chooseCSV"/> 
+        <input type="button" value="Choose Audio File" id="chooseAudio"/> 
+
+        <table id="table">
+            <thead>
+                <tr>
+                    <th onclick="sortTable(0)">Element</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+            </tbody>
+        </table>
+
+
+        <br><br>
+        <button id="save">Save and Create Show</button>
+    </div>
+</body>
+    <script type="text/javascript" src="../js/addShow.js"></script>
+    <script type="text/javascript" src="../js/createSequenceJson.js"></script>
+    <script type="text/javascript" src="../js/csvAddShow.js"></script>
+    <script>
+        // Ensure that input show name is a valid new show name
+        document.getElementById('showName').focus();
+        const submitButton = document.getElementById('submit');
+        const cancelButton = document.getElementById('cancel');
+        const saveButton = document.getElementById('save');
+        submitButton.onclick = function() {addNewShow()};
+        cancelButton.onclick = function() {returnToShows()};
+        saveButton.onclick = function() {saveCSVShow()};
+
+        window.addEventListener("keydown", function (event) {
+            if (event.defaultPrevented) {
+                return; // Do nothing if the event was already processed
+            }
+
+            switch (event.key) {
+                case "Enter":
+                    addNewShow();
+                
+                default:
+                    return; // Quit when this doesn't handle the key event
+            }
+            
+            // Cancel the default action to avoid it being handled twice
+            event.preventDefault();
+        }, true);
+    </script>
+</html>
+

@@ -1,9 +1,20 @@
-const button = document.getElementById('addShow');
+const csvButton = document.getElementById('addShowFromCSV');
+const profileButton = document.getElementById('addShowFromProfile');
+const manualButton = document.getElementById('manuallyAddShow');
+const deleteShowButton = document.getElementById('deleteShow');
 
-button.onclick = function changePageSource() {
-    window.parent.document.getElementById('frame').src = './html/addShow.html';
+csvButton.onclick = function addShowCSV() {
+    window.parent.document.getElementById('frame').src = './html/csvAddShow.html';
 };
-
+profileButton.onclick = function addShowProfile() {
+    window.parent.document.getElementById('frame').src = './html/profileAddShow.html';
+};
+manualButton.onclick = function addShowManual() {
+    window.parent.document.getElementById('frame').src = './html/manualAddShow.html';
+};
+deleteShowButton.onclick = function changePageSource() {
+    window.parent.document.getElementById('frame').src = './html/deleteShow.html';
+};
 const appConfigPath = path.resolve('app/config/shows.json');
 const appConfig = JSON.parse(fse.readFileSync(appConfigPath));
 let activeShow = appConfig.activeShow;
@@ -12,10 +23,18 @@ const table = document.getElementById('tableBody');
 
 function onShowClick(newActiveShow) {
     activeShow = newActiveShow;
+    const iframe = window.parent.document.getElementById('frame');
+
     fse.writeFileSync(appConfigPath, JSON.stringify(appConfig, null, 2));
-    window.parent.document.getElementById('frame').src = 'html/show.html';
+
+    /*
+     * Set the current show as an iframe attribute to access in other pages
+     */
+    iframe.value = activeShow;
+    iframe.src = 'html/show.html';
 }
 
+// Display tables elements only if there are elements in the shows config
 if (JSON.stringify(shows) === JSON.stringify([])) {
     document.getElementById('noShows').style.display = 'block';
 } else {

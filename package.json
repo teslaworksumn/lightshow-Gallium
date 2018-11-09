@@ -16,9 +16,9 @@
     "pack": "electron-builder --dir",
     "build": "electron-builder",
     "buildall": "electron-builder -mwl",
-    "buildlinux": "electron-builder -l",
     "buildosx": "electron-builder -m",
     "buildwin": "electron-builder -w",
+    "buildlinux": "electron-builder -l",
     "test": "mocha"
   },
   "author": "Byron Ambright and Josh Guldberg",
@@ -40,7 +40,10 @@
     "dmx": "^0.1.1",
     "electron-first-run": "^2.0.0",
     "fs-extra": "^7.0.0",
+    "nanotimer": "^0.3.15",
+    "play-sound": "^1.1.2",
     "serialport": "^7.0.2",
-    "sudo-prompt": "^8.2.3"
-  }
+    "sudo-prompt": "^8.2.3",
+    "xml2js": "^0.4.19"
+    }
 }
