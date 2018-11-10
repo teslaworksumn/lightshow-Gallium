@@ -6,20 +6,15 @@ const player = parent.require('play-sound')(opts = {});
 const NanoTimer = parent.require('nanotimer');
 
 const Settings = parent.require('./js/settings');
-const settings = new Settings(settingsLoaded);
 
 const dmx = new DMX();
+let settings;
 let timer;
 
 const DRIVER = 'enttec-usb-dmx-pro';
 
 // Create a universe
 let universe = null;
-
-// When settings load, set our universe we are using
-function settingsLoaded() {
-    setUniverse(settings.getCurrentDmxDevice());
-}
 
 /* Manual control */
 
@@ -99,3 +94,11 @@ function stopSequence() {
     timer.clearInterval();
     playback.pause();
 }
+
+// When settings load, set our universe we are using
+function settingsLoaded() {
+    setUniverse(settings.getCurrentDmxDevice());
+}
+
+// Make this down here, since we get linter errors otherwise
+settings = new Settings(settingsLoaded);

@@ -128,8 +128,6 @@ class Settings {
 
     // Saves settings to settings.json
     save() {
-        console.log('saving');
-
         // Get page data
         const currentDmxDevice = this.getCurrentDmxDevice();
 
