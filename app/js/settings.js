@@ -16,6 +16,14 @@ function isDmxDevice(location, manufacturer) {
     return true;
 }
 
+// Checks if these are the same device
+function sameDevice(devA, devB) {
+    if (devA === null && devB === null) return true;
+    if (devA === null || devB === null) return false;
+
+    return devA.location === devB.location;
+}
+
 class Settings {
     constructor(onLoad) {
         this.settingsConfigPath = path.resolve('app/config/settings.json');
@@ -34,7 +42,6 @@ class Settings {
     getCurrentDmxDevice() {
         // Check that we are in range
         if (this.selectedDevice >= this.dmxDevices.length || this.selectedDevice < 0) {
-            alert(`Invalid selected device ${this.selectedDevice} (there are ${this.dmxDevices.length} devices)`);
             return null;
         }
 
@@ -78,10 +85,6 @@ class Settings {
 
         // Add to selection box
         this.dmxSelection.appendChild(newOption);
-
-        // If this is the first item being added, trigger onchange
-        // (as if the user chose this device)
-        this.dmxSelection.onchange();
     }
 
     // Adds a DMX device. Can be done through polling devices or set through loading settings.
@@ -102,6 +105,7 @@ class Settings {
         serialport.list()
             .then((ports) => {
                 let portIdx = 0;
+                const oldSelectedDevice = this.getCurrentDmxDevice();
 
                 // Reset the html stuff
                 this.resetDmxHtml();
@@ -117,6 +121,19 @@ class Settings {
                         portIdx += 1;
                     }
                 });
+
+                // We updated our list. Try to keep selecting the current device
+                if (oldSelectedDevice !== null) {
+                    for (let i = 0; i < this.dmxDevices; i += 1) {
+                        if (this.sameDevice(this.dmxDevices[i], oldSelectedDevice)) {
+                            this.dmxSelection.selectedIndex = i;
+                            break;
+                        }
+                    }
+                }
+
+                // We updated, so save
+                this.save();
             })
             .catch((err) => {
                 alert(`Problem detecting DMX devices: ${err}`);
@@ -173,5 +190,7 @@ class Settings {
 if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
     module.exports = Settings;
 } else {
-    window.Settings = new Settings();
+    const settings = new Settings();
+    window.Settings = settings;
+    settings.getDmxDevices();
 }
