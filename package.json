@@ -45,5 +45,5 @@
     "serialport": "^7.0.2",
     "sudo-prompt": "^8.2.3",
     "xml2js": "^0.4.19"
-    }
+  }
 }

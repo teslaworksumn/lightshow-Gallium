@@ -2,7 +2,12 @@
 <html>
 <link href="../css/style.css" rel="stylesheet" id="style" />
 
-<body>
+<head>
+    <script>function load(){} // Forward declaration. Defined in settings.js</script>
+</head>
+
+<!-- Initial load for combo box -->
+<body onload="load();">
     <span class="headertext"> Settings </span>
     <br>
     <br>
@@ -14,8 +19,10 @@
     <br>
     
 </body>
-<script type="text/javascript" src="../js/settingsDmx.js">
-	// Initial load for combo box
-	getDmxDevices();
+<script type="text/javascript" src="../js/settings.js">
+    // If anything changes, save settings.
+    // Easier than saving on close, since iframe.src changing isn't easily hook-able
+
+    document.getElementById('dmxDeviceSelection').onchange = save;
 </script>
 </html>

@@ -1,11 +1,11 @@
-const parent = window.parent;
+const require = window.parent.require;
+const fs = require('fs');
+const path = require('path');
+const DMX = require('dmx');
+const player = require('play-sound')(opts = {});
+const NanoTimer = require('nanotimer');
 
-const fs = parent.require('fs');
-const path = parent.require('path');
-const DMX = parent.require('dmx');
-const player = parent.require('play-sound')(opts = {});
-const NanoTimer = parent.require('nanotimer');
-const dmxSettings = parent.require('./js/settingsDmx');
+const settings = window.parent.require('./js/settings');
 
 const dmx = new DMX();
 let timer;
@@ -58,7 +58,7 @@ function setAll(value) {
     universe.updateAll(value);
 }
 
-setUniverse(dmxSettings.getCurrentDmxDevice());
+setUniverse(settings.getCurrentDmxDevice());
 
 /* Sequences */
 function updateSequence(json, start) {

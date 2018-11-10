@@ -1,9 +1,17 @@
-const parent = window.parent;
-const serialport = parent.require('serialport');
+const require = window.parent.require;
+
+const fse = require('fs-extra');
+const path = require('path');
+const serialport = require('serialport');
+
+const settingsConfigPath = path.resolve('app/config/settings.json');
+let settingsConfig;
 
 const dmxSelection = document.getElementById('dmxDeviceSelection');
 let dmxDevices = [];
 let selectedDevice = 0;
+
+/* DMX device selection */
 
 // Gets the currently selected DMX device. Returns null if none selected or out of range
 function getCurrentDmxDevice() {
@@ -50,6 +58,18 @@ function addDeviceToHTML(index, textValue) {
     dmxSelection.appendChild(newOption);
 }
 
+// Adds a DMX device. Can be done through polling devices or set through loading settings.
+function addDmxDevice(location, manufacturer, portIdx) {
+    // Add to devices array
+    dmxDevices.push({
+        location,
+        manufacturer,
+    });
+
+    // Add reference to HTML
+    addDeviceToHTML(portIdx, `${location} (${manufacturer})`);
+}
+
 // Filters whether the device with the given location and manufacturer is indeed a DMX device
 function isDmxDevice(location, manufacturer) {
     // Ignore devices with no location or manufacturer
@@ -78,14 +98,7 @@ function getDmxDevices() {
                 const manufacturer = port.manufacturer;
 
                 if (isDmxDevice(location, manufacturer)) {
-                    // Add to devices array
-                    dmxDevices.push({
-                        location,
-                        manufacturer,
-                    });
-
-                    // Add reference to HTML
-                    addDeviceToHTML(portIdx, `${location} (${manufacturer})`);
+                    addDmxDevice(location, manufacturer, portIdx);
 
                     portIdx += 1;
                 }
@@ -95,6 +108,44 @@ function getDmxDevices() {
             alert(`Problem detecting DMX devices: ${err}`);
             throw err;
         });
+}
+
+/* General settings handling */
+
+// Saves settings to settings.json
+function save() {
+    // Get page data
+    const currentDmxDevice = settingsDmx.getCurrentDmxDevice();
+    console.log(currentDmxDevice);
+
+    // Update settings
+    settingsConfig = {
+        dmxDevice: JSON.stringify(currentDmxDevice, null, 2),
+    };
+    console.log(settingsConfig);
+
+    // Write to file
+    fse.writeFileSync(settingsConfigPath, JSON.stringify(settingsConfig, null, 2));
+}
+
+// Loads settings from file
+function load() {
+    // Make sure config file exists before using
+    fse.pathExists(settingsConfigPath).then((exists) => {
+        if (exists) {
+            // Get settings
+            settingsConfig = JSON.parse(fse.readFileSync(settingsConfigPath));
+
+            // Set HTML elements
+            const currentDmxDevice = JSON.parse(settingsConfig.dmxDevice);
+            if (currentDmxDevice !== null) {
+                settingsDmx.addDmx(currentDmxDevice.location, currentDmxDevice.manufacturer, 0);
+            }
+        } else {
+            // File doesn't exist, so create an empty config file there (save with defaults)
+            save();
+        }
+    });
 }
 
 // If this is being run in the browser, module isn't defined.
