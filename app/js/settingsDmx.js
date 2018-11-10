@@ -85,7 +85,7 @@ function getDmxDevices() {
                     });
 
                     // Add reference to HTML
-                    addDeviceToHTML(portIdx, `${location} / ${manufacturer}`);
+                    addDeviceToHTML(portIdx, `${location} (${manufacturer})`);
 
                     portIdx += 1;
                 }

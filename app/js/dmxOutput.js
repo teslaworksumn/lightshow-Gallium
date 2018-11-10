@@ -1,15 +1,21 @@
 const parent = window.parent;
 
 const fs = parent.require('fs');
+const path = parent.require('path');
 const DMX = parent.require('dmx');
+const player = parent.require('play-sound')(opts = {});
+const NanoTimer = parent.require('nanotimer');
 const dmxSettings = parent.require('./js/settingsDmx');
 
 const dmx = new DMX();
+let timer;
 
 const DRIVER = 'enttec-usb-dmx-pro';
 
 // Create a universe
 let universe = null;
+
+/* Manual control */
 
 // Sets up the DMX universe with the given device
 // Can be called multiple times
@@ -54,5 +60,38 @@ function setAll(value) {
 
 setUniverse(dmxSettings.getCurrentDmxDevice());
 
-// Run some command. Send to max out all channels
-// fs.chmodSync(SERIAL_PORT, 666);
+/* Sequences */
+function updateSequence(json, start) {
+    const index = Math.ceil((new Date() - start) / 50);
+
+    // Make sure the universe is still set before updating
+    if (universe !== null) {
+        universe.update(json[index]);
+    }
+}
+
+// Plays the sequence located at the given path
+function playSequence(sequenceJsonPath) {
+    if (universe === null) return;
+
+    // Load sequence
+    const sequenceJSON = JSON.parse(fs.readFileSync(sequenceJsonPath));
+    const audioPath = sequenceJSON['Audio File'];
+    const sequenceData = sequenceJSON['Sequence Data Json'];
+
+    // Play
+    player.play(audioPath, (err) => {
+        if (err) throw err;
+    });
+
+    // Set update timer
+    timer = new NanoTimer();
+    const start = +new Date();
+    timer.setInterval(updateSequence, [sequenceData, start], '50m');
+}
+
+// Stops playing the currently running sequence
+function stopSequence() {
+    timer.clearInterval();
+    playback.pause();
+}
