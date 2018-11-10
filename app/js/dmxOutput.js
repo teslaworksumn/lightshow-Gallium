@@ -1,11 +1,12 @@
-const require = window.parent.require;
-const fs = require('fs');
-const path = require('path');
-const DMX = require('dmx');
-const player = require('play-sound')(opts = {});
-const NanoTimer = require('nanotimer');
+const parent = window.parent;
+const fs = parent.require('fs');
+const path = parent.require('path');
+const DMX = parent.require('dmx');
+const player = parent.require('play-sound')(opts = {});
+const NanoTimer = parent.require('nanotimer');
 
-const settings = window.parent.require('./js/settings');
+const Settings = parent.require('./js/settings');
+const settings = new Settings(settingsLoaded);
 
 const dmx = new DMX();
 let timer;
@@ -14,6 +15,11 @@ const DRIVER = 'enttec-usb-dmx-pro';
 
 // Create a universe
 let universe = null;
+
+// When settings load, set our universe we are using
+function settingsLoaded() {
+    setUniverse(settings.getCurrentDmxDevice());
+}
 
 /* Manual control */
 
@@ -57,8 +63,6 @@ function setAll(value) {
 
     universe.updateAll(value);
 }
-
-setUniverse(settings.getCurrentDmxDevice());
 
 /* Sequences */
 function updateSequence(json, start) {
