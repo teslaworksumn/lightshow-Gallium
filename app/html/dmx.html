@@ -10,7 +10,11 @@
     <br>
 
     <h3>NOTE: All channels are 0-indexed on this page! DMX is 1-indexed, but that is handled internally.</h3>
-    <h3>Current DMX device: <span id="currentDeviceText">None</span></h3>
+
+    <div class="section">
+        <label for='changeDevice'>Current DMX device: <span id="currentDeviceText">None</span></label>
+        <button id='changeDevice' onclick='window.parent.changeFrame("html/settings.html");'>Change</button>
+    </div>
 
     <!-- Individual channel -->
     <div class="section">
