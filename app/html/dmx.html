@@ -9,11 +9,12 @@
     <br>
     <br>
 
-    <p3>NOTE: All channels are 0-indexed on this page! DMX is 1-indexed, but that is handled internally.</h3>
+    <h3>NOTE: All channels are 0-indexed on this page! DMX is 1-indexed, but that is handled internally.</h3>
+    <h3>Current DMX device: <span id="currentDeviceText">None</span></h3>
 
     <!-- Individual channel -->
     <div class="section">
-        <h3>Set an individual channel on/off</h3>
+        <h4>Set an individual channel on/off</h4>
         <label for="singleChannel">Channel Number</label>
         <input id="singleChannel" type="text" value="0"/>
         <button id='channelOn'>Channel On</button>
@@ -23,7 +24,7 @@
 
     <!-- Range of channels (inclusive) -->
     <div class="section">
-        <h3>Set a range of channels on/off</h3>
+        <h4>Set a range of channels on/off</h4>
         <label for="rangeStart">Range Start</label>
         <input id="rangeStart" type="text" value="0"/>
         <label for="rangeEnd">Range End</label>
@@ -35,7 +36,7 @@
 
     <!-- Full box -->
     <div class="section">
-        <h3>Set a single box on/off (shortcut for setting a range)</h3>
+        <h4>Set a single box on/off (shortcut for setting a range)</h4>
         <label for="boxNumber">Box Number</label>
         <input id="boxNumber" type="text" value="0"/>
         <button id='boxOn'>Box On</button>
@@ -45,14 +46,14 @@
 
     <!-- All channels -->
     <div class="section">
-        <h3>Sets all channels on or off</h3>
+        <h4>Sets all channels on or off</h4>
         <button id='allOn'>All On</button>
         <button id='allOff'>All Off</button>
     </div>
     <br>
 
     <div>
-        <h3>Toggle a continuous fade on all channels</h3>
+        <h4>Toggle a continuous fade on all channels</h4>
         <button id='fadeOn'>Fade On</button>
         <button id='fadeOff'>Fade Off</button>
     </div>

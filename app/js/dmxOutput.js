@@ -21,10 +21,15 @@ let universe = null;
 // Sets up the DMX universe with the given device
 // Can be called multiple times
 function setUniverse(device) {
-    if (device === null) return;
+    if (device === null) {
+        document.getElementById('currentDeviceText').innerHTML = 'None';
+        return;
+    }
 
+    // Create universe
     const serialPort = device.location;
     universe = dmx.addUniverse('DMX Output', DRIVER, serialPort);
+    document.getElementById('currentDeviceText').innerHTML = `${serialPort}`;
 }
 
 // Sets a range of channels to be on or off. Range is inclusive on both ends
