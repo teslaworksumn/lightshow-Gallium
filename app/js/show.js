@@ -1,6 +1,11 @@
 const table = document.getElementById('tableBody');
+table.value = [];
+const playButton = document.getElementById('runShow');
+const ShowElementConstructor = parent.require('./js/showElement.js');
+const showElements = [];
 
-// the directory of the current show is contained in the iframe.value attribute
+
+// directory of the current show contained in the iframe.value attribute
 const showDir = window.parent.document.getElementById('frame').value;
 const showDataPath = path.join(showDir, 'show.json');
 
@@ -24,6 +29,8 @@ for (let i = 0; i < playlistElements.length; i += 1) {
     const sequencePath = path.join(showDir, filename);
     const sequence = JSON.parse(fse.readFileSync(sequencePath));
     let audioPath = sequence['Audio File'];
+    table.value.push(sequencePath);
+    // value will contain an array of file paths for each element in the show
 
     // only add audio filename if there is associated audio
     if (audioPath) {
@@ -37,3 +44,35 @@ for (let i = 0; i < playlistElements.length; i += 1) {
 
     table.appendChild(tableItem);
 }
+
+playButton.onclick = function () {
+    // value property contains the boolean isPlaying
+    if (playButton.value === 'notPlaying') {
+        playButton.innerText = 'Stop';
+        playButton.value = 'playing';
+
+        playButton.style.backgroundColor = 'red';
+        playButton.style.borderColor = 'red';
+
+        // create show elements with sequence json path
+        for (let k = 0; k < table.rows.length; k += 1) {
+            showElements.push(new ShowElementConstructor());
+            showElements[k].setSequenceJson(table.value[k]);
+        }
+
+        startCanPlay(); // lock to determine ability to play
+        playShow(showElements);
+    } else {
+        playButton.innerText = 'Play';
+        playButton.value = 'notPlaying';
+
+        playButton.style.backgroundColor = 'green';
+        playButton.style.borderColor = 'green';
+
+        stopCanPlay(); // lock to stop play of show
+
+        for (let j = 0; j < showElements.length; j += 1) {
+            stopPlaying(showElements[j]); // terminate all elements
+        }
+    }
+};

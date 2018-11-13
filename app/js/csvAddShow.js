@@ -132,7 +132,7 @@ function saveCSVShow() {
     for (let i = 0; i < table.rows.length; i += 1) {
         const filepath = table.rows[i].value[0];
 
-        const timeFrameLength = 25;
+        const timeFrameLength = 50; // ///// CHANGE THIS
         if (isCSVSequence(filepath)) {
             const audiopath = table.rows[i].value[1];
             createSequenceJson(filepath, audiopath, timeFrameLength, visibleShowPath);

@@ -8,6 +8,8 @@ module.exports = {
         "no-alert": "off",
         "no-undef": "off",
         "no-unused-vars": "off",
+        "func-names": "off",
+        "no-restricted-globals": "off",
     },
     "globals": {
         "document": true,
