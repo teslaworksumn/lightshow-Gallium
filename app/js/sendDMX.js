@@ -35,7 +35,8 @@ function playSequence(showElement) {
     }
     const dmx = new DMX();
     const DRIVER = 'enttec-usb-dmx-pro';
-    const SERIAL_PORT = '/dev/cu.usbserial-EN175330'; // hardcoded needs to be changed
+    //const SERIAL_PORT = '/dev/cu.usbserial-EN175330'; // hardcoded needs to be changed
+    const SERIAL_PORT = '/dev/ttyUSB0'; // hardcoded needs to be changed
 
     const sequenceJSON = JSON.parse(fs.readFileSync(showElement.getSequenceJson()));
     const audioPath = sequenceJSON['Audio File'];
