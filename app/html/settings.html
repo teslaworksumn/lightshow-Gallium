@@ -2,10 +2,18 @@
 <html>
 <link href="../css/style.css" rel="stylesheet" id="style" />
 
+<!-- Initial load for combo box -->
 <body>
     <span class="headertext"> Settings </span>
     <br>
     <br>
-</body>
 
+    <label for="dmxDeviceSelection">DMX devices</label>
+    <select id="dmxDeviceSelection" onchange="window.Settings.dmxDeviceOnChange();">
+    </select>
+    <button onclick="window.Settings.getDmxDevices();">Refresh</button>
+    <br>
+    
+</body>
+<script type="text/javascript" src="../js/settings.js"></script>
 </html>
