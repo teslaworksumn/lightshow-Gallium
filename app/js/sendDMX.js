@@ -3,16 +3,15 @@ const DMX = parent.require('dmx');
 const player = parent.require('play-sound')(opts = {});
 const NanoTimer = parent.require('nanotimer');
 
-const canPlay = false; // bool to lock or unlock the ability to run the show
+let canPlay = false; // bool check for if should go to next sequence
 
 function startCanPlay() {
-    canplay = true;
+    canPlay = true;
 }
 
 function stopCanPlay() {
-    canplay = false;
+    canPlay = false;
 }
-
 function stopPlaying(showElement) {
     showElement.getAudio().kill();
     showElement.getTimer().clearInterval();
@@ -55,23 +54,28 @@ function playSequence(showElement) {
     showElement.getTimer().setInterval(update, [showElement], '50m');
 }
 
-// recursively waits and plays elements of the show
 function playShow(elements) {
-    let element = 1;
+    const i = 1;
     playSequence(elements[0]);
-    function recursiveShowRunner(i) {
-        setTimeout(() => {
-            if (canPlay) {
-                if (elements[element - 1].getUniverse()) {
-                    elements[element - 1].getUniverse().close();
+
+    // recursively waits and plays elements of the show
+
+    function playShowInSequence(ind) {
+        let k = ind;
+        if (canPlay) {
+            setTimeout(() => {
+                if (canPlay) {
+                    if (elements[k - 1].getUniverse()) {
+                        elements[k - 1].getUniverse().close();
+                    }
+                    playSequence(elements[k]);
+                    k += 1;
+                    if (k < elements.length) {
+                        playShowInSequence(k);
+                    }
                 }
-                playSequence(elements[element]);
-                element += 1;
-                if (i < elements.length) {
-                    recursiveShowRunner(element);
-                }
-            }
-        }, elements[element - 1].getSequenceLength());
+            }, elements[k - 1].getSequenceLength());
+        }
     }
-    recursiveShowRunner(i);
+    playShowInSequence(i);
 }

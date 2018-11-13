@@ -1,11 +1,14 @@
+/* eslint "no-unused-expressions":  "off" */
+
+
 function ShowElement() {
-    this.sequenceJsonPath = None;
-    this.sequenceData = None;
-    this.audio = None;
-    this.universe = None;
-    this.timer = None;
-    this.startTime = None;
-    this.sequenceLength = None;
+    this.sequenceJsonPath;
+    this.sequenceData;
+    this.audio;
+    this.universe;
+    this.timer;
+    this.startTime;
+    this.sequenceLength;
 }
 
 ShowElement.prototype.getSequenceJson = function () {
