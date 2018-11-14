@@ -26,16 +26,14 @@
     <script type="text/javascript" src="../js/addShow.js"></script>
     <script type="text/javascript" src="../js/show.js"></script>
     <script>
-        // const button = document.getElementById('addShow');
+        const button = document.getElementById('addShow');
         const iframe = window.parent.document.getElementById('frame');
         const header = document.getElementById('header');
 
-        // button.onclick = function () {
-        //   popWindow()
-        // };
+        button.onclick = function () {popWindow()};
 
         var onlyShowName = iframe.value.split(path.sep);
         onlyShowName = iframe.value.split(path.sep)[onlyShowName.length - 1];
         header.innerText = onlyShowName;
-    </script>
+    </script> 
 </html>
