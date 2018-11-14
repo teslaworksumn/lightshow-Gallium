@@ -1,4 +1,5 @@
 /* eslint "no-unused-expressions":  "off" */
+const load = parent.require('audio-loader');
 
 
 function ShowElement() {
@@ -8,7 +9,7 @@ function ShowElement() {
     this.universe;
     this.timer;
     this.startTime;
-    this.sequenceLength;
+    this.elementLength;
 }
 
 ShowElement.prototype.getSequenceJson = function () {
@@ -47,11 +48,11 @@ ShowElement.prototype.getStartTime = function () {
 ShowElement.prototype.setStartTime = function (startTime) {
     this.startTime = startTime;
 };
-ShowElement.prototype.getSequenceLength = function () {
-    return this.sequenceLength;
+ShowElement.prototype.getElementLength = function () {
+    return this.elementLength;
 };
-ShowElement.prototype.setSequenceLength = function (sequenceLength) {
-    this.sequenceLength = sequenceLength;
+ShowElement.prototype.setElementLength = function (elementLength) {
+    this.elementLength = elementLength;
 };
 
 module.exports = ShowElement;

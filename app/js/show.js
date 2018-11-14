@@ -2,7 +2,7 @@ const table = document.getElementById('tableBody');
 table.value = [];
 const playButton = document.getElementById('runShow');
 const ShowElementConstructor = parent.require('./js/showElement.js');
-const showElements = [];
+let showElements = [];
 
 
 // directory of the current show contained in the iframe.value attribute
@@ -55,9 +55,11 @@ playButton.onclick = function () {
         playButton.style.borderColor = 'red';
 
         // create show elements with sequence json path
+        showElements = []
         for (let k = 0; k < table.rows.length; k += 1) {
             showElements.push(new ShowElementConstructor());
             showElements[k].setSequenceJson(table.value[k]);
+            // showElements[k].setUpSequence()
         }
 
         startCanPlay(); // lock to determine ability to play
