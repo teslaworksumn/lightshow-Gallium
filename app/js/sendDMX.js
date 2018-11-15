@@ -15,11 +15,11 @@ function stopCanPlay() {
     canPlay = false;
 }
 function stopPlaying(showElement) {
-    showElement.getAudio().kill();
-    showElement.getTimer().clearInterval();
+    showElement.getAudio().stop();
     if (showElement.getUniverse()) {
         showElement.getUniverse().close();
     }
+    showElement.getTimer().clearInterval();
 }
 
 function update(showElement) {
@@ -32,31 +32,17 @@ function update(showElement) {
 }
 
 function playSequence(showElement) {
-    if (showElement.getUniverse()) { // make sure all callbacks are finished
-        showElement.getUniverse().close();
-    }
     const dmx = new DMX();
     const DRIVER = 'enttec-usb-dmx-pro';
     const SERIAL_PORT = '/dev/cu.usbserial-EN175330'; // hardcoded needs to be changed
-
-    const sequenceJSON = JSON.parse(fs.readFileSync(showElement.getSequenceJson()));
-    const audioPath = sequenceJSON['Audio File'];
-
-    showElement.setSequenceData(sequenceJSON['Sequence Data Json']);
-    showElement.setUniverse(dmx.addUniverse(`${sequenceJSON.Name}`, DRIVER, SERIAL_PORT));
-    showElement.setAudio(player.play(audioPath, (err) => {
-        if (err) {
-            // console.log('no audio found at:', audioPath);
-        }
-    }));
-
-    showElement.setElementLength(sequenceJSON['Sequence Length']);
+    showElement.setUniverse(dmx.addUniverse(`${JSON.parse(fs.readFileSync(showElement.getSequenceJson())).Name}`, DRIVER, SERIAL_PORT));
+    showElement.getAudio().play()
     showElement.setTimer(new NanoTimer());
     showElement.setStartTime(new Date());
-    showElement.getTimer().setInterval(update, [showElement], '50m');
+    showElement.getTimer().setInterval(update, [showElement], '20m');
 }
 function checkAudioFinish(showElement) {
-    const index = Math.ceil((new Date() - showElement.getStartTime())); // HARDCODE
+    const index = Math.ceil((new Date() - showElement.getStartTime()) / 50); // HARDCODE
     if (showElement.getElementLength()) {
         if (index > showElement.getElementLength()) { // check for end of song
             stopPlaying(showElement);
@@ -65,21 +51,16 @@ function checkAudioFinish(showElement) {
 }
 
 function playAudio(showElement) {
-    const sequenceJSON = JSON.parse(fs.readFileSync(showElement.getSequenceJson()));
-    const audioPath = sequenceJSON['Audio File'];
-
-    showElement.setAudio(player.play(audioPath, (err) => {
-        if (err) {
-            // console.log('no audio found at:', audioPath);
-        }
-    }));
-    var audio = getAudioLength(showElement, audioPath);
-    // console.log(audio)
-    // showElement.setAudio(audio)
-
+    showElement.getAudio().play()
+    // showElement.getUniverse().updateAll(0)
+    const dmx = new DMX();
+    const DRIVER = 'enttec-usb-dmx-pro';
+    const SERIAL_PORT = '/dev/cu.usbserial-EN175330'; // hardcoded needs to be changed
+    showElement.setUniverse(dmx.addUniverse(`${JSON.parse(fs.readFileSync(showElement.getSequenceJson())).Name}`, DRIVER, SERIAL_PORT));
+    showElement.getUniverse().updateAll(0);
     showElement.setTimer(new NanoTimer());
     showElement.setStartTime(new Date());
-    showElement.getTimer().setInterval(checkAudioFinish, [showElement], '50m');
+    showElement.getTimer().setInterval(checkAudioFinish, [showElement], '20m');
 }
 
 function playElement(showElement) {
@@ -92,8 +73,7 @@ function playElement(showElement) {
     }
 }
 
-function playShow(elements) {
-    console.log(elements.length)
+async function playShow(elements) {
     const i = 1;
     playElement(elements[0]);
 
@@ -103,27 +83,20 @@ function playShow(elements) {
         if (canPlay) {
             setTimeout(() => {
                 if (canPlay) {
-                    if (elements[k - 1].getUniverse()) {
-                        elements[k - 1].getUniverse().close();
-                    }
+                    if(elements[k-1].getUniverse()){
+                        elements[k-1].getUniverse().close()
+                    };
                     if (k < elements.length) {
                         playElement(elements[k]);
                         k += 1;
                         playShowInSequence(k);
                     }
                 }
-            }, elements[k - 1].getElementLength());
+            }, elements[k-1].getElementLength());
         }
     }
-    playShowInSequence(i);
+    playShowInSequence(i)
 }
+  
 
-function getAudioLength(showElement, audioPath) {
-    var sound = new Howl({
-        src: [audioPath],
-        onload: function () {
-            showElement.setElementLength(sound._duration * 1000);
-        }
-    });
-    return sound;
-}
+  

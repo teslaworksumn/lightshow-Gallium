@@ -2,8 +2,6 @@ const table = document.getElementById('tableBody');
 table.value = [];
 const playButton = document.getElementById('runShow');
 const ShowElementConstructor = parent.require('./js/showElement.js');
-let showElements = [];
-
 
 // directory of the current show contained in the iframe.value attribute
 const showDir = window.parent.document.getElementById('frame').value;
@@ -45,7 +43,7 @@ for (let i = 0; i < playlistElements.length; i += 1) {
     table.appendChild(tableItem);
 }
 
-playButton.onclick = function () {
+playButton.onclick = async function () {
     // value property contains the boolean isPlaying
     if (playButton.value === 'notPlaying') {
         playButton.innerText = 'Stop';
@@ -59,7 +57,8 @@ playButton.onclick = function () {
         for (let k = 0; k < table.rows.length; k += 1) {
             showElements.push(new ShowElementConstructor());
             showElements[k].setSequenceJson(table.value[k]);
-            // showElements[k].setUpSequence()
+            var duration = await showElements[k].setUpSequence();
+            showElements[k].setElementLength(duration* 1000)
         }
 
         startCanPlay(); // lock to determine ability to play
@@ -78,3 +77,10 @@ playButton.onclick = function () {
         }
     }
 };
+
+
+window.parent.document.getElementById('frame').onload = function () {
+    for (let j = 0; j < showElements.length; j += 1) {
+        stopPlaying(showElements[j]); // terminate all elements
+    }
+}
