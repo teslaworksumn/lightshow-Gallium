@@ -15,6 +15,7 @@ manualButton.onclick = function addShowManual() {
 deleteShowButton.onclick = function changePageSource() {
     window.parent.document.getElementById('frame').src = './html/deleteShow.html';
 };
+
 const appConfigPath = path.resolve('app/config/shows.json');
 const appConfig = JSON.parse(fse.readFileSync(appConfigPath));
 let activeShow = appConfig.activeShow;
@@ -27,12 +28,30 @@ function onShowClick(newActiveShow) {
 
     fse.writeFileSync(appConfigPath, JSON.stringify(appConfig, null, 2));
 
-    /*
-     * Set the current show as an iframe attribute to access in other pages
-     */
+    // Set the current show as an iframe attribute to access in other pages
     iframe.value = activeShow;
     iframe.src = 'html/show.html';
 }
+
+
+// Scan through the shows/ directory to see if there are any shows that already
+// exist and add them to app/config so they are also displayed on the show page
+function scanForShows() {
+    const showsDir = path.resolve('app/shows');
+    if (fse.existsSync(showsDir)) {
+        let directories = fse.readdirSync(showsDir);
+        for (let i = 0; i < directories.length; i++) {
+            const showPath = path.resolve('app/shows/', directories[i]); 
+
+            // only add to list of showsif the showPath doesn't already exist
+            if (!appConfig.shows.includes(showPath)) {
+                appConfig.shows.push(showPath);
+            }
+        }
+    }
+}
+
+scanForShows();
 
 // Display tables elements only if there are elements in the shows config
 if (JSON.stringify(shows) === JSON.stringify([])) {
