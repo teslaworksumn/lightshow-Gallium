@@ -51,7 +51,7 @@ function settingsChanged(newSettings) {
     resetDmxHtml();
     if (devices !== null) {
         for (let i = 0; i < devices; i += 1) {
-            addDeviceToHTML(devices[i])
+            addDeviceToHTML(devices[i]);
         }
     }
 
