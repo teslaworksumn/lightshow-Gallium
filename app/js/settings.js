@@ -24,12 +24,12 @@ class Settings {
     constructor(onLoad) {
         const parent = window.parent;
         const path = parent.require('path');
-        
+
         this.fse = parent.require('fs-extra');
         this.serialport = parent.require('serialport');
 
         this.settingsConfigPath = path.resolve('app/config/settings.json');
-        
+
         this.dmxDevices = [];
         this.selectedDevice = 0;
         this.settingsConfig = null;
@@ -122,7 +122,8 @@ class Settings {
         };
 
         // Write to file
-        this.fse.writeFileSync(this.settingsConfigPath, JSON.stringify(this.settingsConfig, null, 2));
+        const settingsAsJson = JSON.stringify(this.settingsConfig, null, 2);
+        this.fse.writeFileSync(this.settingsConfigPath, settingsAsJson);
     }
 
     // Loads settings from file

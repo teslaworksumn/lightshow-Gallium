@@ -5,10 +5,7 @@ const DMX = parent.require('dmx');
 const player = parent.require('play-sound')(opts = {});
 const NanoTimer = parent.require('nanotimer');
 
-const Settings = parent.require('./js/settings');
-
 const dmx = new DMX();
-let settings;
 let timer;
 
 const DRIVER = 'enttec-usb-dmx-pro';
@@ -80,7 +77,7 @@ function settingsLoaded(newSettings) {
 // This function is defined in index.html.
 // Register a listener for when new settings are loaded
 // See https://en.wikipedia.org/wiki/Observer_pattern
-Settings.addSettingsChangedObserver(settingsLoaded);
+parent.addSettingsChangedObserver(settingsLoaded);
 
 // Initialize with current settings
-settingsLoaded(Settings.currentSettings);
+settingsLoaded(parent.currentSettings);
