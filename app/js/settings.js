@@ -4,6 +4,8 @@ const fse = parent.require('fs-extra');
 const path = parent.require('path');
 const serialport = parent.require('serialport');
 
+/* Functions that are not class-specific */
+
 // Filters whether the device with the given location and manufacturer is indeed a DMX device
 function isDmxDevice(location, manufacturer) {
     // Ignore devices with no location or manufacturer
@@ -185,12 +187,41 @@ class Settings {
     }
 }
 
+/* Manage settings being shared across multiple pages */
+
+// Set up global settings here
+let currentSettings = new Settings();
+const settingsChangedObservers = [];
+
+// Adds an observer for when settings are updated.
+// The listener should be a function that takes one argument, the new settings.
+function addSettingsChangedObserver(listener) {
+    settingsChangedObservers.push(listener);
+}
+
+// Called when any setting is updated. Updates the global settings and notifies all observers.
+function settingsChanged(newSettings) {
+    // Validate the updated settings
+    if (newSettings === null) return;
+
+    // Update settings
+    currentSettings = newSettings;
+
+    // Notify observers
+    for (let i = 0; i < settingsChangedObservers.length; i += 1) {
+        settingsChangedObservers[i](currentSettings);
+    }
+}
+
 // If this is being run in the browser, module isn't defined.
 // We want the module.exports though for other pieces to get the settings.
 if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
-    module.exports = Settings;
+    module.exports = {
+        currentSettings,
+        addSettingsChangedObserver,
+    };
 } else {
-    const settings = new Settings();
-    window.Settings = settings;
-    settings.getDmxDevices();
+    window.currentSettings = currentSettings;
+    window.addSettingsChangedObserver = addSettingsChangedObserver;
+    currentSettings.getDmxDevices();
 }

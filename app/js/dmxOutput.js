@@ -18,16 +18,16 @@ let universe = null;
 
 /* Manual control */
 
-// Sets up the DMX universe with the given device
+// Sets up the DMX universe with the given serial output location (string)
 // Can be called multiple times
-function setUniverse(device) {
-    if (device === null) {
+function setUniverse(output) {
+    if (output === null) {
         document.getElementById('currentDeviceText').innerHTML = 'None';
         return;
     }
 
     // Create universe
-    const serialPort = device.location;
+    const serialPort = output;
     universe = dmx.addUniverse('DMX Output', DRIVER, serialPort);
     document.getElementById('currentDeviceText').innerHTML = `${serialPort}`;
 }
@@ -65,9 +65,22 @@ function setAll(value) {
 }
 
 // When settings load, set our universe we are using
-function settingsLoaded() {
-    setUniverse(settings.getCurrentDmxDevice());
+function settingsLoaded(newSettings) {
+    if (newSettings === null) return;
+
+    const device = newSettings.getCurrentDmxDevice();
+    if (device === null) return;
+
+    const dmxOutput = device.location;
+    if (dmxOutput === null) return;
+
+    setUniverse(dmxOutput);
 }
 
-// Make this down here, since we get linter errors otherwise
-settings = new Settings(settingsLoaded);
+// This function is defined in index.html.
+// Register a listener for when new settings are loaded
+// See https://en.wikipedia.org/wiki/Observer_pattern
+Settings.addSettingsChangedObserver(settingsLoaded);
+
+// Initialize with current settings
+settingsLoaded(Settings.currentSettings);
