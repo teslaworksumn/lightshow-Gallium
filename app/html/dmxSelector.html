@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="../css/style.css" rel="stylesheet" id="style" />
+</head>
+
+<!-- settings.js loaded in index.html. Access things through window.parent.currentSettings -->
+<body>
+    <label for="dmxDeviceSelection">DMX devices</label>
+    <select id="dmxDeviceSelection" onchange="window.parent.currentSettings.dmxDeviceOnChange();">
+    </select>
+    <button onclick="window.parent.currentSettings.getDmxDevices();">Refresh</button>
+    <br>
+
+    <script type="text/javascript" src="../js/dmxSelector.js"></script>
+</body>
+</html>
