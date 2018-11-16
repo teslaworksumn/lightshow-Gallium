@@ -7,6 +7,38 @@
     <title>Gallium</title>
     <link href="css/style.css" rel="stylesheet" id="style" />
     <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+
+    <script type="text/javascript" src="./js/settings.js"></script>
+    <script>
+        /* Manage settings being shared across multiple pages */
+
+        // Set up global settings here
+        var currentSettings = new Settings();
+        const settingsChangedObservers = [];
+
+        // Adds an observer for when settings are updated.
+        // The listener should be a function that takes one argument, the new settings.
+        function addSettingsChangedObserver(listener) {
+            settingsChangedObservers.push(listener);
+        }
+
+        // Make public
+        var addSettingsChangedObserver = addSettingsChangedObserver;
+
+        // Called when any setting is updated. Updates the global settings and notifies all observers.
+        function settingsChanged(newSettings) {
+            // Validate the updated settings
+            if (newSettings === null) return;
+
+            // Update settings
+            currentSettings = newSettings;
+
+            // Notify observers
+            for (let i = 0; i < settingsChangedObservers.length; i += 1) {
+                settingsChangedObservers[i](currentSettings);
+            }
+        }
+    </script>
 </head>
 <body>
     <div class="sideNavIFrameWrapper">
