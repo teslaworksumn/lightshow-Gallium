@@ -148,5 +148,3 @@ function setupDmxPage() {
 }
 
 setupDmxPage();
-
-

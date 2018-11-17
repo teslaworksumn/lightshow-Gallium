@@ -3,7 +3,7 @@ const DMX = parent.require('dmx');
 const player = parent.require('play-sound')(opts = {});
 const NanoTimer = parent.require('nanotimer');
 const load = parent.require('audio-loader');
-const { Howl, Howler } = parent.require('howler')
+const { Howl, Howler } = parent.require('howler');
 
 let canPlay = false; // bool check for if should go to next sequence
 
@@ -14,12 +14,17 @@ function startCanPlay() {
 function stopCanPlay() {
     canPlay = false;
 }
-function stopPlaying(showElement) {
-    showElement.getAudio().stop();
-    const universe = showElement.getUniverse();
-    if (universe !== null && universe !== "undefined" && universe.dev.isOpen === true) {
+
+// Closes the DMX universe given. Checks if it's open first
+function closeUniverse(universe) {
+    if (universe !== null && universe !== 'undefined' && universe.dev.isOpen === true) {
         universe.close();
     }
+}
+
+function stopPlaying(showElement) {
+    showElement.getAudio().stop();
+    closeUniverse(showElement.getUniverse());
     showElement.getTimer().clearInterval();
 }
 
@@ -37,7 +42,7 @@ function playSequence(showElement) {
     const DRIVER = 'enttec-usb-dmx-pro';
     const SERIAL_PORT = '/dev/cu.usbserial-EN175330'; // hardcoded needs to be changed
     showElement.setUniverse(dmx.addUniverse(`${JSON.parse(fs.readFileSync(showElement.getSequenceJson())).Name}`, DRIVER, SERIAL_PORT));
-    showElement.getAudio().play()
+    showElement.getAudio().play();
     showElement.setTimer(new NanoTimer());
     showElement.setStartTime(new Date());
     showElement.getTimer().setInterval(update, [showElement], '20m');
@@ -52,7 +57,7 @@ function checkAudioFinish(showElement) {
 }
 
 function playAudio(showElement) {
-    showElement.getAudio().play()
+    showElement.getAudio().play();
     // showElement.getUniverse().updateAll(0)
     const dmx = new DMX();
     const DRIVER = 'enttec-usb-dmx-pro';
@@ -66,9 +71,8 @@ function playAudio(showElement) {
 
 function playElement(showElement) {
     const sequenceJSON = JSON.parse(fs.readFileSync(showElement.getSequenceJson()));
-    if (sequenceJSON['Sequence Data Json'].length == 0) {
-        playAudio(showElement)
-
+    if (sequenceJSON['Sequence Data Json'].length === 0) {
+        playAudio(showElement);
     } else {
         playSequence(showElement);
     }
@@ -84,20 +88,15 @@ async function playShow(elements) {
         if (canPlay) {
             setTimeout(() => {
                 if (canPlay) {
-                    if(elements[k-1].getUniverse()){
-                        elements[k-1].getUniverse().close()
-                    };
+                    closeUniverse(elements[k - 1].getUniverse());
                     if (k < elements.length) {
                         playElement(elements[k]);
                         k += 1;
                         playShowInSequence(k);
                     }
                 }
-            }, elements[k-1].getElementLength());
+            }, elements[k - 1].getElementLength());
         }
     }
-    playShowInSequence(i)
+    playShowInSequence(i);
 }
-  
-
-  

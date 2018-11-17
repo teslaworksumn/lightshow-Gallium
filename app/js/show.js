@@ -65,8 +65,8 @@ playButton.onclick = async function () {
         for (let k = 0; k < table.rows.length; k += 1) {
             showElements.push(new ShowElementConstructor());
             showElements[k].setSequenceJson(table.value[k]);
-            var duration = await showElements[k].setUpSequence();
-            showElements[k].setElementLength(duration* 1000);
+            const duration = await showElements[k].setUpSequence();
+            showElements[k].setElementLength(duration * 1000);
         }
 
         startCanPlay(); // lock to determine ability to play
