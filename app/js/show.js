@@ -11,6 +11,7 @@ const showDataPath = path.join(showDir, 'show.json');
 const showData = JSON.parse(fse.readFileSync(showDataPath));
 
 const playlistElements = showData.Playlist;
+let showElements = [];
 
 // push all playlist items (and associated audio if applicable)
 // names onto table to be rendered for each show
@@ -43,6 +44,13 @@ for (let i = 0; i < playlistElements.length; i += 1) {
     table.appendChild(tableItem);
 }
 
+// terminate all elements
+function stopAllShowElements() {
+    for (let j = 0; j < showElements.length; j += 1) {
+        stopPlaying(showElements[j]);
+    }
+}
+
 playButton.onclick = async function () {
     // value property contains the boolean isPlaying
     if (playButton.value === 'notPlaying') {
@@ -53,12 +61,12 @@ playButton.onclick = async function () {
         playButton.style.borderColor = 'red';
 
         // create show elements with sequence json path
-        showElements = []
+        showElements = [];
         for (let k = 0; k < table.rows.length; k += 1) {
             showElements.push(new ShowElementConstructor());
             showElements[k].setSequenceJson(table.value[k]);
             var duration = await showElements[k].setUpSequence();
-            showElements[k].setElementLength(duration* 1000)
+            showElements[k].setElementLength(duration* 1000);
         }
 
         startCanPlay(); // lock to determine ability to play
@@ -71,16 +79,9 @@ playButton.onclick = async function () {
         playButton.style.borderColor = 'green';
 
         stopCanPlay(); // lock to stop play of show
-
-        for (let j = 0; j < showElements.length; j += 1) {
-            stopPlaying(showElements[j]); // terminate all elements
-        }
+        stopAllShowElements();
     }
 };
 
 
-window.parent.document.getElementById('frame').onload = function () {
-    for (let j = 0; j < showElements.length; j += 1) {
-        stopPlaying(showElements[j]); // terminate all elements
-    }
-}
+window.parent.document.getElementById('frame').onload = stopAllShowElements;

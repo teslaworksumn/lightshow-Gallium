@@ -16,8 +16,9 @@ function stopCanPlay() {
 }
 function stopPlaying(showElement) {
     showElement.getAudio().stop();
-    if (showElement.getUniverse()) {
-        showElement.getUniverse().close();
+    const universe = showElement.getUniverse();
+    if (universe !== null && universe !== "undefined" && universe.dev.isOpen === true) {
+        universe.close();
     }
     showElement.getTimer().clearInterval();
 }
