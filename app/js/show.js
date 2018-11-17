@@ -65,6 +65,8 @@ playButton.onclick = async function () {
         for (let k = 0; k < table.rows.length; k += 1) {
             showElements.push(new ShowElementConstructor());
             showElements[k].setSequenceJson(table.value[k]);
+            // TODO make this a promise or something, so we can set up all asyncronously
+            // eslint-disable-next-line no-await-in-loop
             const duration = await showElements[k].setUpSequence();
             showElements[k].setElementLength(duration * 1000);
         }
