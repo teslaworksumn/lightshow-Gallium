@@ -1,4 +1,12 @@
 
+// Checks if these are the same device
+function sameDevice(devA, devB) {
+    if (devA === null && devB === null) return true;
+    if (devA === null || devB === null) return false;
+
+    return devA.location === devB.location;
+}
+
 // Resets the HTML elements relating to the DMX selection
 // Also resets the related dmxDevices array
 function resetDmxHtml() {
@@ -32,30 +40,45 @@ function dmxDeviceOnChange() {
     const dmxSelection = document.getElementById('dmxDeviceSelection');
     if (!dmxSelection) return; // Not on Settings page (required)
 
-    let selectedDevice = parseInt(dmxSelection.value, 10);
+    let deviceIdx = parseInt(dmxSelection.value, 10);
 
-    if (Number.isNaN(selectedDevice)) {
-        alert(`Selected device '${selectedDevice}' somehow not a number!`);
-        selectedDevice = 0;
+    if (Number.isNaN(deviceIdx)) {
+        alert(`Selected device '${deviceIdx}' somehow not a number!`);
+        deviceIdx = 0;
     }
 
-    window.parent.currentSettings.selectDevice(selectedDevice);
+    window.parent.currentSettings.selectDevice(deviceIdx);
 }
 
 // Called when settings are updated
-function settingsChanged(newSettings) {
+function settingsChanged(newSettings, oldSettings) {
+    // We need both to be not null
+    if (!newSettings) return;
+    if (!oldSettings) return;
+
     // Get all found dmx devices
     const devices = newSettings.getDmxDevices();
 
-    // Update the HTML
+    // Get the last dmx device we were selecting
+    const lastSelected = oldSettings.getCurrentDmxDevice();
+
+    // Clear the select element
     resetDmxHtml();
+
+    // Repopulate select element
     if (devices !== null) {
-        for (let i = 0; i < devices; i += 1) {
-            addDeviceToHTML(devices[i]);
+        for (let i = 0; i < devices.length; i += 1) {
+            const device = devices[i];
+
+            // Add to selector box
+            addDeviceToHTML(device);
+
+            // Select if this was the last selected device
+            if (sameDevice(lastSelected, device)) {
+                newSettings.selectDevice(i);
+            }
         }
     }
-
-    // TODO stay on last selected element
 }
 
 window.parent.addSettingsChangedObserver(settingsChanged);

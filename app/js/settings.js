@@ -12,16 +12,8 @@ function isDmxDevice(location, manufacturer) {
     return true;
 }
 
-// Checks if these are the same device
-function sameDevice(devA, devB) {
-    if (devA === null && devB === null) return true;
-    if (devA === null || devB === null) return false;
-
-    return devA.location === devB.location;
-}
-
 class Settings {
-    constructor(onLoad) {
+    constructor() {
         const parent = window.parent;
         const path = parent.require('path');
 
@@ -34,7 +26,7 @@ class Settings {
         this.selectedDevice = 0;
         this.settingsConfig = null;
 
-        this.load(onLoad);
+        this.load();
     }
 
     /* DMX device selection */
@@ -136,11 +128,6 @@ class Settings {
             } else {
                 // File doesn't exist, so create an empty config file there (save with defaults)
                 this.save();
-            }
-
-            // Let our caller know we are done loading
-            if (onLoad) {
-                onLoad();
             }
         });
     }

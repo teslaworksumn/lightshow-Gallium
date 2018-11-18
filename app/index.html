@@ -30,12 +30,15 @@
             // Validate the updated settings
             if (newSettings === null) return;
 
+            // Get old settings so observers can see what changed
+            const oldSettings = currentSettings;
+
             // Update settings
             currentSettings = newSettings;
 
             // Notify observers
             for (let i = 0; i < settingsChangedObservers.length; i += 1) {
-                settingsChangedObservers[i](currentSettings);
+                settingsChangedObservers[i](currentSettings, oldSettings);
             }
         }
     </script>
