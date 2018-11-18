@@ -32,7 +32,7 @@
         <iframe class="dmxSelectorIframe" src="./dmxSelector.html" style="overflow: hidden"></iframe>
     </div>
 </body>
-    <script>
+    <script type="text/javascript" src="../js/addShow.js">
         const button = document.getElementById('addShow');
         const iframe = window.parent.document.getElementById('frame');
         const header = document.getElementById('header');
@@ -42,7 +42,6 @@
         onlyShowName = iframe.value.split(path.sep)[onlyShowName.length - 1];
         header.innerText = onlyShowName;
     </script>
-    <script type="text/javascript" src="../js/addShow.js"></script>
     <script type="text/javascript" src="../js/sendDMX.js"></script>
     <script type="text/javascript" src="../js/show.js"></script>
    

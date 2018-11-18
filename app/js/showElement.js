@@ -1,7 +1,8 @@
 /* eslint "no-unused-expressions":  "off" */
+const parent = window.parent;
 const fs = parent.require('fs');
 const DMX = parent.require('dmx');
-const { Howl } = parent.require('howler')
+const { Howl } = parent.require('howler');
 
 function ShowElement() {
     this.sequenceJsonPath;
@@ -67,25 +68,24 @@ ShowElement.prototype.setUpSequence = async function () {
     this.sequenceData = sequenceJSON['Sequence Data Json'];
 
     this.audio = new Howl({
-        src: [this.audioPath]
+        src: [this.audioPath],
     });
 
-    var audioTag = new Audio(this.audioPath);
-    return new Promise(function (resolve, reject) {
-        audioTag.addEventListener('durationchange', function () {
+    const audioTag = new Audio(this.audioPath);
+    return new Promise(((resolve, reject) => {
+        audioTag.addEventListener('durationchange', () => {
             resolve(audioTag.duration);
         });
-    });
-
-}
+    }));
+};
 
 ShowElement.prototype.getDuration = function (url) {
-    var audioTag = new Audio(url);
-    return new Promise(function (resolve, reject) {
-        audioTag.addEventListener('durationchange', function () {
+    const audioTag = new Audio(url);
+    return new Promise(((resolve, reject) => {
+        audioTag.addEventListener('durationchange', () => {
             resolve(audioTag.duration);
         });
-    });
+    }));
 };
 
 module.exports = ShowElement;
