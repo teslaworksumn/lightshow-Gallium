@@ -1,4 +1,8 @@
 
+// We need this to be a var so we can have a global settings object
+// eslint-disable-next-line no-var
+var galliumGlobals = {};
+
 // Set up global settings here
 let currentSettings = new Settings();
 const settingsChangedObservers = [];
@@ -26,8 +30,8 @@ function settingsChanged(newSettings) {
     }
 }
 
-// Make settings public
-var galliumGlobals = {
+// Set globals
+galliumGlobals = {
     currentSettings,
     addSettingsChangedObserver,
 };
