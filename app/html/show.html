@@ -4,7 +4,6 @@
 <link href="../css/style.css" rel="stylesheet" id="style" />
 <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
 
-
 <body>
     <span class="headertext" id="header">Show</span>
     <br>
@@ -14,26 +13,28 @@
         <thead>
             <caption>Show Files:</caption>
             <tr>
-                <th onclick="sortTableCheckbox(0)">Selected</th>
-                <th onclick="sortTable(1)">Name</th>
+                <th>Element</th>
+                <th>Audio</th>
             </tr>
         </thead>
         <tbody id="tableBody">
         </tbody>
     </table>
     <button id='addShow'>Add element</button>
+    <br><br>
+    <button id='runShow' value='notPlaying'>Play</button>
 </body>
-    <script type="text/javascript" src="../js/addShow.js"></script>
-    <script type="text/javascript" src="../js/show.js"></script>
-    <script>
+    <script type="text/javascript" src="../js/addShow.js">
         const button = document.getElementById('addShow');
         const iframe = window.parent.document.getElementById('frame');
         const header = document.getElementById('header');
-
-        button.onclick = function () {popWindow()};
-
+        let showElements = [];
+        let serialPort;
         var onlyShowName = iframe.value.split(path.sep);
         onlyShowName = iframe.value.split(path.sep)[onlyShowName.length - 1];
         header.innerText = onlyShowName;
-    </script> 
+    </script>
+    <script type="text/javascript" src="../js/sendDMX.js"></script>
+    <script type="text/javascript" src="../js/show.js"></script>
+   
 </html>
