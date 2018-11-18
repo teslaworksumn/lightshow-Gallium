@@ -25,3 +25,9 @@ function settingsChanged(newSettings) {
         settingsChangedObservers[i](currentSettings, oldSettings);
     }
 }
+
+// Make settings public
+var galliumGlobals = {
+    currentSettings,
+    addSettingsChangedObserver,
+};
