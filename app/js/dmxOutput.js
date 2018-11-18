@@ -77,7 +77,7 @@ function settingsLoaded(newSettings) {
 // This function is defined in index.html.
 // Register a listener for when new settings are loaded
 // See https://en.wikipedia.org/wiki/Observer_pattern
-parent.addSettingsChangedObserver(settingsLoaded);
+window.galliumGlobals.addSettingsChangedObserver(settingsLoaded);
 
 // Initialize with current settings
-settingsLoaded(parent.currentSettings);
+settingsLoaded(window.galliumGlobals.currentSettings);

@@ -1,14 +1,9 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <link href="../css/style.css" rel="stylesheet" id="style" />
     <link href="../css/dmx.css" rel="stylesheet" id="style" />
-    <script type="text/javascript">
-        // Pass through parent settings to iframe
-        window.currentSettings = window.parent.currentSettings;
-        window.addSettingsChangedObserver = window.parent.addSettingsChangedObserver;
-    </script>
+    <script type="text/javascript" src="../js/setupGlobals.js"></script>
 </head>
 <body>
     <span class="headertext"> DMX </span>
@@ -24,9 +19,9 @@
     <div class="section">
         <h4>Set an individual channel on/off</h4>
         <label for="singleChannel">Channel Number</label>
-        <input id="singleChannel" type="text" value="0"/>
-        <button id='channelOn'>Channel On</button>
-        <button id='channelOff'>Channel Off</button>
+        <input id="singleChannel" type="text" value="0" onchange="singleChannelOnChange();"/>
+        <button id='channelOn' onchange="channelOn();">Channel On</button>
+        <button id='channelOff' onchange="channelOff();">Channel Off</button>
     </div>
     <br>
 
@@ -34,11 +29,11 @@
     <div class="section">
         <h4>Set a range of channels on/off</h4>
         <label for="rangeStart">Range Start</label>
-        <input id="rangeStart" type="text" value="0"/>
+        <input id="rangeStart" type="text" value="0" onchange="rangeStartOnChange();"/>
         <label for="rangeEnd">Range End</label>
-        <input id="rangeEnd" type="text" value="511"/>
-        <button id='rangeOn'>Range On</button>
-        <button id='rangeOff'>Range Off</button>
+        <input id="rangeEnd" type="text" value="511" onchange="rangeEndOnChange();"/>
+        <button id='rangeOn' onchange="rangeOn();">Range On</button>
+        <button id='rangeOff' onchange="rangeOff();">Range Off</button>
     </div>
     <br>
 
@@ -46,24 +41,24 @@
     <div class="section">
         <h4>Set a single box on/off (shortcut for setting a range)</h4>
         <label for="boxNumber">Box Number</label>
-        <input id="boxNumber" type="text" value="0"/>
-        <button id='boxOn'>Box On</button>
-        <button id='boxOff'>Box Off</button>
+        <input id="boxNumber" type="text" value="0" onchange="boxNumberOnChange();"/>
+        <button id='boxOn' onchange="boxOn();">Box On</button>
+        <button id='boxOff' onchange="boxOff();">Box Off</button>
     </div>
     <br>
 
     <!-- All channels -->
     <div class="section">
         <h4>Sets all channels on or off</h4>
-        <button id='allOn'>All On</button>
-        <button id='allOff'>All Off</button>
+        <button id='allOn' onchange="allOn();">All On</button>
+        <button id='allOff' onchange="allOff();">All Off</button>
     </div>
     <br>
 
     <div>
         <h4>Toggle a continuous fade on all channels</h4>
-        <button id='fadeOn'>Fade On</button>
-        <button id='fadeOff'>Fade Off</button>
+        <button id='fadeOn' onchange="fadeOn();">Fade On</button>
+        <button id='fadeOff' onchange="fadeOff();">Fade Off</button>
     </div>
     <br>
 

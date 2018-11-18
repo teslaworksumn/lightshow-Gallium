@@ -72,6 +72,8 @@ playButton.onclick = async function () {
         }
 
         startCanPlay(); // lock to determine ability to play
+
+        // This is in sendDMX.js
         playShow(showElements);
     } else {
         playButton.innerText = 'Play';

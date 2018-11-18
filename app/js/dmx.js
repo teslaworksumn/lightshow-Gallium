@@ -1,5 +1,4 @@
 
-
 /* Fading setup */
 let isFading = false;
 let currentFade = 0;
@@ -110,41 +109,30 @@ function onInputChange(id) {
     setBackground(id, 'white');
 }
 
-// Sets up all of the button hooks for the DMX page
-function setupButtons() {
-    /* Clicking */
+// Single channels
+function channelOn() { setSingleChannel(255); }
+function channelOff() { setSingleChannel(0); }
 
-    // Single channels
-    document.getElementById('channelOn').onclick = function channelOn() { setSingleChannel(255); };
-    document.getElementById('channelOff').onclick = function channelOff() { setSingleChannel(0); };
+// Range of channels
+function rangeOn() { setChannelRange(255); }
+function rangeOff() { setChannelRange(0); }
 
-    // Range of channels
-    document.getElementById('rangeOn').onclick = function rangeOn() { setChannelRange(255); };
-    document.getElementById('rangeOff').onclick = function rangeOff() { setChannelRange(0); };
+// Box
+function boxOn() { setBox(255); }
+function boxOff() { setBox(0); }
 
-    // Box
-    document.getElementById('boxOn').onclick = function boxOn() { setBox(255); };
-    document.getElementById('boxOff').onclick = function boxOff() { setBox(0); };
+// All channels
+function allOn() { setAll(255); }
+function allOff() { setAll(0); }
 
-    // All channels
-    document.getElementById('allOn').onclick = function allOn() { setAll(255); };
-    document.getElementById('allOff').onclick = function allOff() { setAll(0); };
+function fadeOff() { setFade(false); }
+function fadeOn() { setFade(true); }
 
-    document.getElementById('fadeOn').onclick = function fadeOn() { setFade(true); };
-    document.getElementById('fadeOff').onclick = function fadeOff() { setFade(false); };
+/* Changing inputs */
+function singleChannelOnChange() { onInputChange('singleChannel'); }
+function rangeStartOnChange() { onInputChange('rangeStart'); }
+function rangeEndOnChange() { onInputChange('rangeEnd'); }
+function boxNumberOnChange() { onInputChange('boxNumber'); }
 
-    /* Changing inputs */
-
-    document.getElementById('singleChannel').oninput = function singleChannelOnChange() { onInputChange('singleChannel'); };
-    document.getElementById('rangeStart').oninput = function rangeStartOnChange() { onInputChange('rangeStart'); };
-    document.getElementById('rangeEnd').oninput = function rangeEndOnChange() { onInputChange('rangeEnd'); };
-    document.getElementById('boxNumber').oninput = function boxNumberOnChange() { onInputChange('boxNumber'); };
-}
-
-// Sets up the page
-function setupDmxPage() {
-    setInterval(updateFade, fadeInterval);
-    setupButtons();
-}
-
-setupDmxPage();
+// Start the fade interval
+setInterval(updateFade, fadeInterval);

@@ -2,11 +2,7 @@
 <html>
 <head>
     <link href="../css/style.css" rel="stylesheet" id="style" />
-    <script type="text/javascript">
-        // Pass through parent settings to iframe
-        window.currentSettings = window.parent.currentSettings;
-        window.addSettingsChangedObserver = window.parent.addSettingsChangedObserver;
-    </script>
+    <script type="text/javascript" src="../js/setupGlobals.js"></script>
 </head>
 
 <!-- settings.js loaded in index.html. Access things through window.currentSettings -->

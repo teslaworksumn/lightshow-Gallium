@@ -1,7 +1,6 @@
 /* eslint "no-unused-expressions":  "off" */
 const parent = window.parent;
 const fs = parent.require('fs');
-const DMX = parent.require('dmx');
 const { Howl } = parent.require('howler');
 
 function ShowElement() {

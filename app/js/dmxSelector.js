@@ -47,7 +47,7 @@ function dmxDeviceOnChange() {
         deviceIdx = 0;
     }
 
-    window.parent.currentSettings.selectDevice(deviceIdx);
+    window.galliumGlobals.currentSettings.selectDevice(deviceIdx);
 }
 
 // Called when settings are updated
@@ -81,4 +81,4 @@ function settingsChanged(newSettings, oldSettings) {
     }
 }
 
-window.parent.addSettingsChangedObserver(settingsChanged);
+window.galliumGlobals.addSettingsChangedObserver(settingsChanged);
