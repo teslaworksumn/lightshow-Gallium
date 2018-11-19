@@ -81,7 +81,7 @@ function playSequence(sequenceJsonPath) {
     // Load sequence
     const sequenceJSON = JSON.parse(fs.readFileSync(sequenceJsonPath));
     const audioPath = sequenceJSON['Audio File'];
-    const sequenceData = sequenceJSON['Sequence Data Json'];
+    const sequenceData = sequenceJSON['Sequence Patched Data Json'];
 
     // Play
     player.play(audioPath, (err) => {
