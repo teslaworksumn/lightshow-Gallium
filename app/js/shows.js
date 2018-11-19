@@ -39,9 +39,9 @@ function onShowClick(newActiveShow) {
 function scanForShows() {
     const showsDir = path.resolve('app/shows');
     if (fse.existsSync(showsDir)) {
-        let directories = fse.readdirSync(showsDir);
-        for (let i = 0; i < directories.length; i++) {
-            const showPath = path.resolve('app/shows/', directories[i]); 
+        const directories = fse.readdirSync(showsDir);
+        for (let i = 0; i < directories.length; i += 1) {
+            const showPath = path.resolve('app/shows/', directories[i]);
 
             // only add to list of showsif the showPath doesn't already exist
             if (!appConfig.shows.includes(showPath)) {

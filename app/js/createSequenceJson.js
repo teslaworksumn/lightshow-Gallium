@@ -73,6 +73,7 @@ function createSequenceJson(csvFilePath, audioFilePath, timeFrameLength, showPat
         sequenceJson['Audio File'] = '';
     }
     sequenceJson['Sequence Data Json'] = jsonSequenceData;
+    sequenceJson['Sequence Patched Data Json'] = jsonSequenceData; // initially patched data is the same as original data
     sequenceJson['Time Frame Length'] = timeFrameLength;
     sequenceJson['Sequence Length'] = timeFrameLength * array.length;
 

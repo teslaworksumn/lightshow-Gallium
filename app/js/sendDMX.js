@@ -35,12 +35,13 @@ function playSequence(showElement) {
     }
     const dmx = new DMX();
     const DRIVER = 'enttec-usb-dmx-pro';
-    const SERIAL_PORT = '/dev/cu.usbserial-EN175330'; // hardcoded needs to be changed
+    // const SERIAL_PORT = '/dev/cu.usbserial-EN175330'; // hardcoded needs to be changed
+    const SERIAL_PORT = '/dev/ttyUSB0'; // hardcoded needs to be changed
 
     const sequenceJSON = JSON.parse(fs.readFileSync(showElement.getSequenceJson()));
     const audioPath = sequenceJSON['Audio File'];
 
-    showElement.setSequenceData(sequenceJSON['Sequence Data Json']);
+    showElement.setSequenceData(sequenceJSON['Sequence Patched Data Json']);
     showElement.setUniverse(dmx.addUniverse(`${sequenceJSON.Name}`, DRIVER, SERIAL_PORT));
     showElement.setAudio(player.play(audioPath, (err) => {
         if (err) {
