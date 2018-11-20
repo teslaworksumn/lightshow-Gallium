@@ -194,3 +194,19 @@ select {
     background-color: green;
     border-color: green;
 }
+
+#collapsibleMenuContent {
+    display: block;
+    float: left;
+}
+
+#collapsibleMenuButton {
+    float: right;
+    text-align: center;
+    font-size: 16e;
+    font-weight: 700; /* bold */
+    width: 30px;
+    height: 30px;
+    margin-left: 10px;
+    margin-right: 5px;
+}
