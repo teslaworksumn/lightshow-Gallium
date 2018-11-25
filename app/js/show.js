@@ -2,6 +2,12 @@ const table = document.getElementById('tableBody');
 table.value = [];
 const playButton = document.getElementById('runShow');
 const ShowElementConstructor = parent.require('./js/showElement.js');
+const editShowButton = document.getElementById('editShow');
+
+editShowButton.onclick = function editShow() {
+    console.log("hehehe");
+    window.parent.document.getElementById('frame').src = './html/editShow.html';
+};
 
 // directory of the current show contained in the iframe.value attribute
 const showDir = window.parent.document.getElementById('frame').value;

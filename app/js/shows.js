@@ -15,6 +15,7 @@ manualButton.onclick = function addShowManual() {
 deleteShowButton.onclick = function changePageSource() {
     window.parent.document.getElementById('frame').src = './html/deleteShow.html';
 };
+
 const appConfigPath = path.resolve('app/config/shows.json');
 const appConfig = JSON.parse(fse.readFileSync(appConfigPath));
 let activeShow = appConfig.activeShow;
