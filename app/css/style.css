@@ -138,6 +138,12 @@ button {
     color:white
 }
 
+button:disabled {
+  border: 1px solid #999999;
+  background-color: #cccccc;
+  color: #666666;
+}
+
 .centered {
     display: flex; /* flex behavior (displays children inline) */
     justify-content: center; /* horizontal centering */

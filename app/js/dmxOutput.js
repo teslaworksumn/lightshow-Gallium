@@ -64,6 +64,42 @@ function setAll(value) {
     universe.updateAll(value);
 }
 
+/* Sequences */
+function updateSequence(json, start) {
+    const index = Math.ceil((new Date() - start) / 50);
+
+    // Make sure the universe is still set before updating
+    if (universe !== null) {
+        universe.update(json[index]);
+    }
+}
+
+// Plays the sequence located at the given path
+function playSequence(sequenceJsonPath) {
+    if (universe === null) return;
+
+    // Load sequence
+    const sequenceJSON = JSON.parse(fs.readFileSync(sequenceJsonPath));
+    const audioPath = sequenceJSON['Audio File'];
+    const sequenceData = sequenceJSON['Sequence Patched Data Json'];
+
+    // Play
+    player.play(audioPath, (err) => {
+        if (err) throw err;
+    });
+
+    // Set update timer
+    timer = new NanoTimer();
+    const start = +new Date();
+    timer.setInterval(updateSequence, [sequenceData, start], '50m');
+}
+
+// Stops playing the currently running sequence
+function stopSequence() {
+    timer.clearInterval();
+    playback.pause();
+}
+
 // When settings load, set our universe we are using
 function settingsLoaded() {
     setUniverse(settings.getCurrentDmxDevice());
