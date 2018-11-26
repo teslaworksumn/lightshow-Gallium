@@ -14,17 +14,20 @@
     <div class="sideNavIFrameWrapper">
         <div class="sidenav">
             <img src="img/teslaworks_name_with_logo.png" id="logo" />
-
-            <div class="tools" style="overflow-y:auto;">
-                <a onclick='changeFrame("html/shows.html")' class="dropdown-btn">Show </a>
-                <a onclick='changeFrame("html/dmx.html")' class="dropdown-btn">DMX</a>
-                <a onclick='changeFrame("html/layout.html")' class="dropdown-btn">Layout</a>
-                <div id='settings'>
-                    <a onclick='changeFrame("html/settings.html")' style="padding-left: 16px;">Settings</a>
+            <div>
+                <div id="collapsibleMenuContent">
+                    <div class="tools">
+                        <a onclick='changeFrame("html/shows.html")' class="dropdown-btn">Show </a>
+                        <a onclick='changeFrame("html/dmx.html")' class="dropdown-btn">DMX</a>
+                        <a onclick='changeFrame("html/layout.html")' class="dropdown-btn">Layout</a>
+                        <div id='settings'>
+                            <a onclick='changeFrame("html/settings.html")'>Settings</a>
+                        </div>
+                    </div>
                 </div>
+                <button id="collapsibleMenuButton" onclick='collapseMenu();'>&lt;</button>
             </div>
         </div>
-
 
         <div class="content">
             <iframe id="frame" src="html/default.html" style="overflow: hidden"></iframe>
@@ -34,6 +37,26 @@
 
 </body>
 <script type="text/javascript" src="../setupRepo.js"></script>
+<script type="text/javascript">
+    // Collapsible menu
+    let isCollapsed = false;
+    function collapseMenu() {
+        isCollapsed = !isCollapsed;
+        const content = document.getElementById('collapsibleMenuContent');
+        const button = document.getElementById('collapsibleMenuButton');
+        if (isCollapsed) {
+            // Now collapsed
+            content.style.display = 'none';
+            button.style.float = 'left';
+            button.innerHTML = '&gt';
+        } else {
+            // Now open
+            content.style.display = 'block';
+            button.style.float = 'right';
+            button.innerHTML = '&lt;';
+        }
+    }
+</script>
 <script>
     var frame = document.getElementById("frame");
 
