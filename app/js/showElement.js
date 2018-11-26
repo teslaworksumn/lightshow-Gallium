@@ -1,5 +1,7 @@
 /* eslint "no-unused-expressions":  "off" */
-
+const parent = window.parent;
+const fs = parent.require('fs');
+const { Howl } = parent.require('howler');
 
 function ShowElement() {
     this.sequenceJsonPath;
@@ -8,14 +10,21 @@ function ShowElement() {
     this.universe;
     this.timer;
     this.startTime;
-    this.sequenceLength;
+    this.elementLength;
+    this.audioPath;
+    this.interval;
 }
-
 ShowElement.prototype.getSequenceJson = function () {
     return this.sequenceJsonPath;
 };
 ShowElement.prototype.setSequenceJson = function (sequenceJsonPath) {
     this.sequenceJsonPath = sequenceJsonPath;
+};
+ShowElement.prototype.getInterval = function () {
+    return this.interval;
+};
+ShowElement.prototype.setInterval = function (interval) {
+    this.interval = interval;
 };
 ShowElement.prototype.getUniverse = function () {
     return this.universe;
@@ -41,17 +50,44 @@ ShowElement.prototype.getTimer = function () {
 ShowElement.prototype.setTimer = function (timer) {
     this.timer = timer;
 };
+ShowElement.prototype.getAudioPath = function () {
+    return this.audioPath;
+};
 ShowElement.prototype.getStartTime = function () {
     return this.startTime;
 };
 ShowElement.prototype.setStartTime = function (startTime) {
     this.startTime = startTime;
 };
-ShowElement.prototype.getSequenceLength = function () {
-    return this.sequenceLength;
+ShowElement.prototype.getElementLength = function () {
+    return this.elementLength;
 };
-ShowElement.prototype.setSequenceLength = function (sequenceLength) {
-    this.sequenceLength = sequenceLength;
+ShowElement.prototype.setElementLength = function (elementLength) {
+    this.elementLength = elementLength;
 };
-
+ShowElement.prototype.setUpSequence = async function () {
+    const sequenceJSON = JSON.parse(fs.readFileSync(this.sequenceJsonPath));
+    this.audioPath = sequenceJSON['Audio File'];
+    this.sequenceData = sequenceJSON['Sequence Data Json'];
+    this.interval = sequenceJSON['Time Frame Length']
+    if (this.audioPath) {
+        this.audio = new Howl({
+            src: [this.audioPath],
+        });
+        const audioTag = new Audio(this.audioPath);
+        return new Promise(((resolve, reject) => {
+            audioTag.addEventListener('durationchange', () => {
+                resolve(audioTag.duration);
+            });
+        }));
+    }
+};
+ShowElement.prototype.getDuration = function (url) {
+    const audioTag = new Audio(url);
+    return new Promise(((resolve, reject) => {
+        audioTag.addEventListener('durationchange', () => {
+            resolve(audioTag.duration);
+        });
+    }));
+};
 module.exports = ShowElement;
