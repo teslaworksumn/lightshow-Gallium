@@ -1,19 +1,18 @@
-const table = document.getElementById('tableBody');
+var table = document.getElementById('tableBody');
 table.value = [];
-const playButton = document.getElementById('runShow');
-const ShowElementConstructor = parent.require('./js/showElement.js');
-const showElements = [];
+var playButton = document.getElementById('runShow');
+var ShowElementConstructor = parent.require('./js/showElement.js');
+let showElements = [];
 
 
 // directory of the current show contained in the iframe.value attribute
-const showDir = window.parent.document.getElementById('frame').value;
-const showDataPath = path.join(showDir, 'show.json');
+var showDir = window.parent.document.getElementById('frame').value;
+var showDataPath = path.join(showDir, 'show.json');
 
 // the json file containing the playlist of the show
-const showData = JSON.parse(fse.readFileSync(showDataPath));
+var showData = JSON.parse(fse.readFileSync(showDataPath));
 
-const playlistElements = showData.Playlist;
-let showElements = [];
+var playlistElements = showData.Playlist;
 
 // push all playlist items (and associated audio if applicable)
 // names onto table to be rendered for each show
@@ -46,34 +45,38 @@ for (let i = 0; i < playlistElements.length; i += 1) {
     table.appendChild(tableItem);
 }
 
-playButton.onclick = function () {
+function stopAllShowElements() {
+    for (let j = 0; j < showElements.length; j += 1) {
+        stopPlaying(showElements[j]);
+    }
+}
+
+playButton.onclick = async function () {
     // value property contains the boolean isPlaying
     if (playButton.value === 'notPlaying') {
         playButton.innerText = 'Stop';
         playButton.value = 'playing';
-
-        playButton.style.backgroundColor = 'red';
+         playButton.style.backgroundColor = 'red';
         playButton.style.borderColor = 'red';
-
-        // create show elements with sequence json path
+         // create show elements with sequence json path
+        showElements = [];
         for (let k = 0; k < table.rows.length; k += 1) {
             showElements.push(new ShowElementConstructor());
             showElements[k].setSequenceJson(table.value[k]);
+            // TODO make this a promise or something, so we can set up all asyncronously
+            // eslint-disable-next-line no-await-in-loop
+            const duration = await showElements[k].setUpSequence();
+            showElements[k].setElementLength(duration * 1000);
         }
-
-        startCanPlay(); // lock to determine ability to play
+         startCanPlay(); // lock to determine ability to play
         playShow(showElements);
     } else {
         playButton.innerText = 'Play';
         playButton.value = 'notPlaying';
-
-        playButton.style.backgroundColor = 'green';
+         playButton.style.backgroundColor = 'green';
         playButton.style.borderColor = 'green';
-
-        stopCanPlay(); // lock to stop play of show
-
-        for (let j = 0; j < showElements.length; j += 1) {
-            stopPlaying(showElements[j]); // terminate all elements
-        }
+         stopCanPlay(); // lock to stop play of show
+        stopAllShowElements();
     }
 };
+ window.parent.document.getElementById('frame').onload = stopAllShowElements;

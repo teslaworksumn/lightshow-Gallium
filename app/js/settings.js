@@ -40,6 +40,7 @@ class Settings {
 
     // Gets the currently selected DMX device. Returns null if none selected or out of range
     getCurrentDmxDevice() {
+
         // Check that we are in range
         if (this.selectedDevice >= this.dmxDevices.length || this.selectedDevice < 0) {
             return null;

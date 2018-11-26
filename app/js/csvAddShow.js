@@ -66,6 +66,10 @@ document.getElementById('chooseCSV').addEventListener('click', () => {
                 const newColumn = document.createElement('td');
                 newColumn.appendChild(associateAudioButton);
 
+                const timeFrameLengthInput = document.createElement('input');
+                const timeFrameLength = document.createElement('td');
+                timeFrameLength.appendChild(timeFrameLengthInput);
+
                 const associatedAudioPath = '';
                 associateAudioButton.addEventListener('click', () => {
                     associateAudio(newColumn, tableItem);
@@ -73,6 +77,8 @@ document.getElementById('chooseCSV').addEventListener('click', () => {
 
                 tableItem.appendChild(elementName);
                 tableItem.appendChild(newColumn);
+                tableItem.appendChild(timeFrameLength);
+
 
                 /*
                  * value will contain array of paths either containing 1 element
@@ -132,7 +138,7 @@ function saveCSVShow() {
     for (let i = 0; i < table.rows.length; i += 1) {
         const filepath = table.rows[i].value[0];
 
-        const timeFrameLength = 50; // ///// CHANGE THIS
+        const timeFrameLength = table.rows[i].children[2].children[0].value;
         if (isCSVSequence(filepath)) {
             const audiopath = table.rows[i].value[1];
             createSequenceJson(filepath, audiopath, timeFrameLength, visibleShowPath);
