@@ -2,6 +2,10 @@ const fs = parent.require('fs');
 const DMX = parent.require('dmx');
 const player = parent.require('play-sound')(opts = {});
 const NanoTimer = parent.require('nanotimer');
+const load = parent.require('audio-loader');
+const { Howl, Howler } = parent.require('howler');
+const Settings = parent.require('./js/settings');
+
 
 let canPlay = false; // bool check for if should go to next sequence
 
@@ -35,21 +39,29 @@ function playSequence(showElement) {
     }
     const dmx = new DMX();
     const DRIVER = 'enttec-usb-dmx-pro';
-    // const SERIAL_PORT = '/dev/cu.usbserial-EN175330'; // hardcoded needs to be changed
-    const SERIAL_PORT = '/dev/ttyUSB0'; // hardcoded needs to be changed
-
-    const sequenceJSON = JSON.parse(fs.readFileSync(showElement.getSequenceJson()));
-    const audioPath = sequenceJSON['Audio File'];
-
-    showElement.setSequenceData(sequenceJSON['Sequence Patched Data Json']);
-    showElement.setUniverse(dmx.addUniverse(`${sequenceJSON.Name}`, DRIVER, SERIAL_PORT));
-    showElement.setAudio(player.play(audioPath, (err) => {
-        if (err) {
-            // console.log('no audio found at:', audioPath);
+    const SERIAL_PORT = parent.parent.settings.getCurrentDmxDevice().location; 
+    showElement.setUniverse(dmx.addUniverse(`${JSON.parse(fs.readFileSync(showElement.getSequenceJson())).Name}`, DRIVER, SERIAL_PORT));
+    showElement.getAudio().play();
+    showElement.setTimer(new NanoTimer());
+    showElement.setStartTime(new Date());
+    showElement.getTimer().setInterval(update, [showElement], '20m');
+}
+function checkAudioFinish(showElement) {
+    const index = Math.ceil((new Date() - showElement.getStartTime()) / 50); // HARDCODE
+    if (showElement.getElementLength()) {
+        if (index > showElement.getElementLength()) { // check for end of song
+            stopPlaying(showElement);
         }
-    }));
+    }};
 
-    showElement.setSequenceLength(sequenceJSON['Sequence Length']);
+function playAudio(showElement) {
+    showElement.getAudio().play();
+    // showElement.getUniverse().updateAll(0)
+    const dmx = new DMX();
+    const DRIVER = 'enttec-usb-dmx-pro';
+    const SERIAL_PORT = parent.parent.settings.getCurrentDmxDevice().location; 
+    showElement.setUniverse(dmx.addUniverse(`${JSON.parse(fs.readFileSync(showElement.getSequenceJson())).Name}`, DRIVER, SERIAL_PORT));
+    showElement.getUniverse().updateAll(0);
     showElement.setTimer(new NanoTimer());
     showElement.setStartTime(new Date());
     showElement.getTimer().setInterval(update, [showElement], '50m');
