@@ -15,8 +15,10 @@
 
     <script type="text/javascript" src="../js/dmxSelector.js"></script>
     <script type="text/javascript">
-        function dmxDeviceOnChange() { window.galliumGlobals.currentSettings.dmxDeviceOnChange(); }
-        function getDmxDevices() { window.galliumGlobals.currentSettings.refresh(); }
+        function getDmxDevices() {
+            resetDmxHtml();
+            window.galliumGlobals.currentSettings.refresh();
+        }
     </script>
 </body>
 </html>

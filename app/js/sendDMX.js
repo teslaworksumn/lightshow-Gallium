@@ -12,12 +12,24 @@ function startCanPlay() {
 function stopCanPlay() {
     canPlay = false;
 }
-function stopPlaying(showElement) {
-    showElement.getAudio().kill();
-    showElement.getTimer().clearInterval();
-    if (showElement.getUniverse()) {
-        showElement.getUniverse().close();
+
+function stopUniverse(universe) {
+    if (universe === null || typeof universe === 'undefined') return;
+    if (universe.dev.isOpen) {
+       universe.close();
     }
+}
+
+function stopPlaying(showElement) {
+    if (showElement === null || typeof showElement === 'undefined') return;
+
+    const audio = showElement.getAudio();
+    if (audio) audio.kill();
+    
+    const timer = showElement.getTimer();
+    if (timer) timer.clearInterval();
+    
+    stopUniverse(showElement.getUniverse());
 }
 
 function update(showElement) {
@@ -30,9 +42,7 @@ function update(showElement) {
 }
 
 function playSequence(showElement) {
-    if (showElement.getUniverse()) { // make sure all callbacks are finished
-        showElement.getUniverse().close();
-    }
+    stopUniverse(showElement.getUniverse());
     const dmx = new DMX();
     const DRIVER = 'enttec-usb-dmx-pro';
     // const SERIAL_PORT = '/dev/cu.usbserial-EN175330'; // hardcoded needs to be changed
@@ -45,7 +55,7 @@ function playSequence(showElement) {
     showElement.setUniverse(dmx.addUniverse(`${sequenceJSON.Name}`, DRIVER, SERIAL_PORT));
     showElement.setAudio(player.play(audioPath, (err) => {
         if (err) {
-            // console.log('no audio found at:', audioPath);
+             console.log(err);
         }
     }));
 
@@ -66,9 +76,7 @@ function playShow(elements) {
         if (canPlay) {
             setTimeout(() => {
                 if (canPlay) {
-                    if (elements[k - 1].getUniverse()) {
-                        elements[k - 1].getUniverse().close();
-                    }
+                    stopUniverse(elements[k - 1].getUniverse())
                     playSequence(elements[k]);
                     k += 1;
                     if (k < elements.length) {

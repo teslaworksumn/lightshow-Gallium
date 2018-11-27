@@ -13,7 +13,7 @@ function isDmxDevice(location, manufacturer) {
 }
 
 class Settings {
-    constructor() {
+    constructor(onChange) {
         const parent = window.parent;
         const path = parent.require('path');
 
@@ -25,6 +25,7 @@ class Settings {
         this.dmxDevices = [];
         this.selectedDevice = 0;
         this.settingsConfig = null;
+        this.onChange = onChange;
 
         this.load();
     }
@@ -60,7 +61,7 @@ class Settings {
         // Since we changed the selected device, save
         this.save();
 
-        return getCurrentDmxDevice();
+        return this.getCurrentDmxDevice();
     }
 
     // Adds a DMX device. Can be done through polling devices or set through loading settings.
@@ -79,6 +80,7 @@ class Settings {
         this.serialport.list()
             .then((ports) => {
                 let portIdx = 0;
+                this.dmxDevices = [];
 
                 // Check each port to see if it matches our expected device
                 ports.forEach((port) => {
@@ -94,6 +96,9 @@ class Settings {
 
                 // We updated, so save
                 this.save();
+
+                // ... and alert
+                this.onChange(this);
             })
             .catch((err) => {
                 alert(`Problem detecting DMX devices: ${err}`);
@@ -108,6 +113,8 @@ class Settings {
         // Get page data
         const currentDmxDevice = this.getCurrentDmxDevice();
 
+        const oldSettings = this.settingsConfig;
+
         // Update settings
         this.settingsConfig = {
             dmxDevice: JSON.stringify(currentDmxDevice, null, 2),
@@ -119,7 +126,7 @@ class Settings {
     }
 
     // Loads settings from file
-    load(onLoad) {
+    load() {
         // Make sure config file exists before using
         this.fse.pathExists(this.settingsConfigPath).then((exists) => {
             if (exists) {
@@ -129,6 +136,8 @@ class Settings {
                 // File doesn't exist, so create an empty config file there (save with defaults)
                 this.save();
             }
+
+            this.onChange(this);
         });
     }
 }

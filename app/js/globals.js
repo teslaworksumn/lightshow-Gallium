@@ -4,7 +4,7 @@
 var galliumGlobals = {};
 
 // Set up global settings here
-let currentSettings = new Settings();
+let currentSettings;
 const settingsChangedObservers = [];
 
 // Adds an observer for when settings are updated.
@@ -18,7 +18,6 @@ function settingsChanged(newSettings) {
     // Validate the updated settings
     if (newSettings === null) return;
 
-    // Get old settings so observers can see what changed
     const oldSettings = currentSettings;
 
     // Update settings
@@ -29,6 +28,9 @@ function settingsChanged(newSettings) {
         settingsChangedObservers[i](currentSettings, oldSettings);
     }
 }
+
+// Actually assign here so we can use settingsChanged
+currentSettings = new Settings(settingsChanged);
 
 // Set globals
 galliumGlobals = {

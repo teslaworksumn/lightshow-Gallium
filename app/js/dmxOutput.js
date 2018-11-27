@@ -18,15 +18,11 @@ let universe = null;
 // Sets up the DMX universe with the given serial output location (string)
 // Can be called multiple times
 function setUniverse(output) {
-    if (output === null) {
-        document.getElementById('currentDeviceText').innerHTML = 'None';
-        return;
-    }
+    if (output === null) return;
 
     // Create universe
     const serialPort = output;
     universe = dmx.addUniverse('DMX Output', DRIVER, serialPort);
-    document.getElementById('currentDeviceText').innerHTML = `${serialPort}`;
 }
 
 // Sets a range of channels to be on or off. Range is inclusive on both ends
@@ -98,14 +94,14 @@ function stopSequence() {
 }
 
 // When settings load, set our universe we are using
-function settingsLoaded(newSettings) {
+function settingsLoaded(newSettings, oldSettings) {
     if (newSettings === null) return;
 
     const device = newSettings.getCurrentDmxDevice();
-    if (device === null) return;
+    if (device === null || device === 'undefined') return;
 
     const dmxOutput = device.location;
-    if (dmxOutput === null) return;
+    if (dmxOutput === null || dmxOutput === 'undefined') return;
 
     setUniverse(dmxOutput);
 }
@@ -116,4 +112,4 @@ function settingsLoaded(newSettings) {
 window.galliumGlobals.addSettingsChangedObserver(settingsLoaded);
 
 // Initialize with current settings
-settingsLoaded(window.galliumGlobals.currentSettings);
+settingsLoaded(window.galliumGlobals.currentSettings, window.galliumGlobals.currentSettings);

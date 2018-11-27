@@ -15,7 +15,7 @@ function resetDmxHtml() {
 
     // Remove all options from combo box
     while (dmxSelection.firstChild) {
-        dmxSelection.removeChild(this.dmxSelection.firstChild);
+        dmxSelection.removeChild(dmxSelection.firstChild);
     }
 }
 
@@ -32,7 +32,7 @@ function addDeviceToHTML(device) {
     newOption.innerHTML = `${device.location} (${device.manufacturer})`;
 
     // Add to selection box
-    this.dmxSelection.appendChild(newOption);
+    dmxSelection.appendChild(newOption);
 }
 
 // Handles when the <select> for the dmx devices has its value change
@@ -82,3 +82,7 @@ function settingsChanged(newSettings, oldSettings) {
 }
 
 window.galliumGlobals.addSettingsChangedObserver(settingsChanged);
+
+// Get current settings on page load
+window.galliumGlobals.currentSettings.load();
+settingsChanged(window.galliumGlobals.currentSettings, window.galliumGlobals.currentSettings);

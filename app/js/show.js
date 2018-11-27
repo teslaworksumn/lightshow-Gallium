@@ -2,7 +2,6 @@ const table = document.getElementById('tableBody');
 table.value = [];
 const playButton = document.getElementById('runShow');
 const ShowElementConstructor = parent.require('./js/showElement.js');
-const showElements = [];
 
 
 // directory of the current show contained in the iframe.value attribute
@@ -13,7 +12,7 @@ const showDataPath = path.join(showDir, 'show.json');
 const showData = JSON.parse(fse.readFileSync(showDataPath));
 
 const playlistElements = showData.Playlist;
-let showElements = [];
+const showElements = [];
 
 // push all playlist items (and associated audio if applicable)
 // names onto table to be rendered for each show
