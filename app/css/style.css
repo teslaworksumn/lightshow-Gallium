@@ -29,7 +29,6 @@ input {
     color: #247dff;
 }
 
-
 .sidenav {
     height: 100%;
     width: 250px;
@@ -123,10 +122,9 @@ input {
     color: white;
 }
 
-
-p, span, form, ol, dt, dl, legend {
+p, span, form, ol, dt, dl, legend, label {
     font-family: 'Raleway', sans-serif;
-    color:white
+    color: white
 }
 
 button {
@@ -152,8 +150,6 @@ button:disabled {
     margin: 0; 
     overflow-y: hidden;
 }
-
-
 
 .active {
     color: #6dae44;
@@ -194,6 +190,10 @@ tr:hover {
 
 select {
     min-width: 100px;
+}
+
+#dmxDeviceSelection {
+    width: 100%;
 }
 
 #runShow {
