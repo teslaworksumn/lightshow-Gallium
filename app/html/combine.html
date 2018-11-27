@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<link href="../css/style.css" rel="stylesheet" id="style" />
+
+<body>
+    <span class="headertext"> Combine </span>
+    <br>
+    <br>
+    <p>Choose Directory of Sequences for 2018 show to combine each sequencers .tim files</p>
+    <button type="button" id="directory">Choose Directory</button>
+    <span id="SelectedDirectory"></span>
+
+    <button type="button" id="submit"> Submit</button>
+    <br>
+    <br>
+    <span id="done"></span>
+
+</body>
+<script type="text/javascript" src="../js/show2018timcombination.js"></script>
+
+<script>
+
+const { dialog } = window.parent.require('electron').remote;
+var directorySelector = document.getElementById('directory');
+var submit = document.getElementById('submit');
+
+directorySelector.onclick = function openSelectedDirectory() {
+    document.getElementById('SelectedDirectory').innerHTML = dialog.showOpenDialog({ properties: ['openDirectory'] })[0];
+};
+
+submit.onclick = function combineFiles() {
+    combineTimFiles2018()
+}
+</script>
+
+</html>

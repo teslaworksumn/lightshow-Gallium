@@ -138,9 +138,9 @@ function saveCSVShow() {
     for (let i = 0; i < table.rows.length; i += 1) {
         const filepath = table.rows[i].value[0];
 
-        const timeFrameLength = table.rows[i].children[2].children[0].value;
         if (isCSVSequence(filepath)) {
             const audiopath = table.rows[i].value[1];
+            const timeFrameLength = table.rows[i].children[2].children[0].value;
             createSequenceJson(filepath, audiopath, timeFrameLength, visibleShowPath);
         } else {
             createSequenceJsonAudioOnly(filepath, visibleShowPath);

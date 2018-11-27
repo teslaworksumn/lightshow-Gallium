@@ -11,34 +11,6 @@ let fadeChange = 255.0 * fadeInterval / fadeDuration;
 // Limits
 const MAX_CHANNEL = 511; // Inclusive
 
-const dmx = new DMX();
-const DRIVER = 'enttec-usb-dmx-pro';
-const SERIAL_PORT = parent.parent.settings.getCurrentDmxDevice().location;
-const universe = dmx.addUniverse('dmx', DRIVER, SERIAL_PORT);
-
-// Actually sets the DMX channels
-function setRange(channelStart, channelEnd, value) {
-    const channels = {};
-    for (let i = channelStart; i <= channelEnd; i += 1) {
-        // DMX is 1-indexed. This should be the only place where the +1 is added
-        channels[i + 1] = value;
-    }
-    universe.update(channels);
-}
-
-// Sets a DMX channel to be on or off
-// Channel is an int, value is an int in range [0, 255]
-// Channels are 0-indexed
-function setChannel(channel, value) {
-    setRange(channel, channel, value);
-}
-
-// Sets all channels to be on or off
-// value is an int in range [0, 255]
-function setAll(value) {
-    universe.updateAll(value);
-}
-
 // Returns the value for the element with the given id, parsed as an int.
 // If failed to parse or find, returns default value
 function getIntFromElementById(id, defaultVal) {
@@ -52,6 +24,12 @@ function getIntFromElementById(id, defaultVal) {
     }
 
     return val;
+}
+
+// Sets all channels to be on or off
+// value is an int in range [0, 255]
+function setAll(value) {
+    parent.parent.universe.updateAll(value);
 }
 
 // Updates the current fade amount. Only changes if isFading is set
@@ -78,15 +56,21 @@ function setBackground(id, color) {
     document.getElementById(id).style.backgroundColor = color;
 }
 
-// Sets a single DMX channel to the given value
-function setSingleChannel(value) {
-    const channel = getIntFromElementById('singleChannel', -1);
-    if (channel < 0 || channel > MAX_CHANNEL) {
-        setBackground('singleChannel', 'red');
-        return;
+function setRange(channelStart, channelEnd, value) {
+    const channels = {};
+    for (let i = channelStart; i <= channelEnd; i += 1) {
+        // DMX is 1-indexed. This should be the only place where the +1 is added
+        channels[i + 1] = value;
     }
+    parent.parent.universe.update(channels);
+}
 
-    setChannel(channel, value);
+
+// Sets a DMX channel to be on or off
+// Channel is an int, value is an int in range [0, 255]
+// Channels are 0-indexed
+function setChannel(channel, value) {
+    setRange(channel, channel, value);
 }
 
 // Sets a range of DMX channels to the given value
@@ -112,6 +96,18 @@ function setChannelRange(value) {
 
     setRange(start, end, value);
 }
+
+// Sets a single DMX channel to the given value
+function setSingleChannel(value) {
+    const channel = getIntFromElementById('singleChannel', -1);
+    if (channel < 0 || channel > MAX_CHANNEL) {
+        setBackground('singleChannel', 'red');
+        return;
+    }
+
+    setChannel(channel, value);
+}
+
 
 // Sets the channels in a box to the given value
 function setBox(value) {
@@ -177,11 +173,3 @@ function setupDmxPage() {
 }
 
 setupDmxPage();
-
-function closeUniverse() {
-    if (universe !== null && universe !== 'undefined' && universe.dev.isOpen === true) {
-        universe.close();
-    }
-}
-
-window.parent.document.getElementById('frame').onload = closeUniverse(universe);
