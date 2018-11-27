@@ -20,14 +20,14 @@ function closeUniverse(universe) {
         universe.close();
     }
 }
- function stopPlaying(showElement) {
+function stopPlaying(showElement) {
     showElement.getAudio().stop();
     closeUniverse(showElement.getUniverse());
     showElement.getTimer().clearInterval();
 }
 
 
- function update(showElement) {
+function update(showElement) {
     const index = Math.ceil((new Date() - showElement.getStartTime()) / showElement.getInterval()); // HARDCODE
     showElement.getUniverse().update(showElement.getSequenceData()[index]);
     // console.log(index, '   ', showElement.getSequenceData().length);
@@ -35,12 +35,14 @@ function closeUniverse(universe) {
         stopPlaying(showElement);
     }
 }
- function playSequence(showElement) {
+function playSequence(showElement) {
     const dmx = new DMX();
     const DRIVER = 'enttec-usb-dmx-pro';
     const SERIAL_PORT = parent.parent.settings.getCurrentDmxDevice().location;
     showElement.setUniverse(dmx.addUniverse(`${JSON.parse(fs.readFileSync(showElement.getSequenceJson())).Name}`, DRIVER, SERIAL_PORT));
-    showElement.getAudio().play();
+    if (this.audioPath) {
+        showElement.getAudio().play();
+    }
     showElement.setTimer(new NanoTimer());
     showElement.setStartTime(new Date());
     showElement.getTimer().setInterval(update, [showElement], '20m');
@@ -56,7 +58,9 @@ function checkAudioFinish(showElement) {
 };
 
 function playAudio(showElement) {
-    showElement.getAudio().play();
+    if (this.audioPath) {
+        showElement.getAudio().play();
+    }
     const dmx = new DMX();
     const DRIVER = 'enttec-usb-dmx-pro';
     const SERIAL_PORT = parent.parent.settings.getCurrentDmxDevice().location;

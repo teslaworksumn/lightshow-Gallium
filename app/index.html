@@ -23,15 +23,12 @@
                         <div id='bottomcontainer'>
                             <label for='changeDevice'>Current DMX device: <span id="currentDeviceText">None</span></label>
                             <label for="dmxDeviceSelection">DMX devices</label>
-                            <select id="dmxDeviceSelection" onchange="settings.dmxDeviceOnChange();">
-                            </select>
+                            <select id="dmxDeviceSelection" onchange="settings.dmxDeviceOnChange();"></select>
                             <button onclick="settings.getDmxDevices();">Refresh</button>
                             <button onclick="settingsLoaded()">Set</button>
                             <br>
                             <a onclick='changeFrame("html/settings.html")' style="padding-left: 16px;">Settings</a>
-                        </div>
-                        
-                        
+                        </div>   
                     </div>
                 </div>
                 <button id="collapsibleMenuButton" onclick='collapseMenu();'>&lt;</button>

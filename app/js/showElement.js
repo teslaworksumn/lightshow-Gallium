@@ -3,7 +3,7 @@ const parent = window.parent;
 const fs = parent.require('fs');
 const { Howl } = parent.require('howler');
 
- function ShowElement() {
+function ShowElement() {
     this.sequenceJsonPath;
     this.sequenceData;
     this.audio;
@@ -14,7 +14,7 @@ const { Howl } = parent.require('howler');
     this.audioPath;
     this.interval;
 }
- ShowElement.prototype.getSequenceJson = function () {
+ShowElement.prototype.getSequenceJson = function () {
     return this.sequenceJsonPath;
 };
 ShowElement.prototype.setSequenceJson = function (sequenceJsonPath) {
@@ -65,22 +65,24 @@ ShowElement.prototype.getElementLength = function () {
 ShowElement.prototype.setElementLength = function (elementLength) {
     this.elementLength = elementLength;
 };
- ShowElement.prototype.setUpSequence = async function () {
+ShowElement.prototype.setUpSequence = async function () {
     const sequenceJSON = JSON.parse(fs.readFileSync(this.sequenceJsonPath));
     this.audioPath = sequenceJSON['Audio File'];
-     this.sequenceData = sequenceJSON['Sequence Data Json'];
-     this.interval = sequenceJSON['Time Frame Length']
-     this.audio = new Howl({
-        src: [this.audioPath],
-    });
-    const audioTag = new Audio(this.audioPath);
-    return new Promise(((resolve, reject) => {
-        audioTag.addEventListener('durationchange', () => {
-            resolve(audioTag.duration);
+    this.sequenceData = sequenceJSON['Sequence Data Json'];
+    this.interval = sequenceJSON['Time Frame Length']
+    if (this.audioPath) {
+        this.audio = new Howl({
+            src: [this.audioPath],
         });
-    }));
+        const audioTag = new Audio(this.audioPath);
+        return new Promise(((resolve, reject) => {
+            audioTag.addEventListener('durationchange', () => {
+                resolve(audioTag.duration);
+            });
+        }));
+    }
 };
- ShowElement.prototype.getDuration = function (url) {
+ShowElement.prototype.getDuration = function (url) {
     const audioTag = new Audio(url);
     return new Promise(((resolve, reject) => {
         audioTag.addEventListener('durationchange', () => {
@@ -88,4 +90,4 @@ ShowElement.prototype.setElementLength = function (elementLength) {
         });
     }));
 };
- module.exports = ShowElement;
+module.exports = ShowElement;
