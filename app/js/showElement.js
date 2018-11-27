@@ -69,7 +69,7 @@ ShowElement.prototype.setUpSequence = async function () {
     const sequenceJSON = JSON.parse(fs.readFileSync(this.sequenceJsonPath));
     this.audioPath = sequenceJSON['Audio File'];
     this.sequenceData = sequenceJSON['Sequence Data Json'];
-    this.interval = sequenceJSON['Time Frame Length']
+    this.interval = sequenceJSON['Time Frame Length'];
     if (this.audioPath) {
         this.audio = new Howl({
             src: [this.audioPath],
@@ -81,6 +81,11 @@ ShowElement.prototype.setUpSequence = async function () {
             });
         }));
     }
+
+    // Didn't have an audio path
+    return new Promise((resolve, reject) => {
+        resolve(0);
+    });
 };
 ShowElement.prototype.getDuration = function (url) {
     const audioTag = new Audio(url);
