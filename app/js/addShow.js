@@ -44,3 +44,7 @@ function addNewShow() {
         document.getElementById('validName').style.display = 'table';
     }
 }
+
+function addNewElement() {
+
+}

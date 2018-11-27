@@ -161,6 +161,12 @@ button {
     color:white
 }
 
+button:disabled {
+  border: 1px solid #999999;
+  background-color: #cccccc;
+  color: #666666;
+}
+
 .centered {
     display: flex; /* flex behavior (displays children inline) */
     justify-content: center; /* horizontal centering */
@@ -216,4 +222,20 @@ select {
 #runShow {
     background-color: green;
     border-color: green;
+}
+
+#collapsibleMenuContent {
+    display: block;
+    float: left;
+}
+
+#collapsibleMenuButton {
+    float: right;
+    text-align: center;
+    font-size: 16e;
+    font-weight: 700; /* bold */
+    width: 30px;
+    height: 30px;
+    margin-left: 10px;
+    margin-right: 5px;
 }

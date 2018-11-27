@@ -14,31 +14,39 @@
         <thead>
             <caption>Show Files:</caption>
             <tr>
-                <th>Element</th>
-                <th>Audio</th>
+                <th onclick="sortTableCheckbox(0)">Element</th>
+                <th onclick="sortTable(1)">Audio</th>
             </tr>
         </thead>
         <tbody id="tableBody">
         </tbody>
     </table>
-    <button id='addShow'>Add element</button>
+    <button id='addElement'>Add element</button>
     <br><br>
     <button id='runShow' value='notPlaying'>Play</button>
     <div class="dmxSelectorIframeContainer">
         <iframe class="dmxSelectorIframe" src="./dmxSelector.html" style="overflow: hidden"></iframe>
     </div>
+
+    <br><br><br><br>
+    <button id='patchShow'>Patch Show</button>
+    <label for="patchShow" name="patchStatus" id="patchLabel">Ready!</label>
 </body>
-    <script type="text/javascript" src="../js/addShow.js">
-        const button = document.getElementById('addShow');
+    <script type="text/javascript" src="../js/addShow.js"></script>
+    <script type="text/javascript" src="../js/sendDMX.js"></script>
+    <script type="text/javascript" src="../js/show.js"></script>
+    <script>
+        const addElementButton = document.getElementById('addElement');
         const iframe = window.parent.document.getElementById('frame');
         const header = document.getElementById('header');
-        let showElements = [];
-        let serialPort;
+        const patchButton = document.getElementById('patchShow');
+
+        addElementButton.onclick = function () {addNewElement()};
+        patchButton.onclick = function () {patchShow()};
+
         var onlyShowName = iframe.value.split(path.sep);
         onlyShowName = iframe.value.split(path.sep)[onlyShowName.length - 1];
         header.innerText = onlyShowName;
     </script>
-    <script type="text/javascript" src="../js/sendDMX.js"></script>
-    <script type="text/javascript" src="../js/show.js"></script>
-   
+    <script type="text/javascript" src="../js/patchShow.js"></script>
 </html>
