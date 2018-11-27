@@ -1,3 +1,3 @@
 {
-  "dmxDevice": "{\n  \"location\": \"/dev/tty.usbserial-EN175330\",\n  \"manufacturer\": \"ENTTEC\"\n}"
+  "dmxDevice": "{\n  \"location\": \"COM5\",\n  \"manufacturer\": \"Vyacheslav Frolov\"\n}"
 }
