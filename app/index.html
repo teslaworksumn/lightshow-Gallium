@@ -12,14 +12,14 @@
 
 <body>
     <div class="sideNavIFrameWrapper">
+    <div id="collapsibleMenuContent">
         <div class="sidenav">
             <img src="img/teslaworks_name_with_logo.png" id="logo" />
             <div id="collapsibleMenu">
-                <div id="collapsibleMenuContent">
                     <div class="tools">
                         <a onclick='changeFrame("html/shows.html")' class="dropdown-btn">Show </a>
                         <a onclick='changeFrame("html/dmx.html")' class="dropdown-btn">DMX</a>
-                        <a onclick='changeFrame("html/layout.html")' class="dropdown-btn">Layout</a>
+                        <a onclick='changeFrame("html/combine.html")' class="dropdown-btn">Combine Tim Files (Show 2018)</a>
                         <div id='bottomcontainer'>
                             <label for='changeDevice'>Current DMX device: <span id="currentDeviceText">None</span></label>
                             <label for="dmxDeviceSelection">DMX devices</label>
@@ -30,15 +30,20 @@
                             <a onclick='changeFrame("html/settings.html")' style="padding-left: 16px;">Settings</a>
                         </div>   
                     </div>
+
+                    
                 </div>
-                <div id="collapsibleMenuButtonContainer">
-                    <button id="collapsibleMenuButton" onclick='collapseMenu();'>&lt;</button>
-                </div>
+                
             </div>
         </div>
+        <div>
     <div class="content">
-                <iframe id="frame" src="html/default.html" style="overflow: hidden"></iframe>
-            </div>
+            <iframe id="frame" src="html/default.html" style="overflow: hidden"></iframe>
+    </div>
+    <div id="collapsibleMenuButtonContainer">
+            <button id="collapsibleMenuButton" onclick='collapseMenu();'>&lt;</button>
+    </div>
+</div>
     </div>
 
 
@@ -46,30 +51,48 @@
 </body>
 <script type="text/javascript" src="../setupRepo.js"></script>
 <script type="text/javascript">
+    var DMX = parent.require('dmx');
+
+
     // Collapsible menu
+
     let isCollapsed = false;
     function collapseMenu() {
         isCollapsed = !isCollapsed;
         const content = document.getElementById('collapsibleMenuContent');
         const button = document.getElementById('collapsibleMenuButton');
+        const buttonWrapper = document.getElementById("collapsibleMenuButtonContainer");
+        const frameWrapper = document.getElementsByClassName('content');
         if (isCollapsed) {
             // Now collapsed
             content.style.display = 'none';
             button.style.float = 'left';
             button.innerHTML = '&gt';
+            buttonWrapper.style.marginLeft = '5px';
+            frameWrapper[0].style.marginLeft = '5px';
         } else {
             // Now open
             content.style.display = 'block';
             button.style.float = 'right';
             button.innerHTML = '&lt;';
+            buttonWrapper.style.marginLeft = '250px';
+            frameWrapper[0].style.marginLeft = '250px';
         }
     }
+
+    const dmx = new DMX();
+    const DRIVER = 'enttec-usb-dmx-pro';
+    var universe;
 
     function settingsLoaded() {
         if (settings.getCurrentDmxDevice() === null) {
             document.getElementById('currentDeviceText').innerHTML = 'None';
         } else {
             document.getElementById('currentDeviceText').innerHTML = `${settings.getCurrentDmxDevice().location}`;
+            if(universe) {
+            universe.close();
+            }
+            universe = dmx.addUniverse("dmx", DRIVER, settings.getCurrentDmxDevice().location);
         }
     }
 
@@ -87,6 +110,8 @@
     logo.onclick = function () {
         changeFrame("html/default.html");
     }
+
+
 
 </script>
 

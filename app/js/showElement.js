@@ -7,7 +7,6 @@ function ShowElement() {
     this.sequenceJsonPath;
     this.sequenceData;
     this.audio;
-    this.universe;
     this.timer;
     this.startTime;
     this.elementLength;
@@ -25,12 +24,6 @@ ShowElement.prototype.getInterval = function () {
 };
 ShowElement.prototype.setInterval = function (interval) {
     this.interval = interval;
-};
-ShowElement.prototype.getUniverse = function () {
-    return this.universe;
-};
-ShowElement.prototype.setUniverse = function (universe) {
-    this.universe = universe;
 };
 ShowElement.prototype.getSequenceData = function () {
     return this.sequenceData;
@@ -68,7 +61,7 @@ ShowElement.prototype.setElementLength = function (elementLength) {
 ShowElement.prototype.setUpSequence = async function () {
     const sequenceJSON = JSON.parse(fs.readFileSync(this.sequenceJsonPath));
     this.audioPath = sequenceJSON['Audio File'];
-    this.sequenceData = sequenceJSON['Sequence Data Json'];
+    this.sequenceData = sequenceJSON['Sequence Patched Data Json'];
     this.interval = sequenceJSON['Time Frame Length'];
     if (this.audioPath) {
         this.audio = new Howl({
