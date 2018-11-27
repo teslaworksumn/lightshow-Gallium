@@ -7,7 +7,7 @@ const serialport = parent.require('serialport');
 // Filters whether the device with the given location and manufacturer is indeed a DMX device
 function isDmxDevice(location, manufacturer) {
     // Ignore devices with no location or manufacturer
-    if (location === undefined || manufacturer === undefined) {
+    if (typeof location === 'undefined' || typeof manufacturer === 'undefined') {
         return false;
     }
 
@@ -21,6 +21,8 @@ function sameDevice(devA, devB) {
     if (devA === null && devB === null) return true;
     if (devA === null || devB === null) return false;
 
+    if (typeof devA.location === 'undefined' || typeof devB.location === 'undefined') return false;
+
     return devA.location === devB.location;
 }
 
@@ -29,18 +31,17 @@ class Settings {
         this.settingsConfigPath = path.resolve('app/config/settings.json');
         this.dmxSelection = document.getElementById('dmxDeviceSelection');
 
-        this.dmxDevices = [];
-        this.selectedDevice = 0;
+        this.dmxDevices = {};
+        this.selectedDevice = -1;
         this.settingsConfig = null;
 
-        this.load(onLoad);
+        this.refreshDmxDevices();
     }
 
     /* DMX device selection */
 
     // Gets the currently selected DMX device. Returns null if none selected or out of range
     getCurrentDmxDevice() {
-
         // Check that we are in range
         if (this.selectedDevice >= this.dmxDevices.length || this.selectedDevice < 0) {
             return null;
@@ -58,16 +59,13 @@ class Settings {
             alert(`Selected device '${this.selectedDevice}' somehow not a number!`);
             this.selectedDevice = 0;
         }
-
-        // Save change to file
-        this.save();
     }
 
     // Resets the HTML elements relating to the DMX selection
     // Also resets the related dmxDevices array
     resetDmxHtml() {
-        // Array must match the DOM
-        this.dmxDevices = [];
+        // Collection must match the DOM
+        this.dmxDevices = {};
 
         // Remove all options from combo box
         while (this.dmxSelection.firstChild) {
@@ -91,17 +89,17 @@ class Settings {
     // Adds a DMX device. Can be done through polling devices or set through loading settings.
     addDmxDevice(location, manufacturer, portIdx) {
         // Add to devices array
-        this.dmxDevices.push({
+        this.dmxDevices[portIdx] = {
             location,
             manufacturer,
-        });
+        };
 
         // Add reference to HTML
         this.addDeviceToHTML(portIdx, `${location} (${manufacturer})`);
     }
 
     // Updates the devices array with all detected DMX serial devices
-    getDmxDevices() {
+    refreshDmxDevices() {
         // See https://serialport.io/docs/api-stream#serialportlist
         serialport.list()
             .then((ports) => {
@@ -125,64 +123,23 @@ class Settings {
 
                 // We updated our list. Try to keep selecting the current device
                 if (oldSelectedDevice !== null) {
-                    for (let i = 0; i < this.dmxDevices; i += 1) {
-                        if (this.sameDevice(this.dmxDevices[i], oldSelectedDevice)) {
+                    for (let i = 0; i < Object.keys(this.dmxDevices).length; i += 1) {
+                        if (sameDevice(this.dmxDevices[i], oldSelectedDevice)) {
                             this.dmxSelection.selectedIndex = i;
-                            break;
+                            return;
                         }
                     }
                 }
 
-                // We updated, so save
-                this.save();
+                // None were our device, or we didn't have an old device
+                // This will make the select box blank (no selection)
+                this.selectedDevice = -1;
+                this.dmxSelection.selectedIndex = -1;
             })
             .catch((err) => {
                 alert(`Problem detecting DMX devices: ${err}`);
                 throw err;
             });
-    }
-
-    /* General settings handling */
-
-    // Saves settings to settings.json
-    save() {
-        // Get page data
-        const currentDmxDevice = this.getCurrentDmxDevice();
-
-        // Update settings
-        this.settingsConfig = {
-            dmxDevice: JSON.stringify(currentDmxDevice, null, 2),
-        };
-
-        // Write to file
-        fse.writeFileSync(this.settingsConfigPath, JSON.stringify(this.settingsConfig, null, 2));
-    }
-
-    // Loads settings from file
-    load(onLoad) {
-        // Make sure config file exists before using
-        fse.pathExists(this.settingsConfigPath).then((exists) => {
-            if (exists) {
-                // Get settings
-                this.settingsConfig = JSON.parse(fse.readFileSync(this.settingsConfigPath));
-
-                // Set HTML elements
-                const currentDmxDevice = JSON.parse(this.settingsConfig.dmxDevice);
-                if (currentDmxDevice !== null) {
-                    const loc = currentDmxDevice.location;
-                    const man = currentDmxDevice.manufacturer;
-                    this.addDmxDevice(loc, man, 0);
-                }
-            } else {
-                // File doesn't exist, so create an empty config file there (save with defaults)
-                this.save();
-            }
-
-            // Let our caller know we are done loading
-            if (onLoad) {
-                onLoad();
-            }
-        });
     }
 }
 
@@ -193,5 +150,4 @@ if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
 } else {
     const settings = new Settings();
     window.Settings = settings;
-    settings.getDmxDevices();
 }

@@ -1,18 +1,18 @@
-var table = document.getElementById('tableBody');
+const table = document.getElementById('tableBody');
 table.value = [];
-var playButton = document.getElementById('runShow');
-var ShowElementConstructor = parent.require('./js/showElement.js');
+const playButton = document.getElementById('runShow');
+const ShowElementConstructor = parent.require('./js/showElement.js');
 let showElements = [];
 
 
 // directory of the current show contained in the iframe.value attribute
-var showDir = window.parent.document.getElementById('frame').value;
-var showDataPath = path.join(showDir, 'show.json');
+const showDir = window.parent.document.getElementById('frame').value;
+const showDataPath = path.join(showDir, 'show.json');
 
 // the json file containing the playlist of the show
-var showData = JSON.parse(fse.readFileSync(showDataPath));
+const showData = JSON.parse(fse.readFileSync(showDataPath));
 
-var playlistElements = showData.Playlist;
+const playlistElements = showData.Playlist;
 
 // push all playlist items (and associated audio if applicable)
 // names onto table to be rendered for each show
@@ -56,9 +56,9 @@ playButton.onclick = async function () {
     if (playButton.value === 'notPlaying') {
         playButton.innerText = 'Stop';
         playButton.value = 'playing';
-         playButton.style.backgroundColor = 'red';
+        playButton.style.backgroundColor = 'red';
         playButton.style.borderColor = 'red';
-         // create show elements with sequence json path
+        // create show elements with sequence json path
         showElements = [];
         for (let k = 0; k < table.rows.length; k += 1) {
             showElements.push(new ShowElementConstructor());
@@ -68,15 +68,15 @@ playButton.onclick = async function () {
             const duration = await showElements[k].setUpSequence();
             showElements[k].setElementLength(duration * 1000);
         }
-         startCanPlay(); // lock to determine ability to play
+        startCanPlay(); // lock to determine ability to play
         playShow(showElements);
     } else {
         playButton.innerText = 'Play';
         playButton.value = 'notPlaying';
-         playButton.style.backgroundColor = 'green';
+        playButton.style.backgroundColor = 'green';
         playButton.style.borderColor = 'green';
-         stopCanPlay(); // lock to stop play of show
+        stopCanPlay(); // lock to stop play of show
         stopAllShowElements();
     }
 };
- window.parent.document.getElementById('frame').onload = stopAllShowElements;
+window.parent.document.getElementById('frame').onload = stopAllShowElements;

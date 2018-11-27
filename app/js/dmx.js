@@ -1,5 +1,5 @@
 
-var DMX = parent.require('dmx');
+const DMX = parent.require('dmx');
 
 /* Fading setup */
 let isFading = false;
@@ -14,7 +14,30 @@ const MAX_CHANNEL = 511; // Inclusive
 const dmx = new DMX();
 const DRIVER = 'enttec-usb-dmx-pro';
 const SERIAL_PORT = parent.parent.settings.getCurrentDmxDevice().location;
-var universe = dmx.addUniverse("dmx", DRIVER, SERIAL_PORT);
+const universe = dmx.addUniverse('dmx', DRIVER, SERIAL_PORT);
+
+// Actually sets the DMX channels
+function setRange(channelStart, channelEnd, value) {
+    const channels = {};
+    for (let i = channelStart; i <= channelEnd; i += 1) {
+        // DMX is 1-indexed. This should be the only place where the +1 is added
+        channels[i + 1] = value;
+    }
+    universe.update(channels);
+}
+
+// Sets a DMX channel to be on or off
+// Channel is an int, value is an int in range [0, 255]
+// Channels are 0-indexed
+function setChannel(channel, value) {
+    setRange(channel, channel, value);
+}
+
+// Sets all channels to be on or off
+// value is an int in range [0, 255]
+function setAll(value) {
+    universe.updateAll(value);
+}
 
 // Returns the value for the element with the given id, parsed as an int.
 // If failed to parse or find, returns default value
@@ -154,29 +177,6 @@ function setupDmxPage() {
 }
 
 setupDmxPage();
-
-function setRange(channelStart, channelEnd, value) {
-
-    const channels = {};
-    for (let i = channelStart; i <= channelEnd; i += 1) {
-        // DMX is 1-indexed. This should be the only place where the +1 is added
-        channels[i + 1] = value;
-    }
-    universe.update(channels);
-}
-
-// Sets a DMX channel to be on or off
-// Channel is an int, value is an int in range [0, 255]
-// Channels are 0-indexed
-function setChannel(channel, value) {
-    setRange(channel, channel, value);
-}
-
-// Sets all channels to be on or off
-// value is an int in range [0, 255]
-function setAll(value) {
-    universe.updateAll(value);
-}
 
 function closeUniverse() {
     if (universe !== null && universe !== 'undefined' && universe.dev.isOpen === true) {

@@ -1,10 +1,10 @@
-var fs = parent.require('fs');
-var DMX = parent.require('dmx');
-var NanoTimer = parent.require('nanotimer');
-var { Howl, Howler } = parent.require('howler');
-var Settings = parent.require('./js/settings');
+const fs = parent.require('fs');
+const DMX = parent.require('dmx');
+const NanoTimer = parent.require('nanotimer');
+const { Howl, Howler } = parent.require('howler');
+const Settings = parent.require('./js/settings');
 
-var canPlay = false; // bool check for if should go to next sequence
+let canPlay = false; // bool check for if should go to next sequence
 
 function startCanPlay() {
     canPlay = true;
@@ -28,7 +28,7 @@ function stopPlaying(showElement) {
 
 
 function update(showElement) {
-    const index = Math.ceil((new Date() - showElement.getStartTime()) / showElement.getInterval()); // HARDCODE
+    const index = Math.ceil((new Date() - showElement.getStartTime()) / showElement.getInterval());
     showElement.getUniverse().update(showElement.getSequenceData()[index]);
     // console.log(index, '   ', showElement.getSequenceData().length);
     if (index > showElement.getSequenceData().length) { // check for end of song
@@ -55,7 +55,7 @@ function checkAudioFinish(showElement) {
             stopPlaying(showElement);
         }
     }
-};
+}
 
 function playAudio(showElement) {
     if (this.audioPath) {
@@ -98,5 +98,4 @@ async function playShow(elements) {
         }
     }
     playShowInSequence(i);
-
 }
