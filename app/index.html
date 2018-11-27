@@ -10,8 +10,6 @@
 <link href="css/style.css" rel="stylesheet" id="style" />
 <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
 
-
-
 <body>
     <div class="sideNavIFrameWrapper">
         <div class="sidenav">
@@ -23,22 +21,27 @@
                         <a onclick='changeFrame("html/dmx.html")' class="dropdown-btn">DMX</a>
                         <a onclick='changeFrame("html/layout.html")' class="dropdown-btn">Layout</a>
                         <div id='bottomcontainer'>
-                                <label for='changeDevice'>Current DMX device: <span id="currentDeviceText">None</span></label>
-            
-                                <label for="dmxDeviceSelection">DMX devices</label>
-                                <select id="dmxDeviceSelection" onchange="settings.dmxDeviceOnChange();">
-                                </select>
-                                <button onclick="settings.getDmxDevices();">Refresh</button>
-                                <br>
-                                <a onclick='changeFrame("html/settings.html")' style="padding-left: 16px;">Settings</a>
-                            </div>
-                            <button id="collapsibleMenuButton" onclick='collapseMenu();'>&lt;</button>
+                            <label for='changeDevice'>Current DMX device: <span id="currentDeviceText">None</span></label>
+                            <label for="dmxDeviceSelection">DMX devices</label>
+                            <select id="dmxDeviceSelection" onchange="settings.dmxDeviceOnChange();">
+                            </select>
+                            <button onclick="settings.getDmxDevices();">Refresh</button>
+                            <button onclick="settingsLoaded()">Set</button>
+                            <br>
+                            <a onclick='changeFrame("html/settings.html")' style="padding-left: 16px;">Settings</a>
                         </div>
+                        
+                        
                     </div>
-        <div class="content">
-            <iframe id="frame" src="html/default.html" style="overflow: hidden"></iframe>
+                </div>
+                <button id="collapsibleMenuButton" onclick='collapseMenu();'>&lt;</button>
+            </div>
         </div>
+        <div class="content">
+                <iframe id="frame" src="html/default.html" style="overflow: hidden"></iframe>
+            </div>
     </div>
+
 
 
 </body>
@@ -66,9 +69,9 @@
     function settingsLoaded() {
         if (settings.getCurrentDmxDevice() === null) {
             document.getElementById('currentDeviceText').innerHTML = 'None';
-            return;
+        } else {
+            document.getElementById('currentDeviceText').innerHTML = `${settings.getCurrentDmxDevice().location}`;
         }
-        document.getElementById('currentDeviceText').innerHTML = `${settings.getCurrentDmxDevice().location}`;
     }
 
     const Settings = require('./js/settings');

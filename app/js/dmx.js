@@ -1,4 +1,5 @@
 
+var DMX = parent.require('dmx');
 
 /* Fading setup */
 let isFading = false;
@@ -148,3 +149,47 @@ function setupDmxPage() {
 }
 
 setupDmxPage();
+
+function setRange(channelStart, channelEnd, value) {
+    if (universe === null) return;
+
+    const channels = {};
+    for (let i = channelStart; i <= channelEnd; i += 1) {
+        // DMX is 1-indexed. This should be the only place where the +1 is added
+        channels[i + 1] = value;
+    }
+
+    const dmx = new DMX();
+    const DRIVER = 'enttec-usb-dmx-pro';
+    const SERIAL_PORT = parent.parent.settings.getCurrentDmxDevice().location;
+    let universe = dmx.addUniverse("range", DRIVER, SERIAL_PORT);
+
+    universe.update(channels);
+    closeUniverse(universe)
+
+}
+
+// Sets a DMX channel to be on or off
+// Channel is an int, value is an int in range [0, 255]
+// Channels are 0-indexed
+function setChannel(channel, value) {
+    setRange(channel, channel, value);
+}
+
+// Sets all channels to be on or off
+// value is an int in range [0, 255]
+function setAll(value) {
+    const dmx = new DMX();
+    const DRIVER = 'enttec-usb-dmx-pro';
+    const SERIAL_PORT = parent.parent.settings.getCurrentDmxDevice().location;
+    let universe = dmx.addUniverse("all", DRIVER, SERIAL_PORT);
+    universe.updateAll(value);
+    closeUniverse(universe)
+
+}
+
+function closeUniverse(universe) {
+    if (universe !== null && universe !== 'undefined' && universe.dev.isOpen === true) {
+        universe.close();
+    }
+}
