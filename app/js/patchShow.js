@@ -54,6 +54,7 @@ function applyPatch(sequenceFile) {
     // console.log(sequence);
     for (let i = 0; i < sequence.length; i += 1) {
         for (let j = 0; j < patch.length; j += 1) {
+            console.log('patching internal', patch[j].internalChannel, 'dmx channel', patch[j].dmxChannel);
             sequence[i][patch[j].dmxChannel] = originalSequence[i][patch[j].internalChannel];
         }
     }

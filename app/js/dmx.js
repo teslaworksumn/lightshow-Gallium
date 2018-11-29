@@ -151,7 +151,6 @@ function setupDmxPage() {
 setupDmxPage();
 
 function setRange(channelStart, channelEnd, value) {
-
     const channels = {};
     for (let i = channelStart; i <= channelEnd; i += 1) {
         // DMX is 1-indexed. This should be the only place where the +1 is added
@@ -172,4 +171,3 @@ function setChannel(channel, value) {
 function setAll(value) {
     parent.parent.universe.updateAll(value);
 }
-

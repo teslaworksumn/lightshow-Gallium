@@ -1,6 +1,6 @@
-const path = parent.require("path");
+const path = parent.require('path');
 const xmlReader = parent.require('xml2js');
-const fs = parent.require('fs')
+const fs = parent.require('fs');
 
 // function printUsage() {
 //     console.log("Usage:", process.argv[0], process.argv[1], "new_file_name base_file \[additional_file ...\]");
@@ -31,35 +31,34 @@ const fs = parent.require('fs')
 // }
 
 
-
 module.exports = {
-    combineTimFiles: async function (files) {
-        var baseXML = fs.readFileSync(files[1]);
-        var baseData;
-        xmlReader.Parser().parseString(baseXML, function (err, result) {
+    async combineTimFiles(files) {
+        const baseXML = fs.readFileSync(files[1]);
+        let baseData;
+        xmlReader.Parser().parseString(baseXML, (err, result) => {
             baseData = JSON.parse(JSON.stringify(result, null, 2));
         });
 
 
         for (let i = 2; i < files.length; i += 1) {
-            var additionalDataXML = fs.readFileSync(files[i]);
+            const additionalDataXML = fs.readFileSync(files[i]);
             var additionalData;
-            xmlReader.Parser().parseString(additionalDataXML, function (err, result) {
+            xmlReader.Parser().parseString(additionalDataXML, (err, result) => {
                 additionalData = JSON.parse(JSON.stringify(result, null, 2));
             });
-            var additionalDataModels = additionalData["TimedSequenceData"]["_dataModels"][0]["d1p1:anyType"][0];
-            for (var j = 0; j < additionalDataModels.length; j++) {
-                baseData["TimedSequenceData"]["_dataModels"][0]["d1p1:anyType"].push(additionalDataModels[j])
+            const additionalDataModels = additionalData.TimedSequenceData._dataModels[0]['d1p1:anyType'][0];
+            for (let j = 0; j < additionalDataModels.length; j++) {
+                baseData.TimedSequenceData._dataModels[0]['d1p1:anyType'].push(additionalDataModels[j]);
             }
 
-            var additionalDataNodes = additionalData["TimedSequenceData"]["_effectNodeSurrogates"][0]["EffectNodeSurrogate"]
-            for (var k = 0; k < additionalDataNodes.length; k++) {
-                baseData["TimedSequenceData"]["_effectNodeSurrogates"][0]["EffectNodeSurrogate"].push(additionalDataNodes[k])
+            const additionalDataNodes = additionalData.TimedSequenceData._effectNodeSurrogates[0].EffectNodeSurrogate;
+            for (let k = 0; k < additionalDataNodes.length; k++) {
+                baseData.TimedSequenceData._effectNodeSurrogates[0].EffectNodeSurrogate.push(additionalDataNodes[k]);
             }
         }
 
-        var builder = new xmlReader.Builder();
-        var newTimFile = builder.buildObject(baseData);
-        fs.writeFileSync(files[0], newTimFile)
-    }
-}
+        const builder = new xmlReader.Builder();
+        const newTimFile = builder.buildObject(baseData);
+        fs.writeFileSync(files[0], newTimFile);
+    },
+};

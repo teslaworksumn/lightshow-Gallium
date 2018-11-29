@@ -1,5 +1,6 @@
 function csvToArray(csv) {
     rows = csv.split('\n');
+    // console.log(rows);
 
     return rows.map(row => row.split(','));
 }
@@ -52,6 +53,7 @@ function createSequenceJsonAudioOnly(audioPath, showPath) {
  */
 function createSequenceJson(csvFilePath, audioFilePath, timeFrameLength, showPath) {
     const csv = fse.readFileSync(csvFilePath, 'utf8');
+    console.log(csv.length);
     const csvFilePathSplit = csvFilePath.split(path.sep);
     const csvFileName = csvFilePathSplit[csvFilePathSplit.length - 1];
     const csvFileNameWithoutExtension = csvFileName.replace(/\.[^/.]+$/, ''); // removes the extension with regex
