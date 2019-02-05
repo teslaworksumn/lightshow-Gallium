@@ -20,10 +20,11 @@ function decodeBuffer (buffer) {
 }
 
 function react(buffer) {
-  var fft_gain=0.13; //from python version of reactor configs/config.yaml
-  var vu_gain=1; //from python version of reactor configs/config.yaml
+  var fft_gain = 0.13; //from python version of reactor configs/config.yaml
+  var vu_gain = 1; //from python version of reactor configs/config.yaml
   var vu_frame = decodeBuffer(buffer);
-  fft_frame=vu_frame.forEach(function(x) {
-    return x*fft_gain/vu_gain;
+  console.log("frame", vu_frame);
+  fft_frame = vu_frame.forEach(function(x) {
+    return x * fft_gain / vu_gain;
   });
 }

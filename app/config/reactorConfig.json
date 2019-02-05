@@ -1,0 +1,65 @@
+{
+  "config": [
+    {
+      "numChannels": 69,
+      "numFftChannels": 1,
+      "numVuChannels": 2,
+      "numFftGain": 0.13,
+      "numVuGain": 0.08,
+      "fftN": 5,
+      "fftLog": "Y",
+      "vuLog": "Y"
+    },
+    {
+      "channel": 0,
+      "lightingType": 0,
+      "typeChannel": 0
+    },
+    {
+      "channel": 1,
+      "lightingType": 1,
+      "typeChannel": 1
+    },
+    {
+      "channel": 2,
+      "lightingType": 2,
+      "typeChannel": 2
+    },
+    {
+      "channel": 3,
+      "lightingType": 3,
+      "typeChannel": 3
+    },
+    {
+      "channel": 4,
+      "lightingType": 4,
+      "typeChannel": 4
+    },
+    {
+      "channel": 5,
+      "lightingType": 5,
+      "typeChannel": 0
+    },
+    {
+      "channel": 6,
+      "lightingType": 6,
+      "typeChannel": 1
+    },
+    {
+      "channel": 7,
+      "lightingType": 7,
+      "typeChannel": 2
+    },
+    {
+      "channel": 8,
+      "lightingType": 8,
+      "typeChannel": 3
+    },
+    {
+      "channel": 9,
+      "lightingType": 9,
+      "typeChannel": 4
+    },
+    {}
+  ]
+}

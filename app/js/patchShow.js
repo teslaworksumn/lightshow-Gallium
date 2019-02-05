@@ -91,6 +91,7 @@ function patchShow() {
         patchButton.setAttribute('disabled', '');
         label.innerText = 'Fetching Google Sheet...';
         // URL to Google Script webapp located in the Light Show Google Drive as 2018-patch-grabber
+        // hardcode
         const GScriptUrl = 'https://script.google.com/macros/s/AKfycbxSabxEj7hijXpU50--KB6lTMDfKF7Y3oEELDfdqGXgiNW9pGw/exec';
         patchPath = path;
         return fetch(GScriptUrl);

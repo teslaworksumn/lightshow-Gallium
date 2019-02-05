@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<link href="../css/style.css" rel="stylesheet" id="style" />
+
+<body>
+    <span class="headertext">Reactor</span>
+    <br><br>
+    <button id='update'>Update Reactor Config</button>
+    <br><br>
+    <button id='play'>Start Reactor</button>
+    <br><br>
+    <span id="label">Selected input device:</span>
+    <select id="audioInputDevice">
+        <option value="" selected disabled hidden>Choose device</option>
+    </select>
+    <br>
+    <p id="selectedConfigFile"></p>
+
+</body>
+
+<script>
+    const updateButton = document.getElementById('update');
+    const label = document.getElementById('label');
+
+    updateButton.onclick = function () {updateConfig()};
+
+</script>
+<script type="text/javascript" src="../js/updateReactorConfig.js"></script>
+<script type="text/javascript" src="../js/updateAudioDevicesList.js"></script>
+
+</html>
