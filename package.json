@@ -43,6 +43,7 @@
     "electron-first-run": "^2.0.0",
     "fs-extra": "^7.0.0",
     "howler": "^2.0.15",
+    "mathjs": "^5.4.2",
     "nanotimer": "^0.3.15",
     "naudiodon": "^0.4.7",
     "play-sound": "^1.1.2",
