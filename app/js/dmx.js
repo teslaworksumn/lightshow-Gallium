@@ -1,4 +1,3 @@
-
 const DMX = parent.require('dmx');
 
 /* Fading setup */
