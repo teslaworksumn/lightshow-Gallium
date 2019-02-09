@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+
+<link href="../css/style.css" rel="stylesheet" id="style" />
+
+<body>
+    <span class="headertext">Midilights</span>
+    <br><br>
+    <button id="start">Start Midilights</button>
+    <button id="stop">Stop Midilights</button>
+    <p>The buttons don't really do anything right now</p>
+
+    <label for "numChanels">Number of set DMX channels:</label>
+    <span id="textNumChannels">0</span>
+    <br>
+    <input id="numChannels" type="text" placeholder="number of DMX channels">
+    <button id="setChannelCount">Set</button>
+    <br><br>
+
+    <label for="midiSelect">Selected MIDI controller:</label>
+    <span id="selectedMidiController">None</span>
+    <br>
+    <select id="midiSelect"></select>
+    <button id="midiRefresh">Refresh</button>
+    <button id="midiSet">Set</button>
+</body>
+    <script>
+    const startButton = document.getElementById("start");
+    const stopButton = document.getElementById("stop");
+    const channelCountInput = document.getElementById("numChannels");
+
+    startButton.onclick = function () {startMidilights()};
+    stopButton.onclick = function () {stopMidilights()};
+
+    </script>
+<script src="../js/midiTest.js"></script>
+</html>
