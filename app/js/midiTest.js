@@ -51,6 +51,7 @@ function showMappingInterface(choice) {
         autoDiv.setAttribute("style", "display: block");
         manualDiv.setAttribute("style", "display: none");
     } else if (choice.value === "manual") {
+        addManualEffectSelect();
         manualDiv.setAttribute("style", "display: block");
         autoDiv.setAttribute("style", "display: none");
     }
@@ -97,7 +98,7 @@ function mapChannelsAuto() {
         // add the DMX channel for a key to a mapping
         // DMX channels can repeat
         for (let i = 0; i < NUM_KEYS; i++) {
-            mapping[i] = validChannels[i % numChannels];
+            mapping[i]= [validChannels[i % numChannels]];
         }
     }
 
@@ -107,8 +108,64 @@ function mapChannelsAuto() {
     }
 }
 
+function addManualEffectSelect() {
+    const table = document.getElementById("manualTable");
+
+    // add selection option for different effects
+    for (let i = 0, row; row = table.rows[i]; i++) {
+        let col = row.cells[1];
+        const select = document.createElement("select");
+
+        const option1 = document.createElement("option");
+        option1.value = "on/off (standard)";
+        option1.innerText = "on/off (standard)";
+        select.appendChild(option1);
+
+        const option2 = document.createElement("option");
+        option2.value = "fade";
+        option2.innerText = "fade";
+        select.appendChild(option2);
+
+        const option3 = document.createElement("option");
+        option3.value = "pulse";
+        option3.innerText = "pulse";
+        select.appendChild(option3);
+
+        const option4 = document.createElement("option");
+        option4.value = "chase";
+        option4.innerText = "chase";
+        select.appendChild(option4);
+
+        col.appendChild(select);
+    }
+}
+
+
 function mapChannelsManual() {
-    
+    var table = document.getElementById("manualTable");
+    for (var i = 0, row; row = table.rows[i]; i++) {
+        col = row.cells[1];
+        let channels = col.children[0].value;
+        channels = channels.split(/,/);
+        for (let i = 0; i < channels.length; i++) {
+            if (!isNumber(channels[i])) {
+                console.log("very bad number here");
+            }
+
+            channels[i] = parseInt(channels[i], 10);
+        }
+        mapping[i] = channels;
+    }
+
+    //console.log("mapping", mapping);
+    for (let i = 0; i < NUM_KEYS; i++) {
+        let dmxChannels = mapping[i];
+        for (let j = 0; j < dmxChannels.length; j++) {
+            console.log("dmxChannels", dmxChannels);
+            keysDown[dmxChannels[j]] = 0;
+        }
+    }
+    console.log("keysDown", keysDown);
 }
 
 function isNumber(value) {
@@ -208,27 +265,50 @@ function midiToDmx(data) {
     const brightness = data[2] * 2; // multiply by 2 to get 0-255 values
 
     // mapping is looked up and returned based on previous mapping calculation
-    const channel = mapping[key];
-
+    console.log("key");
+    const channels = mapping[key];
 
     const channelData = {};
-    channelData[channel] = brightness;
+    console.log("channels", channels);
+    for (let i = 0; i < channels.length; i++) {
+        let dmxChannel = channels[i];
+        channelData[dmxChannel] = brightness;
+    }
+
+    //channelData[channel] = brightness;
+    console.log("channelData", channelData);
 
     // ensures that a proper value for total DMX channels has been set
     if (!isEmpty(keysDown)) {
         // key is pressed
         if (action == KEY_PRESSED) {
-            console.log(key);
+            //console.log(key);
             parent.universe.update(channelData);
-            keysDown[channel] += 1;
-        } else if (action == KEY_RELEASED) { // key is released
-            channelData[channel] = 0;
-            keysDown[channel] -= 1;
-
-            // only turn off light if all keys associated with that channel are up
-            if (keysDown[channel] == 0) {
-                parent.universe.update(channelData);
+            for (let i = 0; i < channels.length; i++) {
+                //console.log("in here", channels[i]);
+                let dmxChannel = channels[i];
+                keysDown[dmxChannel] += 1;
             }
+            console.log("before", keysDown);
+            //keysDown[channel] += 1;
+
+            //console.log("mapping", mapping);
+            //console.log("mapping[key]", mapping[key]);
+            //console.log("channel", channel);
+        } else if (action == KEY_RELEASED) { // key is released
+            for (let i = 0; i < channels.length; i++) {
+                let dmxChannel = channels[i];
+                channelData[dmxChannel] = 0; // turn off channels
+                keysDown[dmxChannel] -= 1;
+                
+                // only turn off light if all keys associated with that channel are up
+                if (keysDown[dmxChannel] == 0) {
+                    parent.universe.update(channelData);
+                }
+            }
+            console.log("after", keysDown);
+            //keysDown[channel] -= 1;
+
         }
     }
 }

@@ -10,12 +10,6 @@
     <button id="stop">Stop Midilights</button>
     <p>The buttons don't really do anything right now</p>
 
-    <label for "numChanels">Number of set DMX channels:</label>
-    <span id="textNumChannels">0</span>
-    <br>
-    <input id="numChannels" type="text" placeholder="number of DMX channels">
-    <button id="setChannelCount">Set</button>
-    <br><br>
 
     <label for="midiSelect">Selected MIDI controller:</label>
     <span id="selectedMidiController">None</span>
@@ -34,6 +28,13 @@
     <br>
 
     <div class="mapper" id="mapAuto">
+        <label for "numChannels">Number of set DMX channels:</label>
+        <span id="textNumChannels">0</span>
+        <br>
+        <input id="numChannels" type="text" placeholder="number of DMX channels">
+        <button id="setChannelCount">Set</button>
+        <br><br>
+
         <label for="autoEmptyChannels">List out empty DMX channels separated by commas</label>
         <br>
         <input id="autoEmptyChannels" placeholder="emptyChannel1,emptyChannel2, ...">
@@ -45,7 +46,7 @@
 
     <div class="mapper" id="mapManual">
         <p>List the DMX channels each key should be mapped to separated by commas<p>
-        <table>
+        <table id="manualTable">
             <tr>
                 <td>C</td>
                 <td>
