@@ -232,3 +232,7 @@ select {
     position: absolute;
     z-index: 10;
 }
+
+.mapper {
+    display: none;
+}
