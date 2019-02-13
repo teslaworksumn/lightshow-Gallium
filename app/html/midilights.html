@@ -10,118 +10,132 @@
     <button id="stop">Stop Midilights</button>
     <p>The buttons don't really do anything right now</p>
 
-
-    <label for="midiSelect">Selected MIDI controller:</label>
-    <span id="selectedMidiController">None</span>
-    <br>
-    <select id="midiSelect"></select>
-    <button id="midiRefresh">Refresh</button>
-    <button id="midiSet">Set</button>
+    <button id="useMidi">Use Midi</button>
+    <button id="useKeyboard">Use Keyboard</button>
     <br><br>
 
-    <input type="radio" id="automatic" name="mappingType" value="automatic" onclick="showMappingInterface(this)"></input>
-    <label for="automatic">Use automatic channel mapping</label>
-    <br>
-    <input type="radio" id="manual" name="mappingType" value="manual" onclick="showMappingInterface(this)"></input>
-    <label for="manual">Manually map channels</label>
-    <br>
-    <br>
-
-    <div class="mapper" id="mapAuto">
-        <label for "numChannels">Number of set DMX channels:</label>
-        <span id="textNumChannels">0</span>
+    <div id="midiControl">
+        <label for="midiSelect">Selected MIDI controller:</label>
+        <span id="selectedMidiController">None</span>
         <br>
-        <input id="numChannels" type="text" placeholder="number of DMX channels">
-        <button id="setChannelCount">Set</button>
+        <select id="midiSelect"></select>
+        <button id="midiRefresh">Refresh</button>
+        <button id="midiSet">Set</button>
         <br><br>
 
-        <label for="autoEmptyChannels">List out empty DMX channels separated by commas</label>
+        <input type="radio" id="automatic" name="mappingType" value="automatic" onclick="showMappingInterface(this)"></input>
+        <label for="automatic">Use automatic channel mapping</label>
         <br>
-        <input id="autoEmptyChannels" placeholder="emptyChannel1,emptyChannel2, ...">
-        <span id="autoErrorText"></span>
-        <p>These channels will not be used when assigning keyboard keys to DMX channels</p>
-        <p>Note that DMX channels are different from box channels</p>
-        <button id="autoSubmit" onclick="mapChannelsAuto()">Submit</button>
+        <input type="radio" id="manual" name="mappingType" value="manual" onclick="showMappingInterface(this)"></input>
+        <label for="manual">Manually map channels</label>
+        <br>
+        <br>
+
+        <div class="mapper" id="mapAuto">
+            <label for "numChannels">Number of set DMX channels:</label>
+            <span id="textNumChannels">0</span>
+            <br>
+            <input id="numChannels" type="text" placeholder="number of DMX channels">
+            <button id="setChannelCount">Set</button>
+            <br><br>
+
+            <label for="autoEmptyChannels">List out empty DMX channels separated by commas</label>
+            <br>
+            <input id="autoEmptyChannels" placeholder="emptyChannel1,emptyChannel2, ...">
+            <span id="autoErrorText"></span>
+            <p>These channels will not be used when assigning keyboard keys to DMX channels</p>
+            <p>Note that DMX channels are different from box channels</p>
+            <button id="autoSubmit" onclick="mapChannelsAuto()">Submit</button>
+        </div>
+
+        <div class="mapper" id="mapManual">
+            <p>List the DMX channels each key should be mapped to separated by commas<p>
+            <table id="manualTable">
+                <tr>
+                    <td>C</td>
+                    <td>
+                        <input type="text" id="cMap" placeholder="channel1,channel2 ...">
+                    </td>
+                </tr>
+                <tr>
+                    <td>C# / Db</td>
+                    <td>
+                        <input type="text" id="c#Map" placeholder="channel1,channel2 ...">
+                    </td>
+                </tr>
+                <tr>
+                    <td>D</td>
+                    <td>
+                        <input type="text" id="dMap" placeholder="channel1,channel2 ...">
+                    </td>
+                </tr>
+                <tr>
+                    <td>D# / Eb</td>
+                    <td>
+                        <input type="text" id="d#Map" placeholder="channel1,channel2 ...">
+                    </td>
+                </tr>
+                <tr>
+                    <td>E</td>
+                    <td>
+                        <input type="text" id="eMap" placeholder="channel1,channel2 ...">
+                    </td>
+                </tr>
+                <tr>
+                    <td>F</td>
+                    <td>
+                        <input type="text" id="fMap" placeholder="channel1,channel2 ...">
+                    </td>
+                </tr>
+                <tr>
+                    <td>F# / Gb</td>
+                    <td>
+                        <input type="text" id="g#Map" placeholder="channel1,channel2 ...">
+                    </td>
+                </tr>
+                <tr>
+                    <td>G</td>
+                    <td>
+                        <input type="text" id="gMap" placeholder="channel1,channel2 ...">
+                    </td>
+                </tr>
+                <tr>
+                    <td>G# / Ab</td>
+                    <td>
+                        <input type="text" id="g#Map" placeholder="channel1,channel2 ...">
+                    </td>
+                </tr>
+                <tr>
+                    <td>A</td>
+                    <td>
+                        <input type="text" id="aMap" placeholder="channel1,channel2 ...">
+                    </td>
+                </tr>
+                <tr>
+                    <td>A# / Bb</td>
+                    <td>
+                        <input type="text" id="a#Map" placeholder="channel1,channel2 ...">
+                    </td>
+                </tr>
+                <tr>
+                    <td>B</td>
+                    <td>
+                        <input type="text" id="bMap" placeholder="channel1,channel2 ...">
+                    </td>
+                </tr>
+            </table>
+            <br>
+            <button id="manualSubmit" onclick="mapChannelsManual()">Submit</button>
+        </div>
     </div>
 
-    <div class="mapper" id="mapManual">
+    <div id="keyboardControl">
         <p>List the DMX channels each key should be mapped to separated by commas<p>
-        <table id="manualTable">
-            <tr>
-                <td>C</td>
-                <td>
-                    <input type="text" id="cMap" placeholder="channel1,channel2 ...">
-                </td>
-            </tr>
-            <tr>
-                <td>C# / Db</td>
-                <td>
-                    <input type="text" id="c#Map" placeholder="channel1,channel2 ...">
-                </td>
-            </tr>
-            <tr>
-                <td>D</td>
-                <td>
-                    <input type="text" id="dMap" placeholder="channel1,channel2 ...">
-                </td>
-            </tr>
-            <tr>
-                <td>D# / Eb</td>
-                <td>
-                    <input type="text" id="d#Map" placeholder="channel1,channel2 ...">
-                </td>
-            </tr>
-            <tr>
-                <td>E</td>
-                <td>
-                    <input type="text" id="eMap" placeholder="channel1,channel2 ...">
-                </td>
-            </tr>
-            <tr>
-                <td>F</td>
-                <td>
-                    <input type="text" id="fMap" placeholder="channel1,channel2 ...">
-                </td>
-            </tr>
-            <tr>
-                <td>F# / Gb</td>
-                <td>
-                    <input type="text" id="g#Map" placeholder="channel1,channel2 ...">
-                </td>
-            </tr>
-            <tr>
-                <td>G</td>
-                <td>
-                    <input type="text" id="gMap" placeholder="channel1,channel2 ...">
-                </td>
-            </tr>
-            <tr>
-                <td>G# / Ab</td>
-                <td>
-                    <input type="text" id="g#Map" placeholder="channel1,channel2 ...">
-                </td>
-            </tr>
-            <tr>
-                <td>A</td>
-                <td>
-                    <input type="text" id="aMap" placeholder="channel1,channel2 ...">
-                </td>
-            </tr>
-            <tr>
-                <td>A# / Bb</td>
-                <td>
-                    <input type="text" id="a#Map" placeholder="channel1,channel2 ...">
-                </td>
-            </tr>
-            <tr>
-                <td>B</td>
-                <td>
-                    <input type="text" id="bMap" placeholder="channel1,channel2 ...">
-                </td>
-            </tr>
+        <table id="keyboardTable">
         </table>
         <br>
-        <button id="manualSubmit" onclick="mapChannelsManual()">Submit</button>
+        <button id="keyboardSubmit" onclick="mapChannelsKeyboard()">Submit</button>
+        <button id="addKeyboardKey" onclick="addKeyboardKey()">Add Key</button>
     </div>
 
 
