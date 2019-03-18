@@ -6,9 +6,9 @@
 <body>
     <span class="headertext">Midilights</span>
     <br><br>
-    <button id="start">Start Midilights</button>
-    <button id="stop">Stop Midilights</button>
-    <p>The buttons don't really do anything right now</p>
+    <button id="start">All On</button>
+    <button id="stop">All Off and Stop Midilights</button>
+    <br> <br>
 
     <button id="useMidi">Use Midi</button>
     <button id="useKeyboard">Use Keyboard</button>
@@ -23,15 +23,16 @@
         <button id="midiSet">Set</button>
         <br><br>
 
-        <input type="radio" id="automatic" name="mappingType" value="automatic" onclick="showMappingInterface(this)"></input>
+        <!-- radio buttons to select either automatic or manual mapping -->
+        <input type="radio" id="automatic" name="mappingType" value="automatic" onclick="showAutoMappingInterface(this)"></input>
         <label for="automatic">Use automatic channel mapping</label>
         <br>
-        <input type="radio" id="manual" name="mappingType" value="manual" onclick="showMappingInterface(this)"></input>
+        <input type="radio" id="manual" name="mappingType" value="manual" onclick="showManualTypeInterface(this)"></input>
         <label for="manual">Manually map channels</label>
         <br>
         <br>
 
-        <div class="mapper" id="mapAuto">
+        <div class="invisible" id="mapAuto">
             <label for "numChannels">Number of set DMX channels:</label>
             <span id="textNumChannels">0</span>
             <br>
@@ -48,91 +49,36 @@
             <button id="autoSubmit" onclick="mapChannelsAuto()">Submit</button>
         </div>
 
-        <div class="mapper" id="mapManual">
-            <p>List the DMX channels each key should be mapped to separated by commas<p>
-            <table id="manualTable">
-                <tr>
-                    <td>C</td>
-                    <td>
-                        <input type="text" id="cMap" placeholder="channel1,channel2 ...">
-                    </td>
-                </tr>
-                <tr>
-                    <td>C# / Db</td>
-                    <td>
-                        <input type="text" id="c#Map" placeholder="channel1,channel2 ...">
-                    </td>
-                </tr>
-                <tr>
-                    <td>D</td>
-                    <td>
-                        <input type="text" id="dMap" placeholder="channel1,channel2 ...">
-                    </td>
-                </tr>
-                <tr>
-                    <td>D# / Eb</td>
-                    <td>
-                        <input type="text" id="d#Map" placeholder="channel1,channel2 ...">
-                    </td>
-                </tr>
-                <tr>
-                    <td>E</td>
-                    <td>
-                        <input type="text" id="eMap" placeholder="channel1,channel2 ...">
-                    </td>
-                </tr>
-                <tr>
-                    <td>F</td>
-                    <td>
-                        <input type="text" id="fMap" placeholder="channel1,channel2 ...">
-                    </td>
-                </tr>
-                <tr>
-                    <td>F# / Gb</td>
-                    <td>
-                        <input type="text" id="g#Map" placeholder="channel1,channel2 ...">
-                    </td>
-                </tr>
-                <tr>
-                    <td>G</td>
-                    <td>
-                        <input type="text" id="gMap" placeholder="channel1,channel2 ...">
-                    </td>
-                </tr>
-                <tr>
-                    <td>G# / Ab</td>
-                    <td>
-                        <input type="text" id="g#Map" placeholder="channel1,channel2 ...">
-                    </td>
-                </tr>
-                <tr>
-                    <td>A</td>
-                    <td>
-                        <input type="text" id="aMap" placeholder="channel1,channel2 ...">
-                    </td>
-                </tr>
-                <tr>
-                    <td>A# / Bb</td>
-                    <td>
-                        <input type="text" id="a#Map" placeholder="channel1,channel2 ...">
-                    </td>
-                </tr>
-                <tr>
-                    <td>B</td>
-                    <td>
-                        <input type="text" id="bMap" placeholder="channel1,channel2 ...">
-                    </td>
-                </tr>
-            </table>
+
+        <!-- radio buttons to select which type of manual mapping to be done -->
+        <div class="invisible" id="manualType">
+            <input type="radio" id="oneOctave" name="manualType" value="oneOctave" onclick="setupOneOctave()"></input>
+            <label for="oneOctave">Repeat mapping for one octave across all octaves</label>
             <br>
+            <input type="radio" id="keyRange" name="manualType" value="keyRange" onclick="setupKeyRange()"></input>
+            <label for="keyRange">Choose key range and individually set octaves</label>
+            <br>
+            <br>
+        </div>
+
+        <div class="invisible" id="prompts">
+            <div id="promptLowNote">
+                <p>Press the lowest note on the keyboard</p>
+            </div>
+            <div class="invisible" id="promptHighNote">
+                <p>Press the highest note on the keyboard</p>
+            </div>
+
+        </div>
+
+        <div class="invisible" id="mapManual">
+            <p>List the DMX channels each key should be mapped to separated by commas<p>
             <button id="manualSubmit" onclick="mapChannelsManual()">Submit</button>
         </div>
     </div>
 
     <div id="keyboardControl">
         <p>List the DMX channels each key should be mapped to separated by commas<p>
-        <table id="keyboardTable">
-        </table>
         <br>
         <button id="keyboardSubmit" onclick="mapChannelsKeyboard()">Submit</button>
         <button id="addKeyboardKey" onclick="addKeyboardKey()">Add Key</button>
@@ -145,8 +91,8 @@
     const stopButton = document.getElementById("stop");
     const channelCountInput = document.getElementById("numChannels");
 
-    startButton.onclick = function () {startMidilights()};
-    stopButton.onclick = function () {stopMidilights()};
+    startButton.onclick = function () {allOn()};
+    stopButton.onclick = function () {allOff()};
 
     </script>
 <script src="../js/midiTest.js"></script>

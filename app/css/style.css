@@ -233,6 +233,6 @@ select {
     z-index: 10;
 }
 
-.mapper {
+.invisible {
     display: none;
 }

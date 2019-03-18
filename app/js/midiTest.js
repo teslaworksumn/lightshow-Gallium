@@ -18,6 +18,17 @@ var inputs;
 var outputs;
 var midiPort;
 
+// constants used to help determine which stage of setting up the page is on
+const FINISHED = 4;
+
+var firstNote = -1;
+var secondNote = -2;
+
+// used to determine if the midi inputs are for setting up the keyboard or are
+// regular presses
+var settingUpCount = 0;
+var isSettingUp = true;
+
 var numChannels = INVALID;
 var keysDown = {};
 
@@ -35,9 +46,16 @@ const useKeyboard = document.getElementById("useKeyboard");
 
 const input = document.querySelector('input');
 
+
+midiControl.setAttribute("style", "display:none");
+keyboardControl.setAttribute("style", "display:none");
+
+
+// Set GUI elements based on the type of input
 useMidi.onclick = function showMidiControl() {
     midiControl.setAttribute("style", "display: block");
     keyboardControl.setAttribute("style", "display: none");
+
 
     // only listen for keypress events when the keyboard input option is chosen
     document.removeEventListener('keydown', keyboardToDmx);
@@ -55,35 +73,19 @@ useKeyboard.onclick = function showMidiControl() {
     document.addEventListener('keyup', keyboardToDmx);
 }
 
-midiControl.setAttribute("style", "display:none");
-keyboardControl.setAttribute("style", "display:none");
 
 
 function showKeyboardTable() {
-    const table = document.getElementById("keyboardTable");
+    const keyboardDiv = document.getElementById("keyboardControl");
+    const table = createMappingTable(-1, -1, "keyboard");
 
-    // NUM_KEYS is just chosen for now - option to be changed for later?
-    for (let i = 0; i < NUM_KEYS; i++) {
-        const row = document.createElement("tr");
-        const keyCol = document.createElement("td");
-
-        const keyInput = document.createElement("input");
-        keyInput.setAttribute("type", "text");
-        keyInput.setAttribute("placeholder", "keyboard key");
-        keyCol.appendChild(keyInput);
-
-        const channelCol = document.createElement("td");
-        const channelInput = document.createElement("input");
-        channelInput.setAttribute("type", "text");
-        channelInput.setAttribute("placeholder", "channel1,channel2, ...");
-        channelCol.appendChild(channelInput);
-
-        row.appendChild(keyCol);
-        row.appendChild(channelCol);
-        table.appendChild(row);
+    // remove previous tables instead of adding to them
+    const oldTable = keyboardDiv.querySelector("table");
+    if (oldTable) {
+        keyboardDiv.removeChild(oldTable);
     }
 
-    addEffectSelect("keyboardTable");
+    keyboardDiv.appendChild(table);
 }
 
 function mapChannelsKeyboard() {
@@ -91,6 +93,7 @@ function mapChannelsKeyboard() {
     let keys = [];
     let channels = [];
 
+    // extract all rows with channels mapped and push to appropriate arrays
     for (var i = 0, row; row = table.rows[i]; i++) {
         let keyCol = row.cells[0];
         let key = keyCol.children[0].value;
@@ -100,34 +103,35 @@ function mapChannelsKeyboard() {
             keys.push(key);
         }
 
+        // second column is text box with key that is being mapped
         let channelCol = row.cells[1];
+
+        // first child is text box with CSV separated DMX channels
         let channelInputs = channelCol.children[0].value;
 
         // only add if there is some input for channel list
         if (channelInputs) {
             channelInputs = channelInputs.split(/,/);
-            let numberChannels = []
+            let dmxChannels = []
             for (let i = 0; i < channelInputs.length; i++) {
                 if (!isNumber(channelInputs[i])) {
                     console.log("bad number here", channelInputs[i]);
                 } else {
-                    numberChannels.push(parseInt(channelInputs[i], 10));
+                    dmxChannels.push(parseInt(channelInputs[i], 10));
                 }
             }
 
-            channels.push(numberChannels);
+            channels.push(dmxChannels);
         }
     }
-
-    //console.log("keys", keys);
-    //console.log("channels", channels);
 
     // assign array of inputted channels to each keyboard character
     for (let i = 0; i < keys.length; i++) {
         let key = keys[i]; // keyboard character
         mapping[key] = channels[i];
-        //keysDown[key] = 0;
     }
+
+    console.log("mapping", mapping);
 
     // initialize DMX channel keys in keysDown
     for (let i = 0; i < channels.length; i++) {
@@ -137,10 +141,7 @@ function mapChannelsKeyboard() {
         }
     }
 
-    
-
     console.log("mapping", mapping);
-    //console.log("keysDown", keysDown);
 }
 
 // add a row to the keyboard table, allowing for another input key
@@ -214,19 +215,175 @@ setMidi.onclick = function setMidiDevice() {
 }
 
 // show the relevant portion of the UI
-function showMappingInterface(choice) {
+function showAutoMappingInterface(choice) {
     const autoDiv = document.getElementById("mapAuto");
     const manualDiv = document.getElementById("mapManual");
+    const manualTypeDiv = document.getElementById("manualType");
 
-    if (choice.value === "automatic") {
-        autoDiv.setAttribute("style", "display: block");
-        manualDiv.setAttribute("style", "display: none");
-    } else if (choice.value === "manual") {
-        addEffectSelect("manualTable");
-        manualDiv.setAttribute("style", "display: block");
-        autoDiv.setAttribute("style", "display: none");
+    autoDiv.setAttribute("style", "display: block");
+    manualDiv.setAttribute("style", "display: none");
+    manualType.setAttribute("style", "display: none");
+}
+
+function hideElement(id) {
+    if (typeof id === 'string') {
+        const element = document.getElementById(id);
+        element.setAttribute("class", "invisible");
+    } else {
+        id.setAttribute("class", "invisible");
     }
 }
+
+function showElement(id) {
+    if (typeof id === 'string') {
+        const element = document.getElementById(id);
+        element.removeAttribute("class");
+    } else {
+        id.removeAttribute("class");
+    }
+}
+
+
+function setupAutoMap() {
+
+}
+
+function setupManualMap() {
+}
+
+function setupOneOctave() {
+    showOneOctaveTable();
+    isSettingUp = false; // no prompting notes needed for this selection
+
+    hideElement(keyboardControl);
+    hideElement("prompts");
+    hideElement("mapAuto");
+}
+
+function setupKeyRange() {
+    hideElement(keyboardControl);
+    hideElement("mapAuto");
+
+    showElement("prompts");
+    isSettingUp = true;
+}
+
+function showManualTypeInterface() {
+    const manualType = document.getElementById("manualType");
+    const autoDiv = document.getElementById("mapAuto");
+
+    manualType.setAttribute("style", "display: block");
+    autoDiv.setAttribute("style", "display: none");
+}
+
+// shows a table with notes from C to B
+function showOneOctaveTable() {
+    const C4 = 60;
+    const B4 = 71;
+    
+    showMidiTable(C4, B4);
+}
+
+function showMidiTable(low, high) {
+    const manualDiv = document.getElementById('mapManual');
+    const table = createMappingTable(low, high, "midi");
+
+    table.setAttribute("id", "manualTable");
+
+    manualDiv.appendChild(table);
+    manualDiv.setAttribute("style", "display: block");
+}
+
+// function promptNotes() {
+//     const prompts = document.getElementById("prompts");
+
+//     prompts.setAttribute("style", "display: block");
+//     isSettingUp = true;
+// }
+
+
+// Returns an HTML table containing rows for every key between (inclusive)
+// startNote and endNote
+function createMappingTable(startNote, endNote, inputType) {
+    const table = document.createElement("table");
+
+    if (inputType === "midi") {
+        // i <= endNote includes all notes in the range
+        for (let i = startNote; i <= endNote; i++) {
+            const row = document.createElement("tr");
+            const keyCol = document.createElement("td");
+            const inputCol = document.createElement("td");
+
+            keyCol.innerText = getNoteLetterFromMidi(i);
+            keyCol.value = i; // value is MIDI note number
+
+            const channelInput = document.createElement("input");
+            const select = createEffectSelect();
+            inputCol.appendChild(channelInput);
+            inputCol.appendChild(select);
+
+            row.appendChild(keyCol);
+            row.appendChild(inputCol);
+
+            table.appendChild(row);
+        }
+    } else if (inputType === "keyboard") {
+        for (let i = 0; i < NUM_KEYS; i++) {
+            const row = document.createElement("tr");
+            const keyCol = document.createElement("td");
+            const inputCol = document.createElement("td");
+
+            const noteInput = document.createElement("input");
+            keyCol.appendChild(noteInput);
+
+            const channelInput = document.createElement("input");
+            const select = createEffectSelect();
+            inputCol.appendChild(channelInput);
+            inputCol.appendChild(select);
+
+            row.appendChild(keyCol);
+            row.appendChild(inputCol);
+
+            table.appendChild(row);
+            table.setAttribute("id", "keyboardTable");
+        }
+    }
+
+    return table;
+}
+
+// Function that takes in a midi note number and converts it to a string
+// representing the note name
+function getNoteLetterFromMidi(midiNote) {
+    const note = midiNote % NUM_KEYS;
+
+    if (note === 0) {
+        return 'C';
+    } else if (note === 1) {
+        return 'C# / Db';
+    } else if (note === 2) {
+        return 'D';
+    } else if (note === 3) {
+        return 'D# / Eb'
+    } else if (note === 4) {
+        return 'E';
+    } else if (note === 5) {
+        return 'F';
+    } else if (note === 6) {
+        return 'F# / Gb';
+    } else if (note === 7) {
+        return 'G';
+    } else if (note === 8) {
+        return "G# / Ab";
+    } else if (note === 9) {
+        return "A";
+    } else if (note === 10) {
+        return "A# / Bb";
+    } else if (note === 11) {
+        return "B";
+    }
+}
+
 
 // Maps every key to 1 DMX channel
 // DMX channels may repeat so that every key has exactly 1 channel of DMX output
@@ -238,7 +395,11 @@ function mapChannelsAuto() {
     var validChannels = [];
 
     for (let i = 0; i < emptyChannels.length; i++) {
+        console.log("length", emptyChannels.length, emptyChannels);
         if (!isNumber(emptyChannels[i])) {
+            if (emptyChannels[i] === "") {
+                return;
+            }
             label.innerText = "Invalid number entered.  Ensure only integers and commas are entered"
 
             return;
@@ -280,61 +441,64 @@ function mapChannelsAuto() {
     }
 }
 
-function addEffectSelect(id) {
-    const table = document.getElementById(id);
+// Returns an HTML select element with lighting effects as options
+function createEffectSelect() {
+    const select = document.createElement("select");
 
-    // add selection option for different effects
-    for (let i = 0, row; row = table.rows[i]; i++) {
-        let col = row.cells[1];
-        const select = document.createElement("select");
+    const option1 = document.createElement("option");
+    option1.value = ON_OFF;
+    option1.innerText = "on/off (standard)";
+    select.appendChild(option1);
 
-        const option1 = document.createElement("option");
-        option1.value = ON_OFF;
-        option1.innerText = "on/off (standard)";
-        select.appendChild(option1);
+    const option2 = document.createElement("option");
+    option2.value = FADE;
+    option2.innerText = "fade";
+    select.appendChild(option2);
 
-        const option2 = document.createElement("option");
-        option2.value = FADE;
-        option2.innerText = "fade";
-        select.appendChild(option2);
+    const option3 = document.createElement("option");
+    option3.value = PULSE;
+    option3.innerText = "pulse";
+    select.appendChild(option3);
 
-        const option3 = document.createElement("option");
-        option3.value = PULSE;
-        option3.innerText = "pulse";
-        select.appendChild(option3);
+    const option4 = document.createElement("option");
+    option4.value = CHASE;
+    option4.innerText = "chase";
+    select.appendChild(option4);
 
-        const option4 = document.createElement("option");
-        option4.value = CHASE;
-        option4.innerText = "chase";
-        select.appendChild(option4);
-
-        col.appendChild(select);
-    }
+    return select;
 }
 
 
 function mapChannelsManual() {
     var table = document.getElementById("manualTable");
+    console.log(table);
     for (var i = 0, row; row = table.rows[i]; i++) {
+        let noteNameCell = row.cells[0];
+        let note = noteNameCell.value;
+
         let col = row.cells[1];
         let channels = col.children[0].value; // channel input
+        console.log("channels", channels);
         channels = channels.split(/,/);
         for (let i = 0; i < channels.length; i++) {
             if (!isNumber(channels[i])) {
                 console.log("very bad number here");
+            } else {
+                channels[i] = parseInt(channels[i], 10);
             }
-
-            channels[i] = parseInt(channels[i], 10);
         }
-        mapping[i] = channels;
 
+        mapping[note] = channels;
 
         let effect = col.children[1].value; 
-        mapping[i].effect = effect;
+        mapping[note].effect = effect;
     }
+    
+    console.log("mapping", mapping);
 
     // sets up keysDown
-    for (let i = 0; i < NUM_KEYS; i++) {
+    // for every MIDI note
+    for (let i = firstNote; i <= secondNote; i++) {
         let dmxChannels = mapping[i];
         for (let j = 0; j < dmxChannels.length; j++) {
             console.log("dmxChannels", dmxChannels);
@@ -371,11 +535,9 @@ setChannelCount.onclick = function setNumChannels() {
 
 navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
 
-
-
 function onMIDIFailure(msg){
-  console.log('Failed to get MIDI access - ' + msg);
-  process.exit(1);
+    console.log('Failed to get MIDI access - ' + msg);
+    process.exit(1);
 }
 
 function onMIDISuccess(midiAccess) {
@@ -400,19 +562,6 @@ function addMidiDevicesToSelect(inputs) {
     });
 }
 
-/*
-function testOutputs() {
-  console.log('Testing MIDI-Out ports...');
-  outputs.forEach(function(port){
-    //console.log('id:', port.id, 'manufacturer:', port.manufacturer, 'name:', port.name, 'version:', port.version);
-    console.log(port);
-    port.open();
-    port.send([0x90, 60, 0x7f]);
-  });
-  setTimeout(stopOutputs, 1000);
-}
-*/
-
 function stopOutputs() {
   outputs.forEach(function(port){
     port.send([0x80, 60, 0]);
@@ -427,51 +576,70 @@ function onMidiIn(ev) {
 // takes MIDI input data and turns on lights accordingly
 function midiToDmx(data) {
     const action = data[0].toString(16);
-    const key = data[1] % NUM_KEYS; // returns number from 0-11 to index into the mapping dictionary
+    const key = data[1]; // returns number from 0-11 to index into the mapping dictionary
     const brightness = data[2] * 2; // multiply by 2 to get 0-255 values
 
-    // mapping is looked up and returned based on previous mapping calculation
-    console.log("key");
-    const channels = mapping[key];
+    console.log("getting MIDI", isSettingUp);
 
-    const channelData = {};
-    console.log("channels", channels);
-    for (let i = 0; i < channels.length; i++) {
-        let dmxChannel = channels[i];
-        channelData[dmxChannel] = brightness;
-    }
 
-    //channelData[channel] = brightness;
-    console.log("channelData", channelData);
+    if (isSettingUp) {
+        // only do something on key presses
+        if (action === KEY_PRESSED) { 
+            if (firstNote === -1 && secondNote === -2) {
+                console.log("press 1");
+                firstNote = data[1]; // get raw MIDI note number
+                console.log("firstNote", firstNote);
+                const lowPrompt = document.getElementById("promptLowNote");
+                lowPrompt.innerText += " Success!";
 
-    console.log("mapping", mapping);
+                const highPrompt = document.getElementById("promptHighNote");
+                highPrompt.setAttribute("style", "display: block");
+            } else if (secondNote === -2) {
+                console.log("press 2");
+                secondNote = data[1]; // get raw MIDI note number
+                console.log("secondNote", secondNote);
 
-    // ensures that a proper value for total DMX channels has been set
-    if (!isEmpty(keysDown)) {
-        // key is pressed
-        if (action == KEY_PRESSED) {
-            //console.log(key);
-            parent.universe.update(channelData);
-            for (let i = 0; i < channels.length; i++) {
-                //console.log("in here", channels[i]);
-                let dmxChannel = channels[i];
-                keysDown[dmxChannel] += 1;
+                const prompts = document.getElementById("prompts");
+                prompts.setAttribute("class", "invisible");
+
+                showMidiTable(firstNote, secondNote);
             }
-            console.log("before", keysDown);
-            //keysDown[channel] += 1;
+        } else if (action === KEY_RELEASED && firstNote > 0 && secondNote > 0) {
+            if (isSettingUp) {
+                isSettingUp = false;
+            }
+        }
+    } else {
+        // mapping is looked up and returned based on previous mapping calculation
+        const channels = mapping[key];
 
-            //console.log("mapping", mapping);
-            //console.log("mapping[key]", mapping[key]);
-            //console.log("channel", channel);
-        } else if (action == KEY_RELEASED) { // key is released
-            for (let i = 0; i < channels.length; i++) {
-                let dmxChannel = channels[i];
-                channelData[dmxChannel] = 0; // turn off channels
-                keysDown[dmxChannel] -= 1;
-                
-                // only turn off light if all keys associated with that channel are up
-                if (keysDown[dmxChannel] == 0) {
-                    parent.universe.update(channelData);
+        const channelData = {};
+        for (let i = 0; i < channels.length; i++) {
+            let dmxChannel = channels[i];
+            channelData[dmxChannel] = brightness;
+        }
+
+        // ensures that a proper value for total DMX channels has been set
+        if (!isEmpty(keysDown)) {
+            if (action == KEY_PRESSED) {
+                parent.universe.update(channelData);
+                for (let i = 0; i < channels.length; i++) {
+                    let dmxChannel = channels[i];
+                    keysDown[dmxChannel] += 1;
+                }
+                console.log("before", keysDown);
+            } else if (action == KEY_RELEASED) {
+                for (let i = 0; i < channels.length; i++) {
+                    let dmxChannel = channels[i];
+                    channelData[dmxChannel] = 0; // turn off channels
+                    keysDown[dmxChannel] -= 1;
+                    
+                    console.log("after", keysDown);
+                    // only turn off light if all keys associated with that channel are up
+                    if (keysDown[dmxChannel] === 0) {
+                        console.log("dmxChannel", dmxChannel);
+                        parent.universe.update(channelData);
+                    }
                 }
             }
         }
@@ -496,11 +664,12 @@ function keyboardToDmx(keyPress) {
         return;
     }
     
+    // add to array if the key isn't already in there
     if (!(key in keyboardCharactersDown)) {
         keyboardCharactersDown[key] = 0;
     }
 
-    console.log("kcd", keyboardCharactersDown);
+    // console.log("kcd", keyboardCharactersDown);
 
 
     if (!isEmpty(keysDown)) {
@@ -516,18 +685,20 @@ function keyboardToDmx(keyPress) {
                 keysDown[dmxChannel] += 1;
             }
 
-            console.log("keysDown", keysDown);
+            console.log("Down", keysDown);
         } else if (keyPress.type === "keyup") {
 
             keyboardCharactersDown[key] = 0;
 
             for (let i = 0; i < channels.length; i++) {
                 let dmxChannel = channels[i];
-                channelData[dmxChannel] = 0; // turn off channels
                 keysDown[dmxChannel] -= 1;
-                
+
+                console.log("up", keysDown);
                 // only turn off light if all keys associated with that channel are up
-                if (keysDown[dmxChannel] == 0) {
+                if (keysDown[dmxChannel] === 0) {
+                    console.log("turning off", dmxChannel);
+                    channelData[dmxChannel] = 0; // turn off channels
                     parent.universe.update(channelData);
                 }
             }
@@ -556,11 +727,6 @@ function isEmpty(obj) {
     return true;
 }
 
-function createMapping(configFilePath) {
-    //fse
-}
-
-
 /* Features to add
  * automatic/manual key to channel mapping
  * ripple effect when some keys are pressed
@@ -568,14 +734,11 @@ function createMapping(configFilePath) {
  * select which DMX channels are being used
  */
 
-
-
-
-function startMidilights() {
-    //parent.universe.updateAll(255);
+function allOn() {
+    parent.universe.updateAll(255);
 }
 
-function stopMidilights() {
+function allOff() {
     parent.universe.updateAll(0);
     keysDown = {};
     navigator.close(); // This will close MIDI inputs, otherwise Node.js will wait for MIDI input forever.
