@@ -2,98 +2,94 @@
 <html>
 
 <link href="../css/style.css" rel="stylesheet" id="style" />
+<link href="../css/midilights.css" rel="stylesheet" />
 
 <body>
-    <span class="headertext">Midilights</span>
-    <br><br>
-    <button id="start">All On</button>
-    <button id="stop">All Off and Stop Midilights</button>
-    <br> <br>
+<span class="headertext">Midilights</span>
+<br><br>
+<button id="start">All On</button>
+<button id="stop">All Off</button>
+<br> <br>
 
-    <button id="useMidi">Use Midi</button>
-    <button id="useKeyboard">Use Keyboard</button>
+<button id="useMidi">Use Midi</button>
+<button id="useKeyboard">Use Keyboard</button>
+<br><br>
+
+<div id="midiControl" class="invisible">
+    <label for="midiSelect">Selected MIDI controller:</label>
+    <span id="selectedMidiController">None</span>
+    <br>
+    <select id="midiSelect"></select>
+    <button id="midiRefresh">Refresh</button>
+    <button id="midiSet">Set</button>
     <br><br>
 
-    <div id="midiControl">
-        <label for="midiSelect">Selected MIDI controller:</label>
-        <span id="selectedMidiController">None</span>
+    <!-- radio buttons to select either automatic or manual mapping -->
+    <input type="radio" id="automatic" name="mappingType" value="automatic" onclick="setupAutoMap()"></input>
+    <label for="automatic">Use automatic channel mapping</label>
+    <br>
+    <input type="radio" id="manual" name="mappingType" value="manual" onclick="setupManualMap()"></input>
+    <label for="manual">Manually map channels</label>
+    <br>
+    <br>
+
+    <div class="invisible" id="mapAuto">
+        <label for "numChannels">Number of set DMX channels:</label>
+        <span id="textNumChannels">0</span>
         <br>
-        <select id="midiSelect"></select>
-        <button id="midiRefresh">Refresh</button>
-        <button id="midiSet">Set</button>
+        <input id="numChannels" type="text" placeholder="number of DMX channels">
+        <button id="setChannelCount">Set</button>
         <br><br>
 
-        <!-- radio buttons to select either automatic or manual mapping -->
-        <input type="radio" id="automatic" name="mappingType" value="automatic" onclick="setupAutoMap()"></input>
-        <label for="automatic">Use automatic channel mapping</label>
+        <label for="autoEmptyChannels">List out empty DMX channels separated by commas</label>
         <br>
-        <input type="radio" id="manual" name="mappingType" value="manual" onclick="setupManualMap()"></input>
-        <label for="manual">Manually map channels</label>
+        <input id="autoEmptyChannels" placeholder="emptyChannel1,emptyChannel2, ...">
+        <span id="autoErrorText"></span>
+        <p>These channels will not be used when assigning keyboard keys to DMX channels</p>
+        <p>Note that DMX channels are different from box channels</p>
+        <button id="autoSubmit" onclick="mapChannelsAuto()">Submit</button>
+    </div>
+
+    <!-- radio buttons to select which type of manual mapping to be done -->
+    <div class="invisible" id="manualType">
+        <input type="radio" id="oneOctave" name="manualType" value="oneOctave" onclick="setupOneOctave()"></input>
+        <label for="oneOctave">Repeat mapping for one octave across all octaves</label>
+        <br>
+        <input type="radio" id="keyRange" name="manualType" value="keyRange" onclick="setupKeyRange()"></input>
+        <label for="keyRange">Choose key range and individually set octaves</label>
         <br>
         <br>
+    </div>
 
-        <div class="invisible" id="mapAuto">
-            <label for "numChannels">Number of set DMX channels:</label>
-            <span id="textNumChannels">0</span>
-            <br>
-            <input id="numChannels" type="text" placeholder="number of DMX channels">
-            <button id="setChannelCount">Set</button>
-            <br><br>
-
-            <label for="autoEmptyChannels">List out empty DMX channels separated by commas</label>
-            <br>
-            <input id="autoEmptyChannels" placeholder="emptyChannel1,emptyChannel2, ...">
-            <span id="autoErrorText"></span>
-            <p>These channels will not be used when assigning keyboard keys to DMX channels</p>
-            <p>Note that DMX channels are different from box channels</p>
-            <button id="autoSubmit" onclick="mapChannelsAuto()">Submit</button>
+    <div class="invisible" id="prompts">
+        <div id="promptLowNote">
+            <p>Press the lowest note on the keyboard</p>
         </div>
-
-
-        <!-- radio buttons to select which type of manual mapping to be done -->
-        <div class="invisible" id="manualType">
-            <input type="radio" id="oneOctave" name="manualType" value="oneOctave" onclick="setupOneOctave()"></input>
-            <label for="oneOctave">Repeat mapping for one octave across all octaves</label>
-            <br>
-            <input type="radio" id="keyRange" name="manualType" value="keyRange" onclick="setupKeyRange()"></input>
-            <label for="keyRange">Choose key range and individually set octaves</label>
-            <br>
-            <br>
-        </div>
-
-        <div class="invisible" id="prompts">
-            <div id="promptLowNote">
-                <p>Press the lowest note on the keyboard</p>
-            </div>
-            <div class="invisible" id="promptHighNote">
-                <p>Press the highest note on the keyboard</p>
-            </div>
-
-        </div>
-
-        <div class="invisible" id="mapManual">
-            <p>List the DMX channels each key should be mapped to separated by commas<p>
-            <button id="manualSubmit" onclick="mapChannelsManual()">Submit</button>
+        <div class="invisible" id="promptHighNote">
+            <p>Press the highest note on the keyboard</p>
         </div>
     </div>
 
-    <div id="keyboardControl">
+    <div class="invisible" id="mapManual">
         <p>List the DMX channels each key should be mapped to separated by commas<p>
-        <br>
-        <button id="keyboardSubmit" onclick="mapChannelsKeyboard()">Submit</button>
-        <button id="addKeyboardKey" onclick="addKeyboardKey()">Add Key</button>
+        <button id="manualSubmit" onclick="mapChannelsManual()">Submit</button>
     </div>
+</div>
 
-
+<div id="keyboardControl" class="invisible">
+    <p>List the DMX channels each key should be mapped to separated by commas<p>
+    <br>
+    <button id="keyboardSubmit" onclick="mapChannelsKeyboard()">Submit</button>
+    <button id="addKeyboardKey" onclick="addKeyboardKey()">Add Key</button>
+</div>
 </body>
-    <script>
-    const startButton = document.getElementById("start");
-    const stopButton = document.getElementById("stop");
-    const channelCountInput = document.getElementById("numChannels");
+<script>
+const startButton = document.getElementById("start");
+const stopButton = document.getElementById("stop");
+const channelCountInput = document.getElementById("numChannels");
 
-    startButton.onclick = function () {allOn()};
-    stopButton.onclick = function () {allOff()};
-
-    </script>
-<script src="../js/midiTest.js"></script>
+startButton.onclick = function () {allOn()};
+stopButton.onclick = function () {allOff()};
+</script>
+<script src="../js/midilights.js"></script>
 </html>
