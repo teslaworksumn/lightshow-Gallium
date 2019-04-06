@@ -232,7 +232,3 @@ select {
     position: absolute;
     z-index: 10;
 }
-
-.invisible {
-    display: none;
-}
