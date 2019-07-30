@@ -10,6 +10,11 @@ module.exports = {
         "no-unused-vars": "off",
         "func-names": "off",
         "no-restricted-globals": "off",
+        "no-multi-spaces": [0, {
+            "exceptions": {
+                "VariableDeclaration": true
+            }
+        }],
     },
     "globals": {
         "document": true,
