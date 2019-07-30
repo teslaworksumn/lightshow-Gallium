@@ -40,11 +40,10 @@ document.getElementById('chooseCSV').addEventListener('click', () => {
         title: 'Choose a CSV Sequence',
         filters: [
             { name: 'CSV', extensions: ['csv'] },
-            /*
-             * Add below line if all files need to be seen when browsing
-             * Currently, this file only works with CSV files so it makes
-             * sense to only allow the selection of CSV files in this dialog
-             */
+
+            // Add below line if all files need to be seen when browsing
+            // Currently, this file only works with CSV files so it makes
+            // sense to only allow the selection of CSV files in this dialog
             // { name: 'All Files', extensions: ['*'] },
         ],
     }, (fileNames) => {
@@ -66,7 +65,22 @@ document.getElementById('chooseCSV').addEventListener('click', () => {
                 const newColumn = document.createElement('td');
                 newColumn.appendChild(associateAudioButton);
 
-                const timeFrameLengthInput = document.createElement('input');
+                const timeFrameLengthInput = document.createElement('select');
+                const option25  = document.createElement('option');
+                const option50  = document.createElement('option');
+                const option100 = document.createElement('option');
+
+                option25.text   = 25;
+                option25.value  = '25';
+                option50.value  = 50;
+                option50.text   = '50';
+                option100.value = 100;
+                option100.text  = '100';
+
+                timeFrameLengthInput.appendChild(option25);
+                timeFrameLengthInput.appendChild(option50);
+                timeFrameLengthInput.appendChild(option100);
+
                 const timeFrameLength = document.createElement('td');
                 timeFrameLength.appendChild(timeFrameLengthInput);
 
@@ -146,10 +160,6 @@ function saveCSVShow() {
             createSequenceJsonAudioOnly(filepath, visibleShowPath);
         }
     }
-    // if isSequence(filepath)...
-    //  createSequenceJson
-    // else
-    //  audio thing
 
     // need to go to shows.html page for this show
     const iframe = window.parent.document.getElementById('frame');
