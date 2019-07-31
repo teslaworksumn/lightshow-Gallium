@@ -35,13 +35,20 @@ function addNewShow() {
         alert(`Yo, show '${showName}' already exists`);
     } else {
         fse.mkdirSync(showPath);
-        alert(`New show '${showName}' added`);
         fse.copyFileSync(emptyShowPath, path.join(showPath, 'show.json'));
+
         const showJson = JSON.parse(fse.readFileSync(path.join(showPath, 'show.json')));
+
+        // set information in the JSON file used as the show's settings
         showJson.Name = `${showName}`;
+        showJson.GoogleScriptUrl = '';
+
         fse.writeFileSync(path.join(showPath, 'show.json'), JSON.stringify(showJson, null, 2));
+
         addShowToConfig(showPath);
         document.getElementById('validName').style.display = 'table';
+
+        alert(`New show '${showName}' added`);
     }
 }
 

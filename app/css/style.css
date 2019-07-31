@@ -40,7 +40,7 @@ input {
     padding-top: 20px;
     background-color: #111;
 }
-  
+
 .sideNavIFrameWrapper{
     display: flex;
 }
@@ -114,7 +114,7 @@ input {
 
 .headertext {
     display: inline-block; /* or block */
-    font-size: 30px; 
+    font-size: 30px;
     text-align: center;
     background-color: #247dff;
     padding: 20px;
@@ -147,7 +147,7 @@ button:disabled {
     justify-content: center; /* horizontal centering */
     align-items: center; /* vertical centering */
     height: 100vh;
-    margin: 0; 
+    margin: 0;
     overflow-y: hidden;
 }
 
@@ -232,3 +232,29 @@ select {
     position: absolute;
     z-index: 10;
 }
+
+.flex-container {
+    display: flex;
+    align-items: center;
+}
+
+.flex-container div {
+    margin: 10px;
+}
+
+.invisible {
+    display: none;
+}
+
+.patchingUrl {
+    width: 90%;
+}
+
+#urlRow, #urlModification {
+    flex: 0 0 auto;
+}
+
+#urlInput {
+    flex: 1 1 auto;
+}
+
