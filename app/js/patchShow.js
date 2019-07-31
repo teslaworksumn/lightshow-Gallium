@@ -2,7 +2,6 @@ const label = document.getElementById('patchLabel');
 
 const showPath = iframe.value;
 let patchPath = '';
-// let patchPath = '/home/nuts/lightshow-Gallium/app/shows/bengt/patch.json';
 
 // This function ensures that a file patch.json exists in the current show
 // directory, copying in a blank patch if one does not already exist.
@@ -35,13 +34,9 @@ function getPatch() {
 // patch[j] is one channel mapping
 function applyPatch(sequenceFile) {
     const patchFile = fse.readJsonSync(patchPath);
-    // console.log('patchFile:', patchFile);
     const patch = patchFile.patch;
-    // console.log('patch', patch);
+
     const sequenceJson = JSON.parse(fse.readFileSync(sequenceFile));
-    // console.log('sequence file', sequenceJson);
-
-
     const originalSequence = sequenceJson['Sequence Data Json'];
 
     // only apply the patch to sequences and not audio files
@@ -51,18 +46,14 @@ function applyPatch(sequenceFile) {
 
     const sequence = sequenceJson['Sequence Patched Data Json'];
 
-    // console.log(sequence);
     for (let i = 0; i < sequence.length; i += 1) {
         for (let j = 0; j < patch.length; j += 1) {
             sequence[i][patch[j].dmxChannel] = originalSequence[i][patch[j].internalChannel];
         }
     }
 
-    // console.log(sequence);
-
     sequenceJson['Sequence Patched Data Json'] = sequence;
 
-    // console.log('updated sequence file', sequenceJson);
     fse.writeFileSync(sequenceFile, JSON.stringify(sequenceJson, null, 2));
 }
 
@@ -79,6 +70,14 @@ function applyPatchToShow() {
     }
 }
 
+function getUrl() {
+    const showJsonPath = path.join(showPath, 'show.json');
+    const data = JSON.parse(fse.readFileSync(showJsonPath));
+    const url = data.GoogleScriptUrl;
+
+    return url;
+}
+
 // Uses promises to ensure that things happen in a specific order.
 // In order:
 //  1. Ensure that a patch.json file exists in the show directory
@@ -90,15 +89,20 @@ function patchShow() {
     getPatch().then((path) => {
         patchButton.setAttribute('disabled', '');
         label.innerText = 'Fetching Google Sheet...';
-        // URL to Google Script webapp located in the Light Show Google Drive as 2018-patch-grabber
-        const GScriptUrl = 'https://script.google.com/macros/s/AKfycbxSabxEj7hijXpU50--KB6lTMDfKF7Y3oEELDfdqGXgiNW9pGw/exec';
+
+        // use the url found in each show's settings file
+        const GScriptUrl = getUrl();
+
         patchPath = path;
+
         return fetch(GScriptUrl);
     }).then((response) => {
         label.innerText = 'Converting response to JSON...';
+
         return response.json();
     }).then((patchJson) => {
         label.innerText = 'Saving patch...';
+
         return fse.writeFileSync(patchPath, JSON.stringify(patchJson, null, 2));
     })
         .then(() => {
@@ -111,6 +115,5 @@ function patchShow() {
         .catch((err) => {
             label.innerText = 'Error occured. Try again';
             patchButton.removeAttribute('disabled', '');
-        // console.log(err);
         });
 }

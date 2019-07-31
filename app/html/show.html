@@ -27,24 +27,40 @@
     <br><br><br><br>
     <button id='patchShow'>Patch Show</button>
     <label for="patchShow" name="patchStatus" id="patchLabel">Ready!</label>
+
+    <div class="flex-container">
+        <div id='urlRow'>
+            <p>Google Script Patching URL:</p>
+        </div>
+        <div id='urlInput'>
+            <input id="patchingUrlInput" class="invisible patchingUrl"></input>
+            <span id="patchingUrlDisplay" class="patchingUrl"></input>
+        </div>
+        <div id='urlModification'>
+            <button id="editUrl">Edit</button>
+            <button id="saveUrl" class='invisible'>Save</button>
+            <button id="cancelUrl" class='invisible'>Cancel</button>
+        </div>
+    </div>
 </body>
-    <script type="text/javascript" src="../js/addShow.js"></script>
-    <script>
-        const addElementButton = document.getElementById('addElement');
-        const iframe = window.parent.document.getElementById('frame');
-        const header = document.getElementById('header');
-        const patchButton = document.getElementById('patchShow');
 
-        addElementButton.onclick = function () {addNewElement()};
-        patchButton.onclick = function () {patchShow()};
+<script type="text/javascript" src="../js/addShow.js"></script>
+<script>
+    const iframe           = window.parent.document.getElementById('frame');
+    const addElementButton = document.getElementById('addElement');
+    const header           = document.getElementById('header');
+    const patchButton      = document.getElementById('patchShow');
 
-        var onlyShowName = iframe.value.split(path.sep);
-        onlyShowName = iframe.value.split(path.sep)[onlyShowName.length - 1];
-        header.innerText = onlyShowName;
+    addElementButton.onclick = function () {addNewElement()};
+    patchButton.onclick      = function () {patchShow()};
 
-    </script>
-    <script type="text/javascript" src="../js/patchShow.js"></script>
-    <script type="text/javascript" src="../js/sendDMX.js"></script>
-    <script type="text/javascript" src="../js/show.js"></script>
+    var onlyShowName = iframe.value.split(path.sep);
+    onlyShowName     = iframe.value.split(path.sep)[onlyShowName.length - 1];
+    header.innerText = onlyShowName;
+</script>
+<script type="text/javascript" src="../js/patchShow.js"></script>
+<script type="text/javascript" src="../js/sendDMX.js"></script>
+<script type="text/javascript" src="../js/show.js"></script>
+<script type="text/javascript" src="../js/modifyPatchUrl.js"></script>
 
 </html>
