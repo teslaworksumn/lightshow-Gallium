@@ -70,8 +70,8 @@ document.getElementById('chooseCSV').addEventListener('click', () => {
                 const option50  = document.createElement('option');
                 const option100 = document.createElement('option');
 
-                option25.text   = 25;
-                option25.value  = '25';
+                option25.value  = 25;
+                option25.text   = '25';
                 option50.value  = 50;
                 option50.text   = '50';
                 option100.value = 100;
