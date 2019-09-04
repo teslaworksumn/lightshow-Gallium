@@ -73,9 +73,8 @@ function applyPatchToShow() {
 function getUrl() {
     const showJsonPath = path.join(showPath, 'show.json');
     const data = JSON.parse(fse.readFileSync(showJsonPath));
-    const url = data.GoogleScriptUrl;
 
-    return url;
+    return data.GoogleScriptUrl;
 }
 
 // Uses promises to ensure that things happen in a specific order.
