@@ -82,18 +82,24 @@
     }
 
     const dmx = new DMX();
+    // dmx.activate_second_universe();
     const DRIVER = 'enttec-usb-dmx-pro';
-    var universe;
+    var universe1;
+    var universe2;
 
     function settingsLoaded() {
         if (settings.getCurrentDmxDevice() === null) {
             document.getElementById('currentDeviceText').innerHTML = 'None';
         } else {
             document.getElementById('currentDeviceText').innerHTML = `${settings.getCurrentDmxDevice().location}`;
-            if(universe) {
-            universe.close();
+            if(universe1) {
+                universe1.close();
             }
-            universe = dmx.addUniverse("dmx", DRIVER, settings.getCurrentDmxDevice().location);
+            if(universe2) {
+                universe2.close();
+            }
+            universe1 = dmx.addUniverse("dmx1", DRIVER, settings.getCurrentDmxDevice().location);
+            universe2 = dmx.addUniverse("dmx2", DRIVER, settings.getCurrentDmxDevice().location);
         }
     }
 
