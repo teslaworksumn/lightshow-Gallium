@@ -10,6 +10,7 @@ profileButton.onclick = function addShowProfile() {
     window.parent.document.getElementById('frame').src = './html/profileAddShow.html';
 };
 manualButton.onclick = function addShowManual() {
+    console.log('test text');
     window.parent.document.getElementById('frame').src = './html/manualAddShow.html';
 };
 deleteShowButton.onclick = function changePageSource() {
