@@ -82,6 +82,7 @@ We are using a modified version of the [Airbnb JavaScript Style Guide](https://g
 * [**Chris Walaszek**](https://github.com/walas013)
 * [**Ryan Fredlund**](https://github.com/bookdude13)
 * [**David Hwang**](https://github.com/hwangdav000)
+* [**Mitali Naigaonkar**](https://github.com/metallical)
 * [**Zachary Guldberg**](https://github.com/Laserrpg999)
 * [**Brooke Bear**](https://github.com/bear0224)
 
