@@ -14,7 +14,6 @@ Directory structure:
 └── test
 ```
 
-
 * `app/` houses the app and all the files needed.
 * `app/config` contains config files.
 * `app/css` contains CSS files that are used in Gallium.
@@ -23,15 +22,21 @@ Directory structure:
 * `app/img` contains image files that are used in Gallium.
 * `test/` contains the test suite for Gallium.
 
-## Pre-requisites
+## Pre-requisites (all users)
 
-1. [Node.js installed and in PATH.](https://nodejs.org/en/download/current/)
+1. [Node.js installed and in PATH.](https://nodejs.org/en/download/)
 
-We are supporting Node.js version 10.11.0 with the plan to update to the LTS version when it comes out. Installing via your operating system's [package manager](https://nodejs.org/en/download/package-manager/) is an easy way to make sure it is set up correctly. Simply paste the command line options into the terminal and Node.js will be installed. Be sure to install Node.js version 10.x.
+We are supporting Node.js version 10.16.3. Installing via your operating system's [package manager](https://nodejs.org/en/download/package-manager/) is an easy way to make sure it is set up correctly. Simply paste the command line options into the terminal and Node.js will be installed. Otherwise you can download the installer and set it up that way.
+
+### Windows users
+
+1. Run `npm install --global --production windows-build-tools` from an elevated Powershell or CMD.exe (run as Administrator). Note that this step will take a while so be sure to give it some time to finish.
 
 ## Dev Environment Setup and Running
 
-1. Change directory to the repo root directory (`.../lightshow-Gallium`)
+**Only run these steps after you have completed the [pre-requisite steps](#pre-requisites-all-users).**
+
+1. Change directory to the repo root directory (`lightshow-Gallium/`)
 1. Run `npm install` to install npm dependencies
 1. Run `node setupRepo.js` to initialize certain directories and files
 
@@ -42,7 +47,7 @@ NOTE: If you get an error that looks like `error while loading shared libraries:
 
 ## Application Packaging
 
-1. Change directory to the repo root directory (`.../lightshow-Gallium`)
+1. Change directory to the repo root directory (`lightshow-Gallium/`)
 1. Run `npm install`
 1. Run `node setupRepo.js`
 1. Run `npm run-script package`
