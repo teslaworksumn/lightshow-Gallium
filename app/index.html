@@ -82,7 +82,9 @@
     }
 
     const dmx = new DMX();
-    const DRIVER = 'enttec-usb-dmx-pro';
+    // const DRIVER = 'enttec-usb-dmx-pro';
+    const DRIVER = 'enttec_usb_dmx_pro_multiple_universes';
+    dmx.registerDriver(DRIVER, require('./js/enttec_usb_dmx_pro_multiple_universes.js'));
     var universe;
 
     function settingsLoaded() {
@@ -90,10 +92,13 @@
             document.getElementById('currentDeviceText').innerHTML = 'None';
         } else {
             document.getElementById('currentDeviceText').innerHTML = `${settings.getCurrentDmxDevice().location}`;
-            if(universe) {
-            universe.close();
+
+            if (universe) {
+                universe.close();
             }
-            universe = dmx.addUniverse("dmx", DRIVER, settings.getCurrentDmxDevice().location);
+
+            universe1 = dmx.addUniverse("universe1", DRIVER, settings.getCurrentDmxDevice().location);
+            universe2 = dmx.addUniverse("universe2", DRIVER, settings.getCurrentDmxDevice().location);
         }
     }
 

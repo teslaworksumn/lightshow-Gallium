@@ -28,7 +28,8 @@ function getIntFromElementById(id, defaultVal) {
 // Sets all channels to be on or off
 // value is an int in range [0, 255]
 function setAll(value) {
-    parent.parent.universe.updateAll(value);
+    parent.parent.universe1.updateAll(value);
+    parent.parent.universe2.updateAll(value);
 }
 
 // Updates the current fade amount. Only changes if isFading is set
