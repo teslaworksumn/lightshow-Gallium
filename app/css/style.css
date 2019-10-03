@@ -1,10 +1,15 @@
+
+/*---------------------------------------
+  General
+-----------------------------------------*/
+
 html {
     position:relative;
     animation: animatebottom 0.4s;
     overflow: auto;
     color: white;
-    background-color: black;
-}@keyframes animatebottom{from{bottom:-300px;opacity:0} to{bottom:0;opacity:1}}
+    background-color: #323131;
+}
 
 body {
     color: white;
@@ -15,18 +20,9 @@ input {
     height: 16px;
 }
 
-.tools {
-    height: 100%;
-    flex-direction: column;
-    display:flex;
-    overflow-x: hidden;
-}
-.sidenav button {
-    border-color: white;
-}
-
-.sidenav a:hover, .dropdown-btn:hover {
-    color: #247dff;
+p, span, form, ol, dt, dl, legend, label {
+    font-family: 'Raleway', sans-serif;
+    color: white;
 }
 
 .sidenav {
@@ -45,7 +41,7 @@ input {
     display: flex;
 }
 .sidenav a, .dropdown-btn {
-    padding: 6px 8px 6px 16px;
+    padding: 6px 8px 6px 8px;
     text-decoration: none;
     font-size: 20px;
     display: block;
@@ -54,105 +50,18 @@ input {
     width:100%;
     text-align: left;
     cursor: pointer;
-    outline: none;
-    flex-shrink: 0;
-    color: white;
-}
-
-#bottomcontainer {
-    margin-top: auto!important;
-    width: 100%;
-    margin-bottom: 30px;
-    color: black!important;
-}
-
-.main {
-    margin-left: 200px; /* Same as the width of the sidenav */
-    font-size: 20px; /* Increased text to enable scrolling */
-    padding: 0px 10px;
-}
-
-.dropdown-container {
-    display: none;
-    background-color: #595959;
-    flex-shrink: 0;
-}
-
-.dropdown-container a {
-    font-size: 15px;
-    color:#A9A9A9;
-}
-
-#logo {
-    height: 75px;
-    display: block;
-    margin-bottom: 30px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.content {
-    margin-left: 250px;
-    display: flex;
-    flex-flow: column;
-    overflow: hidden;
-    box-sizing: border-box;
-    color: white;
-}
-
-#frame {
-    display: block;
-    width: 100vw;
-    height: 100vh;
-    max-width: 100%;
-    margin: 0;
-    padding: 0;
-    border: 0 none;
-    box-sizing: border-box;
-    overflow: hidden;
-}
-
-.headertext {
-    display: inline-block; /* or block */
-    font-size: 30px;
-    text-align: center;
-    background-color: #247dff;
-    padding: 20px;
-    width: 95%;
-    color: white;
-}
-
-p, span, form, ol, dt, dl, legend, label {
-    font-family: 'Raleway', sans-serif;
-    color: white
-}
-
-button {
-    font-family: 'Raleway', sans-serif;
-    cursor: pointer;
-    border-color:  #247dff;
-    background-color: #247dff;
     border-radius: 4px;
-    color:white
+    color:white;
 }
 
-button:disabled {
-  border: 1px solid #999999;
-  background-color: #cccccc;
-  color: #666666;
+nav {
+    background: rgb(72, 72, 72);
+    color: #ffffff;
+    width: 100vw;
 }
 
-.centered {
-    display: flex; /* flex behavior (displays children inline) */
-    justify-content: center; /* horizontal centering */
-    align-items: center; /* vertical centering */
-    height: 100vh;
-    margin: 0;
-    overflow-y: hidden;
-}
-
-.active {
-    color: #6dae44;
+select {
+    min-width: 100px;
 }
 
 td {
@@ -172,74 +81,230 @@ tr:hover {
     background-color: #111111;
 }
 
- table {
+table {
     border-collapse: collapse;
     width: 100%;
- }
-
-.input {
-    background: none;
-    border: none;
-    color:black;
-    border-bottom: solid 2px #474544;
-    background-color: white;
-    font-weight: 400;
-    letter-spacing: 1px;
-    padding:  10px;
 }
 
-select {
-    min-width: 100px;
+button:disabled {
+    border: 1px solid #999999;
+    background-color: #cccccc;
+    color: #666666;
+}
+
+/*---------------------------------------
+  Header
+-----------------------------------------*/
+
+.headertext {
+    display: inline-block;
+    font-size: 30px;
+    text-align: center;
+    background-color: #247dff;
+    padding: 20px;
+    width: 95%;
+    color: white;
+}
+
+/*---------------------------------------
+  Footer
+-----------------------------------------*/
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    display:inline-flex;
+    width: 100%;
+    z-index: 1;
+}
+
+.settings-wrapper {
+    background-color: rgb(72, 72, 72);
+    margin: 0;
+    text-align: center;
+    flex: 0 0 auto;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    width:4em;
+}
+
+/*---------------------------------------
+  DMX
+-----------------------------------------*/
+
+.dmx-button {
+    height: 20px;
+}
+
+.centered {
+    display: flex; /* flex behavior (displays children inline) */
+    justify-content: center; /* horizontal centering */
+    align-items: center; /* vertical centering */
+    height: 100vh;
+    margin: 0;
+    overflow-y: hidden;
+}
+
+.dmx-wrapper {
+    line-height: initial;
+    display: flex;
+    height: 100%;
+    width:100%;
+    padding-right: 14px;
+    font-size: 10px;
+    align-self: flex-end;
+    background-color: rgb(72, 72, 72);
+    justify-content: flex-end;
 }
 
 #dmxDeviceSelection {
-    width: 100%;
+    display: inline-block;
+    color: black;
+    width: initial;
+    height: initial;
+    margin-bottom: 3px;
 }
+
+
+/*---------------------------------------
+  Sidenav
+-----------------------------------------*/
+
+.nav-wrapper {
+    height: 100vh;
+}
+
+.sidenav i:hover {
+    color:#247dff
+}
+
+.sidenav-iframe-wrapper {
+    display:flex;
+}
+
+.sidenav {
+    width: 4em;
+    background: rgb(72, 72, 72);
+    color: #ffffff;
+    margin: 0;
+    text-align: center;
+    flex: 0 0 auto;
+    height: calc(100vh - 52px);
+    padding-top: 10px;
+}
+
+.sidenav a {
+    cursor: pointer;
+}
+
+.sidenav li:nth-child(2) {
+    padding-top: 10px;
+}
+
+.sidenav li {
+    width: 2em;
+    height: 2em;
+    display:table;
+    margin:0px auto 0px auto;
+    padding-bottom: 10px;
+}
+
+.sidenavs-wrapper {
+    display: flex;
+}
+
+/*---------------------------------------
+  Collapsible Show Side Nav
+-----------------------------------------*/
+
+#sidenav-shows {
+    height: calc(100vh - 21px);
+    width: 100px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-left: 1em;
+}
+
+#sidenav-shows li {
+    width: 100px;
+    height: 2em;
+    display:table;
+    margin:0px auto 0px auto;
+    padding-bottom: 10px;
+}
+
+/*---------------------------------------
+  Logo
+-----------------------------------------*/
+
+.logo-container {
+    border-bottom-width: thin;
+    border-bottom-style: solid;
+    border-bottom-color:#323131;
+}
+
+.logo {
+    height: 3em;
+    display:table;
+    margin:0px auto 0px auto;
+}
+
+/*---------------------------------------
+  Icon
+-----------------------------------------*/
+
+.icon {
+    color: #ffffff;
+    font-size: 2rem;
+    width:100%;
+    height:100%;
+}
+
+/*---------------------------------------
+  Iframe
+-----------------------------------------*/
+
+.content {
+    padding-left: 4em;
+    position: fixed;
+    box-sizing: border-box;
+    overflow-y: hidden;
+}
+
+#frame {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0 none;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+/*---------------------------------------
+  Default.html
+-----------------------------------------*/
+
+.centered {
+    display: flex; /* flex behavior (displays children inline) */
+    justify-content: center; /* horizontal centering */
+    align-items: center; /* vertical centering */
+    height: 100vh;
+    margin: 0;
+    overflow-y: hidden;
+}
+
+
+/*---------------------------------------
+  Misc
+-----------------------------------------*/
 
 #runShow {
     background-color: green;
     border-color: green;
-}
-
-#collapsibleMenu {
-    height: calc(100vh - 115px);
-    width: 250px; /* Same as sidenav */
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-}
-
-#collapsibleMenuContent {
-    flex: 0 1 auto;
-    overflow-x: hidden;
-}
-
-#collapsibleMenuButtonContainer {
-    margin-left: 250px;
-
-}
-
-#collapsibleMenuButton {
-    top: 0;
-    flex: 0 1 auto;
-    text-align: center;
-    font-size: 16px;
-    font-weight: 700; /* bold */
-    width: 30px;
-    height: 30px;
-    margin-left: 10px;
-    margin-right: 5px;
-    position: absolute;
-    z-index: 10;
-}
-
-.flex-container {
-    display: flex;
-    align-items: center;
-}
-
-.flex-container div {
-    margin: 10px;
 }
 
 .invisible {

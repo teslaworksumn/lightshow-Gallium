@@ -5,82 +5,76 @@
 <head>
     <meta charset="UTF-8">
     <title>Gallium</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link href="css/materialize.min.css" rel="stylesheet"/>
+    <link href="./css/style.css" rel="stylesheet"/>
+    <link href="./css/icono.min.css" rel="stylesheet"/>
+    <link href="../node_modules/@fortawesome/fontawesome-free/css/all.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
 </head>
 
-<link href="css/style.css" rel="stylesheet" id="style" />
-<link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
-
 <body>
-    <div class="sideNavIFrameWrapper">
-    <div id="collapsibleMenuContent">
-        <div class="sidenav">
-            <img src="img/teslaworks_name_with_logo.png" id="logo" />
-            <div id="collapsibleMenu">
-                    <div class="tools">
-                        <a onclick='changeFrame("html/shows.html")' class="dropdown-btn">Show </a>
-                        <a onclick='changeFrame("html/dmx.html")' class="dropdown-btn">DMX</a>
-                        <a onclick='changeFrame("html/combine.html")' class="dropdown-btn">Combine Tim Files (Show 2018)</a>
-                        <a onclick='changeFrame("html/midilights.html")' class="dropdown-btn">Midilights</a>
-                        <div id='bottomcontainer'>
-                            <label for='changeDevice'>Current DMX device: <span id="currentDeviceText">None</span></label>
-                            <label for="dmxDeviceSelection">DMX devices</label>
-                            <select id="dmxDeviceSelection" onchange="settings.dmxDeviceOnChange();"></select>
-                            <button onclick="settings.refreshDmxDevices();">Refresh</button>
-                            <button onclick="settingsLoaded()">Set</button>
-                            <br>
-                            <a onclick='changeFrame("html/settings.html")' style="padding-left: 16px;">Settings</a>
-                        </div>   
-                    </div>
-
-                    
+    <div class="sidenav-iframe-wrapper">
+        <div class="nav-wrapper">
+            <div class="sidenavs-wrapper">
+                <ul class="sidenav sidenav-fixed">
+                    <li class="logo-container">
+                            <img id="logo" class="logo" src="img/tesla_gear.png"/>
+                    </li>
+                    <li>
+                        <a class="icon" onclick='changeFrame("html/shows.html")'>
+                            <i class="far fa-lightbulb icon"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="icon" onclick='changeFrame("html/dmx.html")'>
+                            <i class="fas fa-bug icon"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="icon" onclick='changeFrame("html/midilights.html")'>
+                            <i class="icono-piano icon"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="icon" onclick='changeFrame("html/games.html")'>
+                            <i class="fas fa-gamepad icon"></i>
+                        </a>
+                    </li>
+                </ul>
+                <ul id="sidenav-shows" class="invisible"></ul>
+            </div>
+            <div class="footer">
+                <div class="settings-wrapper">
+                    <a class="icon" onclick='changeFrame("html/settings.html")'>
+                        <i class="fas fa-cog icon"></i>
+                    </a>
                 </div>
-                
+                <div class="dmx-wrapper">
+                    <div class="dmx-device-wrapper">
+                        <label for='changeDevice'>Current DMX device: <span id="currentDeviceText">None</span></label>
+                        <select id="dmxDeviceSelection" onmousemove="settings.refreshDmxDevices();" onchange="settings.dmxDeviceOnChange();"></select>
+                        <button class="dmx-button" onclick="settingsLoaded()">Set</button>
+                    </div>
+                </div>
             </div>
         </div>
-        <div>
-    <div class="content">
-            <iframe id="frame" src="html/default.html" style="overflow: hidden"></iframe>
+        <div class="content">
+            <iframe id="frame" src="html/default.html"></iframe>
+        </div>
     </div>
-    <div id="collapsibleMenuButtonContainer">
-            <button id="collapsibleMenuButton" onclick='collapseMenu();'>&lt;</button>
-    </div>
-</div>
-    </div>
-
-
-
 </body>
 <script type="text/javascript" src="../setupRepo.js"></script>
+<script type="text/javascript" src="./js/materialize.min.js"></script>
+<script type="text/javascript" src="./js/shows.js"></script>
+
+
+
 <script type="text/javascript">
-    var DMX = parent.require('dmx');
-
-
-    // Collapsible menu
 
     let isCollapsed = false;
-    function collapseMenu() {
-        isCollapsed = !isCollapsed;
-        const content = document.getElementById('collapsibleMenuContent');
-        const button = document.getElementById('collapsibleMenuButton');
-        const buttonWrapper = document.getElementById("collapsibleMenuButtonContainer");
-        const frameWrapper = document.getElementsByClassName('content');
-        if (isCollapsed) {
-            // Now collapsed
-            content.style.display = 'none';
-            button.style.float = 'left';
-            button.innerHTML = '&gt';
-            buttonWrapper.style.marginLeft = '5px';
-            frameWrapper[0].style.marginLeft = '5px';
-        } else {
-            // Now open
-            content.style.display = 'block';
-            button.style.float = 'right';
-            button.innerHTML = '&lt;';
-            buttonWrapper.style.marginLeft = '250px';
-            frameWrapper[0].style.marginLeft = '250px';
-        }
-    }
 
+    var DMX = parent.require('dmx');
     const dmx = new DMX();
     const DRIVER = 'enttec-usb-dmx-pro';
     var universe;
@@ -111,8 +105,6 @@
     logo.onclick = function () {
         changeFrame("html/default.html");
     }
-
-
 
 </script>
 
