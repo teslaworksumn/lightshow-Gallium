@@ -3,45 +3,48 @@
 
 <link href="../css/style.css" rel="stylesheet" id="style" />
 <link href="../css/dmx.css" rel="stylesheet" id="style" />
+<link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
 
 <body>
-    <span class="headertext"> DMX </span>
+    <span class="headertext">DMX</span>
     <br>
     <br>
 
-    <h3>NOTE: All channels are 0-indexed on this page! DMX is 1-indexed, but that is handled internally.</h3>
+    <h3 style="color:red;">NOTE: All channels are 0-indexed on this page! DMX is 1-indexed, but that is handled internally.</h3>
 
     <!-- Individual channel -->
     <div class="section">
         <h4>Set an individual channel on/off</h4>
-        <label for="singleChannel">Channel Number</label>
         <input id="singleChannel" type="text" value="0"/>
+        <label for="singleChannel">Channel Number</label>
+        <br><br>
         <button id='channelOn'>Channel On</button>
         <button id='channelOff'>Channel Off</button>
     </div>
-    <br>
 
     <!-- Range of channels (inclusive) -->
     <div class="section">
         <h4>Set a range of channels on/off</h4>
-        <label for="rangeStart">Range Start</label>
+        <table></table>
         <input id="rangeStart" type="text" value="0"/>
-        <label for="rangeEnd">Range End</label>
+        <label for="rangeStart">Range Start</label>
+        <br>
         <input id="rangeEnd" type="text" value="511"/>
+        <label for="rangeEnd">Range End</label>
+        <br><br>
         <button id='rangeOn'>Range On</button>
         <button id='rangeOff'>Range Off</button>
     </div>
-    <br>
 
     <!-- Full box -->
     <div class="section">
         <h4>Set a single box on/off (shortcut for setting a range)</h4>
-        <label for="boxNumber">Box Number</label>
         <input id="boxNumber" type="text" value="0"/>
+        <label for="boxNumber">Box Number</label>
+        <br><br>
         <button id='boxOn'>Box On</button>
         <button id='boxOff'>Box Off</button>
     </div>
-    <br>
 
     <!-- All channels -->
     <div class="section">
@@ -49,14 +52,12 @@
         <button id='allOn'>All On</button>
         <button id='allOff'>All Off</button>
     </div>
-    <br>
 
     <div>
         <h4>Toggle a continuous fade on all channels</h4>
         <button id='fadeOn'>Fade On</button>
         <button id='fadeOff'>Fade Off</button>
     </div>
-    <br>
 
 </body>
     <script type="text/javascript" src="../js/dmx.js"></script>
