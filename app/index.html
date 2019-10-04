@@ -19,42 +19,32 @@
             <div class="sidenavs-wrapper">
                 <ul class="sidenav sidenav-fixed">
                     <li class="logo-container">
-                            <img id="logo" class="logo" src="img/tesla_gear.png"/>
+                        <img id="logo" class="logo" src="img/tesla_gear.png"/>
                     </li>
                     <li>
-                        <a class="icon" onclick='changeFrame("html/shows.html")'>
-                            <i class="far fa-lightbulb icon"></i>
-                        </a>
+                        <i class="far fa-lightbulb icon" onclick='changeFrame("html/shows.html")' title="Shows"></i>
                     </li>
                     <li>
-                        <a class="icon" onclick='changeFrame("html/dmx.html")'>
-                            <i class="fas fa-bug icon"></i>
-                        </a>
+                        <i class="fas fa-bug icon" onclick='changeFrame("html/dmx.html")' title="DMX Controls"></i>
                     </li>
                     <li>
-                        <a class="icon" onclick='changeFrame("html/midilights.html")'>
-                            <i class="icono-piano icon"></i>
-                        </a>
+                        <i class="fas fa-music icon" onclick='changeFrame("html/midilights.html")' title="MIDILights"></i>
                     </li>
                     <li>
-                        <a class="icon" onclick='changeFrame("html/games.html")'>
-                            <i class="fas fa-gamepad icon"></i>
-                        </a>
+                        <i class="fas fa-gamepad icon" onclick='changeFrame("html/games.html")' title="Games"></i>
                     </li>
                 </ul>
                 <ul id="sidenav-shows" class="invisible"></ul>
             </div>
             <div class="footer">
                 <div class="settings-wrapper">
-                    <a class="icon" onclick='changeFrame("html/settings.html")'>
-                        <i class="fas fa-cog icon"></i>
-                    </a>
+                    <i class="fas fa-cog icon" onclick='changeFrame("html/settings.html")' title="Settings"></i>
                 </div>
                 <div class="dmx-wrapper">
                     <div class="dmx-device-wrapper">
                         <label for='changeDevice'>Current DMX device: <span id="currentDeviceText">None</span></label>
                         <select id="dmxDeviceSelection" onmousemove="settings.refreshDmxDevices();" onchange="settings.dmxDeviceOnChange();"></select>
-                        <button class="dmx-button" onclick="settingsLoaded()">Set</button>
+                        <button id="dmx-button" onclick="settingsLoaded()">Set</button>
                     </div>
                 </div>
             </div>
@@ -66,9 +56,6 @@
 </body>
 <script type="text/javascript" src="../setupRepo.js"></script>
 <script type="text/javascript" src="./js/materialize.min.js"></script>
-<script type="text/javascript" src="./js/shows.js"></script>
-
-
 
 <script type="text/javascript">
 

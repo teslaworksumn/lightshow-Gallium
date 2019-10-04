@@ -3,82 +3,32 @@
   General
 -----------------------------------------*/
 
+:root {
+    --page-bg-color: #323131;
+    --nav-bg-color: #484848;
+    --tw-blue: #247DFF;
+    --font: 'Raleway', sans-serif;
+}
+
 html {
     position:relative;
     animation: animatebottom 0.4s;
     overflow: auto;
-    color: white;
-    background-color: #323131;
+    background-color: var(--page-bg-color);
 }
 
-body {
-    color: white;
-    font-family: 'Raleway', sans-serif;
-}
-
-input {
-    height: 16px;
-}
-
+body,
 p, span, form, ol, dt, dl, legend, label {
-    font-family: 'Raleway', sans-serif;
     color: white;
+    font-family: var(--font);
+    font-size: 15px;
 }
-
-.sidenav {
-    height: 100%;
-    width: 250px;
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    left: 0;
-    overflow-x: hidden;
-    padding-top: 20px;
-    background-color: #111;
-}
-
-.sideNavIFrameWrapper{
-    display: flex;
-}
-.sidenav a, .dropdown-btn {
-    padding: 6px 8px 6px 8px;
-    text-decoration: none;
-    font-size: 20px;
-    display: block;
-    border: none;
-    background: none;
-    width:100%;
-    text-align: left;
-    cursor: pointer;
-    border-radius: 4px;
-    color:white;
-}
-
-nav {
-    background: rgb(72, 72, 72);
-    color: #ffffff;
-    width: 100vw;
+input, select, option, optgroup {
+    font-family: var(--font);
 }
 
 select {
     min-width: 100px;
-}
-
-td {
-    border: 1px solid white;
-    padding: 8px;
-}
-
-th {
-    padding-top: 12px;
-    padding-bottom: 12px;
-    background-color: #247dff;
-    border: 1px solid #fff;
-    font-family: 'Raleway', sans-serif;
-}
-
-tr:hover {
-    background-color: #111111;
 }
 
 table {
@@ -86,6 +36,39 @@ table {
     width: 100%;
 }
 
+th {
+    padding-top: 1em;
+    padding-bottom: 1em;
+    background-color: var(--tw-blue);
+    border: 1px solid #fff;
+}
+
+tr:hover {
+    background-color: #111111;
+}
+
+td {
+    border: 1px solid white;
+    padding: 0.5em;
+}
+
+
+
+/*---------------------------------------
+  Buttons
+-----------------------------------------*/
+
+button {
+    color: black;
+    background-color: whitesmoke;
+/*    height: 100%;*/
+    border-radius: 0.25em;
+    font-family: var(--font);
+}
+button:active {
+    color: white;
+    background-color: var(--tw-blue);
+}
 button:disabled {
     border: 1px solid #999999;
     background-color: #cccccc;
@@ -98,10 +81,10 @@ button:disabled {
 
 .headertext {
     display: inline-block;
-    font-size: 30px;
+    font-size: 2.5em;
     text-align: center;
-    background-color: #247dff;
-    padding: 20px;
+    background-color: var(--tw-blue);
+    padding: 0.5em;
     width: 95%;
     color: white;
 }
@@ -113,28 +96,24 @@ button:disabled {
 .footer {
     position: absolute;
     bottom: 0;
-    display:inline-flex;
+    display: inline-flex;
     width: 100%;
     z-index: 1;
 }
 
 .settings-wrapper {
-    background-color: rgb(72, 72, 72);
+    background-color: var(--nav-bg-color);
     margin: 0;
     text-align: center;
     flex: 0 0 auto;
     padding-top: 10px;
     padding-bottom: 10px;
-    width:4em;
+    width: 4rem;
 }
 
 /*---------------------------------------
   DMX
 -----------------------------------------*/
-
-.dmx-button {
-    height: 20px;
-}
 
 .centered {
     display: flex; /* flex behavior (displays children inline) */
@@ -146,14 +125,12 @@ button:disabled {
 }
 
 .dmx-wrapper {
-    line-height: initial;
     display: flex;
     height: 100%;
-    width:100%;
-    padding-right: 14px;
-    font-size: 10px;
+    width: 100%;
+    padding-right: 1em;
     align-self: flex-end;
-    background-color: rgb(72, 72, 72);
+    background-color: var(--nav-bg-color);
     justify-content: flex-end;
 }
 
@@ -162,7 +139,6 @@ button:disabled {
     color: black;
     width: initial;
     height: initial;
-    margin-bottom: 3px;
 }
 
 
@@ -174,44 +150,41 @@ button:disabled {
     height: 100vh;
 }
 
-.sidenav i:hover {
-    color:#247dff
-}
-
+.sidenavs-wrapper,
 .sidenav-iframe-wrapper {
-    display:flex;
+    display: flex;
 }
 
 .sidenav {
-    width: 4em;
-    background: rgb(72, 72, 72);
-    color: #ffffff;
-    margin: 0;
+    height: 100%;
+    width: 4rem;
+    background: var(--nav-bg-color);
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
     text-align: center;
+    overflow-x: hidden;
+    margin: 0;
     flex: 0 0 auto;
-    height: calc(100vh - 52px);
-    padding-top: 10px;
-}
-
-.sidenav a {
-    cursor: pointer;
-}
-
-.sidenav li:nth-child(2) {
+    height: 100vh;
     padding-top: 10px;
 }
 
 .sidenav li {
     width: 2em;
     height: 2em;
-    display:table;
-    margin:0px auto 0px auto;
+    display: table;
+    margin: 0px auto 0px auto;
     padding-bottom: 10px;
 }
-
-.sidenavs-wrapper {
-    display: flex;
+.sidenav li:nth-child(2) {
+    padding-top: 10px;
 }
+.sidenav li:nth-child(n+2) {
+    padding-bottom: 30px;
+}
+
 
 /*---------------------------------------
   Collapsible Show Side Nav
@@ -241,24 +214,29 @@ button:disabled {
 .logo-container {
     border-bottom-width: thin;
     border-bottom-style: solid;
-    border-bottom-color:#323131;
+    border-bottom-color: var(--page-bg-color);
 }
 
 .logo {
     height: 3em;
-    display:table;
-    margin:0px auto 0px auto;
+    display: table;
+    margin: 0px auto 0px auto;
 }
 
 /*---------------------------------------
-  Icon
+  Icons
 -----------------------------------------*/
 
 .icon {
     color: #ffffff;
     font-size: 2rem;
-    width:100%;
-    height:100%;
+    width: 100%;
+    height: 100%;
+}
+
+.icon:hover {
+    cursor: pointer;
+    color: var(--tw-blue);
 }
 
 /*---------------------------------------
