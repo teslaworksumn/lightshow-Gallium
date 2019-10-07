@@ -3,3 +3,6 @@ build/*
 
 # Ignore packaged files directory
 dist/*
+
+#ignore pulled in files
+app/js/materialize.min.js

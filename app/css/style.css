@@ -16,6 +16,13 @@ html {
     overflow: auto;
     background-color: var(--page-bg-color);
 }
+html {
+    height: 100%;
+  }
+  body {
+    min-height: 100%;
+  }
+
 
 body,
 p, span, form, ol, dt, dl, legend, label {
@@ -185,28 +192,6 @@ button:disabled {
     padding-bottom: 30px;
 }
 
-
-/*---------------------------------------
-  Collapsible Show Side Nav
------------------------------------------*/
-
-#sidenav-shows {
-    height: calc(100vh - 21px);
-    width: 100px;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    margin-left: 1em;
-}
-
-#sidenav-shows li {
-    width: 100px;
-    height: 2em;
-    display:table;
-    margin:0px auto 0px auto;
-    padding-bottom: 10px;
-}
-
 /*---------------------------------------
   Logo
 -----------------------------------------*/
@@ -253,7 +238,7 @@ button:disabled {
 #frame {
     display: block;
     width: 100vw;
-    height: 100vh;
+    height: calc(100vh - 2rem);
     max-width: 100%;
     margin: 0;
     padding: 0;
