@@ -1,146 +1,126 @@
+
+/*---------------------------------------
+  General
+-----------------------------------------*/
+
+:root {
+    --page-bg-color: #323131;
+    --nav-bg-color: #484848;
+    --tw-blue: #247DFF;
+    --font: 'Raleway', sans-serif;
+}
+
 html {
     position:relative;
     animation: animatebottom 0.4s;
     overflow: auto;
-    color: white;
-    background-color: black;
-}@keyframes animatebottom{from{bottom:-300px;opacity:0} to{bottom:0;opacity:1}}
-
-body {
-    color: white;
-    font-family: 'Raleway', sans-serif;
+    background-color: var(--page-bg-color);
 }
-
-input {
-    height: 16px;
-}
-
-.tools {
+html {
     height: 100%;
-    flex-direction: column;
-    display:flex;
-    overflow-x: hidden;
-}
-.sidenav button {
-    border-color: white;
-}
+  }
+  body {
+    min-height: 100%;
+  }
 
-.sidenav a:hover, .dropdown-btn:hover {
-    color: #247dff;
-}
 
-.sidenav {
-    height: 100%;
-    width: 250px;
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    left: 0;
-    overflow-x: hidden;
-    padding-top: 20px;
-    background-color: #111;
-}
-
-.sideNavIFrameWrapper{
-    display: flex;
-}
-.sidenav a, .dropdown-btn {
-    padding: 6px 8px 6px 16px;
-    text-decoration: none;
-    font-size: 20px;
-    display: block;
-    border: none;
-    background: none;
-    width:100%;
-    text-align: left;
-    cursor: pointer;
-    outline: none;
-    flex-shrink: 0;
+body,
+p, span, form, ol, dt, dl, legend, label {
     color: white;
-}
-
-#bottomcontainer {
-    margin-top: auto!important;
-    width: 100%;
-    margin-bottom: 30px;
-    color: black!important;
-}
-
-.main {
-    margin-left: 200px; /* Same as the width of the sidenav */
-    font-size: 20px; /* Increased text to enable scrolling */
-    padding: 0px 10px;
-}
-
-.dropdown-container {
-    display: none;
-    background-color: #595959;
-    flex-shrink: 0;
-}
-
-.dropdown-container a {
+    font-family: var(--font);
     font-size: 15px;
-    color:#A9A9A9;
+}
+input, select, option, optgroup {
+    font-family: var(--font);
 }
 
-#logo {
-    height: 75px;
-    display: block;
-    margin-bottom: 30px;
-    margin-left: auto;
-    margin-right: auto;
+select {
+    min-width: 100px;
 }
 
-.content {
-    margin-left: 250px;
-    display: flex;
-    flex-flow: column;
-    overflow: hidden;
-    box-sizing: border-box;
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th {
+    padding-top: 1em;
+    padding-bottom: 1em;
+    background-color: var(--tw-blue);
+    border: 1px solid #fff;
+}
+
+tr:hover {
+    background-color: #111111;
+}
+
+td {
+    border: 1px solid white;
+    padding: 0.5em;
+}
+
+
+
+/*---------------------------------------
+  Buttons
+-----------------------------------------*/
+
+button {
+    color: black;
+    background-color: whitesmoke;
+/*    height: 100%;*/
+    border-radius: 0.25em;
+    font-family: var(--font);
+}
+button:active {
     color: white;
+    background-color: var(--tw-blue);
+}
+button:disabled {
+    border: 1px solid #999999;
+    background-color: #cccccc;
+    color: #666666;
 }
 
-#frame {
-    display: block;
-    width: 100vw;
-    height: 100vh;
-    max-width: 100%;
-    margin: 0;
-    padding: 0;
-    border: 0 none;
-    box-sizing: border-box;
-    overflow: hidden;
-}
+/*---------------------------------------
+  Header
+-----------------------------------------*/
 
 .headertext {
-    display: inline-block; /* or block */
-    font-size: 30px;
+    display: inline-block;
+    font-size: 2.5em;
     text-align: center;
-    background-color: #247dff;
-    padding: 20px;
+    background-color: var(--tw-blue);
+    padding: 0.5em;
     width: 95%;
     color: white;
 }
 
-p, span, form, ol, dt, dl, legend, label {
-    font-family: 'Raleway', sans-serif;
-    color: white
+/*---------------------------------------
+  Footer
+-----------------------------------------*/
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    display: inline-flex;
+    width: 100%;
+    z-index: 1;
 }
 
-button {
-    font-family: 'Raleway', sans-serif;
-    cursor: pointer;
-    border-color:  #247dff;
-    background-color: #247dff;
-    border-radius: 4px;
-    color:white
+.settings-wrapper {
+    background-color: var(--nav-bg-color);
+    margin: 0;
+    text-align: center;
+    flex: 0 0 auto;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    width: 4rem;
 }
 
-button:disabled {
-  border: 1px solid #999999;
-  background-color: #cccccc;
-  color: #666666;
-}
+/*---------------------------------------
+  DMX
+-----------------------------------------*/
 
 .centered {
     display: flex; /* flex behavior (displays children inline) */
@@ -151,95 +131,143 @@ button:disabled {
     overflow-y: hidden;
 }
 
-.active {
-    color: #6dae44;
-}
-
-td {
-    border: 1px solid white;
-    padding: 8px;
-}
-
-th {
-    padding-top: 12px;
-    padding-bottom: 12px;
-    background-color: #247dff;
-    border: 1px solid #fff;
-    font-family: 'Raleway', sans-serif;
-}
-
-tr:hover {
-    background-color: #111111;
-}
-
- table {
-    border-collapse: collapse;
+.dmx-wrapper {
+    display: flex;
+    height: 100%;
     width: 100%;
- }
-
-.input {
-    background: none;
-    border: none;
-    color:black;
-    border-bottom: solid 2px #474544;
-    background-color: white;
-    font-weight: 400;
-    letter-spacing: 1px;
-    padding:  10px;
-}
-
-select {
-    min-width: 100px;
+    padding-right: 1em;
+    align-self: flex-end;
+    background-color: var(--nav-bg-color);
+    justify-content: flex-end;
 }
 
 #dmxDeviceSelection {
-    width: 100%;
+    display: inline-block;
+    color: black;
+    width: initial;
+    height: initial;
 }
+
+
+/*---------------------------------------
+  Sidenav
+-----------------------------------------*/
+
+.nav-wrapper {
+    height: 100vh;
+}
+
+.sidenavs-wrapper,
+.sidenav-iframe-wrapper {
+    display: flex;
+}
+
+.sidenav {
+    height: 100%;
+    width: 4rem;
+    background: var(--nav-bg-color);
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    text-align: center;
+    overflow-x: hidden;
+    margin: 0;
+    flex: 0 0 auto;
+    height: 100vh;
+    padding-top: 10px;
+}
+
+.sidenav li {
+    width: 2em;
+    height: 2em;
+    display: table;
+    margin: 0px auto 0px auto;
+    padding-bottom: 10px;
+}
+.sidenav li:nth-child(2) {
+    padding-top: 10px;
+}
+.sidenav li:nth-child(n+2) {
+    padding-bottom: 30px;
+}
+
+/*---------------------------------------
+  Logo
+-----------------------------------------*/
+
+.logo-container {
+    border-bottom-width: thin;
+    border-bottom-style: solid;
+    border-bottom-color: var(--page-bg-color);
+}
+
+.logo {
+    height: 3em;
+    display: table;
+    margin: 0px auto 0px auto;
+}
+
+/*---------------------------------------
+  Icons
+-----------------------------------------*/
+
+.icon {
+    color: #ffffff;
+    font-size: 2rem;
+    width: 100%;
+    height: 100%;
+}
+
+.icon:hover {
+    cursor: pointer;
+    color: var(--tw-blue);
+}
+
+/*---------------------------------------
+  Iframe
+-----------------------------------------*/
+
+.content {
+    padding-left: 4em;
+    position: fixed;
+    box-sizing: border-box;
+    overflow-y: hidden;
+}
+
+#frame {
+    display: block;
+    width: 100vw;
+    height: calc(100vh - 2rem);
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0 none;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+/*---------------------------------------
+  Default.html
+-----------------------------------------*/
+
+.centered {
+    display: flex; /* flex behavior (displays children inline) */
+    justify-content: center; /* horizontal centering */
+    align-items: center; /* vertical centering */
+    height: 100vh;
+    margin: 0;
+    overflow-y: hidden;
+}
+
+
+/*---------------------------------------
+  Misc
+-----------------------------------------*/
 
 #runShow {
     background-color: green;
     border-color: green;
-}
-
-#collapsibleMenu {
-    height: calc(100vh - 115px);
-    width: 250px; /* Same as sidenav */
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-}
-
-#collapsibleMenuContent {
-    flex: 0 1 auto;
-    overflow-x: hidden;
-}
-
-#collapsibleMenuButtonContainer {
-    margin-left: 250px;
-
-}
-
-#collapsibleMenuButton {
-    top: 0;
-    flex: 0 1 auto;
-    text-align: center;
-    font-size: 16px;
-    font-weight: 700; /* bold */
-    width: 30px;
-    height: 30px;
-    margin-left: 10px;
-    margin-right: 5px;
-    position: absolute;
-    z-index: 10;
-}
-
-.flex-container {
-    display: flex;
-    align-items: center;
-}
-
-.flex-container div {
-    margin: 10px;
 }
 
 .invisible {
