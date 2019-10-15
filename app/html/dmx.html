@@ -8,14 +8,12 @@
 <body>
     <span class="headertext">DMX</span>
     <br>
-    <br>
 
-    <h3 style="color:red;">NOTE: All channels are 0-indexed on this page! DMX is 1-indexed, but that is handled internally.</h3>
 
     <!-- Individual channel -->
     <div class="section">
         <h4>Set an individual channel on/off</h4>
-        <input id="singleChannel" type="text" value="0"/>
+        <input id="singleChannel" type="text" value="1"/>
         <label for="singleChannel">Channel Number</label>
         <br><br>
         <button id='channelOn'>Channel On</button>
@@ -25,10 +23,10 @@
     <!-- Range of channels (inclusive) -->
     <div class="section">
         <h4>Set a range of channels on/off</h4>
-        <input id="rangeStart" type="text" value="0"/>
+        <input id="rangeStart" type="text" value="1"/>
         <label for="rangeStart">Range Start</label>
         <br>
-        <input id="rangeEnd" type="text" value="511"/>
+        <input id="rangeEnd" type="text" value="512"/>
         <label for="rangeEnd">Range End</label>
         <br><br>
         <button id='rangeOn'>Range On</button>
