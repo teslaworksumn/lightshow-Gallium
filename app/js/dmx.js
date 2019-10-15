@@ -8,7 +8,7 @@ const fadeInterval = 50;
 let fadeChange = 255.0 * fadeInterval / fadeDuration;
 
 // Limits
-const MAX_CHANNEL = 511; // Inclusive
+const MAX_CHANNEL = 512; // Inclusive
 
 // Returns the value for the element with the given id, parsed as an int.
 // If failed to parse or find, returns default value
@@ -76,13 +76,13 @@ function setChannel(channel, value) {
 function setChannelRange(value) {
     const start = getIntFromElementById('rangeStart', -1);
 
-    if (start < 0 || start > MAX_CHANNEL) {
+    if (start < 1 || start > MAX_CHANNEL) {
         setBackground('rangeStart', 'red');
         return;
     }
 
     const end = getIntFromElementById('rangeEnd', -1);
-    if (end < 0 || end > MAX_CHANNEL) {
+    if (end < 1 || end > MAX_CHANNEL) {
         setBackground('rangeEnd', 'red');
         return;
     }
@@ -99,7 +99,7 @@ function setChannelRange(value) {
 // Sets a single DMX channel to the given value
 function setSingleChannel(value) {
     const channel = getIntFromElementById('singleChannel', -1);
-    if (channel < 0 || channel > MAX_CHANNEL) {
+    if (channel < 1 || channel > MAX_CHANNEL) {
         setBackground('singleChannel', 'red');
         return;
     }
