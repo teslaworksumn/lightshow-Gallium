@@ -59,7 +59,7 @@ function setRange(channelStart, channelEnd, value) {
     const channels = {};
     for (let i = channelStart; i <= channelEnd; i += 1) {
         // DMX is 1-indexed. This should be the only place where the +1 is added
-        channels[i + 1] = value;
+        channels[i] = value;
     }
     parent.parent.universe.update(channels);
 }
