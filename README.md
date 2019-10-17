@@ -30,7 +30,11 @@ We are supporting Node.js version 10.16.3. Installing via your operating system'
 
 ### Windows users
 
-1. Run `npm install --global --production windows-build-tools` from an elevated Powershell or CMD.exe (run as Administrator). Note that this step will take a while so be sure to give it some time to finish.
+1. Run `npm install --global --production windows-build-tools` from an elevated Powershell or CMD.exe (run as Administrator). Note that this step will take a while so be sure to give it some time to finish. Even though the command will stop outputing information, it still is working. 
+
+### Mac users
+
+1. XCode command line tools must be installed for most commands to work. If you don't already have XCode installed, either install the latest version of XCode from the app store or run `xcode-select --install` if you only want to install the XCode command line tools. Note that this step may take a while so be sure to give it some time to finish. 
 
 ## Dev Environment Setup and Running
 
