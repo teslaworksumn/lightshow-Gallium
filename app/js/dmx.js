@@ -3,8 +3,11 @@ const DMX = parent.require('dmx');
 /* Fading setup */
 let isFading = false;
 let currentFade = 0;
-const fadeDuration = 5000;
-const fadeInterval = 50;
+let fadeDuration =  5000;
+
+// const fadeDuration = getIntFromElementById("fadeDuration", 5000);
+// const fadeInterval = getIntFromElementById("fadeDuration", 50);
+let fadeInterval = 50;
 let fadeChange = 255.0 * fadeInterval / fadeDuration;
 
 // Limits
@@ -39,7 +42,11 @@ function setAll(value) {
 // Updates the current fade amount. Only changes if isFading is set
 function updateFade() {
     if (isFading) {
+
         currentFade += fadeChange;
+        console.log(currentFade);
+        console.log(fadeDuration);
+        console.log(fadeChange);
 
         if (currentFade < 0) {
             currentFade = 0;
@@ -173,6 +180,19 @@ function setupButtons() {
     document.getElementById('rangeStart').oninput = function rangeStartOnChange() { onInputChange('rangeStart'); };
     document.getElementById('rangeEnd').oninput = function rangeEndOnChange() { onInputChange('rangeEnd'); };
     document.getElementById('boxNumber').oninput = function boxNumberOnChange() { onInputChange('boxNumber'); };
+
+    document.getElementById('fadeDuration').onchange = function fadeDurationChange() { 
+        fadeDuration = document.getElementById("fadeDuration").value;
+        fadeChange = 255.0 * fadeInterval / fadeDuration;
+        setInterval(updateFade, fadeInterval);
+    };
+    document.getElementById('fadeInterval').onchange = function fadeIntervalChange() { 
+        fadeInterval = document.getElementById("fadeInterval").value;
+        fadeChange = 255.0 * fadeInterval / fadeDuration;
+        setInterval(updateFade, fadeInterval);
+
+    };
+
 }
 
 // Sets up the page
