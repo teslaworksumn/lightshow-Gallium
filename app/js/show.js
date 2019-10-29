@@ -20,11 +20,32 @@ for (let i = 0; i < playlistElements.length; i += 1) {
     let filename = playlistElements[i].split(path.sep);
     filename = filename[filename.length - 1];
 
-    const tableItem = document.createElement('tr');
-    elementName = document.createElement('td');
+    const tableItem   = document.createElement('tr');
+    const elementName = document.createElement('td');
+    const shouldPlay  = document.createElement('td');
+
+    const checkboxCell = document.createElement('input');
+    checkboxCell.type  = 'checkbox';
+
+    // Default should play checkboxes to true. If an element should not be
+    // played, the box should be unchecked.
+    checkboxCell.checked = true;
+
     elementName.innerText = filename;
 
+    shouldPlay.appendChild(checkboxCell);
+
+    tableItem.appendChild(shouldPlay);
     tableItem.appendChild(elementName);
+
+    // grey out a row if the show play checkbox is not checked
+    checkboxCell.addEventListener('change', (event) => {
+        if (event.target.checked) {
+            tableItem.classList.remove('greyout');
+        } else {
+            tableItem.classList.add('greyout');
+        }
+    });
 
     const sequencePath = path.join(showDir, filename);
     const sequence = JSON.parse(fse.readFileSync(sequencePath));
@@ -60,14 +81,25 @@ playButton.onclick = async function () {
         playButton.style.borderColor = 'red';
         // create show elements with sequence json path
         showElements = [];
-        for (let k = 0; k < table.rows.length; k += 1) {
-            showElements.push(new ShowElementConstructor());
-            showElements[k].setSequenceJson(table.value[k]);
+
+        for (let i = 0; i < table.rows.length; i += 1) {
+            // only add this row to be played if the should play checkbox is checked
+            if (!table.rows[i].cells[0].children[0].checked) {
+                // eslint-disable-next-line no-continue
+                continue;
+            }
+
+            const showElement = new ShowElementConstructor();
+            showElement.setSequenceJson(table.value[i]);
+
             // TODO make this a promise or something, so we can set up all asyncronously
             // eslint-disable-next-line no-await-in-loop
-            const duration = await showElements[k].setUpSequence();
-            showElements[k].setElementLength(duration * 1000);
+            const duration = await showElement.setUpSequence();
+            showElement.setElementLength(duration * 1000);
+
+            showElements.push(showElement);
         }
+
         startCanPlay(); // lock to determine ability to play
         playShow(showElements);
     } else {
