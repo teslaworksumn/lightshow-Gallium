@@ -13,7 +13,7 @@
 html {
     position:relative;
     animation: animatebottom 0.4s;
-    overflow: auto;
+    overflow: hidden;
     background-color: var(--page-bg-color);
 }
 html {
