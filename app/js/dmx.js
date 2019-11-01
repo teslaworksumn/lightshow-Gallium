@@ -92,7 +92,8 @@ function setChannelRange(value) {
         setBackground('rangeEnd', 'red');
         return;
     }
-
+    setBackground('rangeStart', 'white'); //input is valid now
+    setBackground('rangeEnd', 'white');
     setRange(start, end, value);
 }
 
