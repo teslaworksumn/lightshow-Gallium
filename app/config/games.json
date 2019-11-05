@@ -1,4 +1,4 @@
 {
-  "server_hostname": "http://localhost:2567",
+  "serverHostname": "http://localhost:2567",
   "authToken": "lightshow"
 }

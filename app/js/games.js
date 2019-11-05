@@ -1,16 +1,15 @@
 const DMX = parent.require('dmx');
-var socket = parent.require('socket.io-client');
+const socket = parent.require('socket.io-client');
 
 // set default values
-var CONFIG = parent.require('./config/games');
+const CONFIG = parent.require('./config/games');
 
 // configuration values
-var server_hostname = CONFIG.server_hostname;
-var authToken = CONFIG.authToken;
+let serverHostname = CONFIG.serverHostname;
+let authToken = CONFIG.authToken;
 
-// Provide feedback to the user 
+// Provide feedback to the user
 function setStatus(status) {
-    console.log(status);
     document.getElementById('status').textContent = status;
 }
 
@@ -24,48 +23,47 @@ function processUpdate(update) {
 
 // Refresh the socket client
 function refresh(event) {
-    
     // Gets the hostname entered
     const serverHostnameInput = document.getElementById('serverHostname');
-    server_hostname = serverHostnameInput.value;
+    serverHostname = serverHostnameInput.value;
 
     // Gets the auth token (password) entered
     const authTokenInput = document.getElementById('authToken');
     authToken = authTokenInput.value;
 
     // Update the user
-    setStatus(`Connecting to ${server_hostname}`);
+    setStatus(`Connecting to ${serverHostname}`);
 
     // Run the client
-    var client = socket(server_hostname, {
+    const client = socket(serverHostname, {
         path: '/gallium',
         query: {
-            token: authToken
-        }
+            token: authToken,
+        },
     });
-    
+
     // Game server connected
     client.on('connect', () => {
-        setStatus(`Connected!`);
+        setStatus('Connected!');
     });
 
     // Game server disconnected
     client.on('disconnect', () => {
-        setStatus(`Server disconnected.`);
-        setClients("-")
-        setCurrentGame("-")
-        setServerStatus("-")
+        setStatus('Server disconnected.');
+        setClients('-');
+        setCurrentGame('-');
+        setServerStatus('-');
     });
 
     // Game server connection error handling
     client.on('connect_error', (error) => {
-        setStatus(`Unable to connect to ${server_hostname}. ${error}`);
+        setStatus(`Unable to connect to ${serverHostname}. ${error}`);
     });
     client.on('connect_timeout', (error) => {
-        setStatus(`Connection timed out`);
+        setStatus('Connection timed out');
     });
     client.on('connect_timeout', (error) => {
-        setStatus(`Reconnected!`);
+        setStatus('Reconnected!');
     });
 
     // Listen for status updates (current game, number of clients)
@@ -78,10 +76,10 @@ function refresh(event) {
 
 // Sets up all of the button hooks for the DMX page
 function setup() {
-    setStatus(`Setting up`);
+    setStatus('Setting up');
     /* Clicking */
     const serverHostnameInput = document.getElementById('serverHostname');
-    serverHostnameInput.value = server_hostname;
+    serverHostnameInput.value = serverHostname;
     serverHostnameInput.oninput = refresh;
 
     const authTokenInput = document.getElementById('authToken');
@@ -89,7 +87,7 @@ function setup() {
     authTokenInput.oninput = refresh;
 
     document.getElementById('reconnect').onclick = refresh;
-    setStatus(`Ready to connect`);
+    setStatus('Ready to connect');
 }
 
 // Set up the page for display
