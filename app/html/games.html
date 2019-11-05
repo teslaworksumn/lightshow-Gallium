@@ -6,9 +6,42 @@
 <body>
     <span class="headertext"> Games </span>
     <br>
+    <div class="section">
+        <h4>Server Information</h4>
+        <input id="serverHostname" type="text"/>
+        <label for="authToken">Game Server Hostname</label>
+        <br>
+        <input id="authToken" type="text"/>
+        <label for="authToken">Authentication Token</label>
+        <br>
+        <p>Status: <span id="status"></span></p>
+        <button id='reconnect'>Connect</button>
+    </div>
     <br>
-    <span>Todo</span>
-    <br>
-    <br>
+    <div class="section">
+        <table style="width:100%">
+            <tr>
+              <th>Name</th>
+              <th>Value</th>
+            </tr>
+            <tr>
+                <td for="lastUpdated">Last Update</td>
+                <td id="lastUpdated"></td>
+              </tr>
+            <tr>
+                <td for="serverStatus">Server Status</td>
+                <td id="serverStatus"></td>
+              </tr>
+            <tr>
+              <td for="clients">Clients</td>
+              <td id="clients"></td>
+            </tr>
+            <tr>
+                <td for="currentGame">Current Game</td>
+                <td id="currentGame"></td>
+              </tr>
+          </table>
+    </div>
 </body>
+<script type="text/javascript" src="../js/games.js"></script>
 </html>
