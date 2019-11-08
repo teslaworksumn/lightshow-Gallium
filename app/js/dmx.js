@@ -28,7 +28,13 @@ function getIntFromElementById(id, defaultVal) {
 // Sets all channels to be on or off
 // value is an int in range [0, 255]
 function setAll(value) {
-    parent.parent.universe.updateAll(value);
+    try {
+        parent.parent.universe.updateAll(value);
+    } catch (error) {
+        alert('Error: No DMX device selected')
+        isFading = false
+    }
+    
 }
 
 // Updates the current fade amount. Only changes if isFading is set
@@ -61,7 +67,12 @@ function setRange(channelStart, channelEnd, value) {
         // DMX is 1-indexed. This should be the only place where the +1 is added
         channels[i] = value;
     }
-    parent.parent.universe.update(channels);
+    try {
+        parent.parent.universe.update(channels);
+    } catch (error) {
+        alert('Error: No DMX device selected')
+    }
+    
 }
 
 
