@@ -85,8 +85,8 @@ function getUrl() {
 //  4. Write the patch to patch.json
 //  5. Apply the patch to the entire show
 function patchShow() {
-    if (!navigator.onLine){
-        window.alert("No internet connection")
+    if (!navigator.onLine) {
+        window.alert('No internet connection');
     }
     getPatch().then((path) => {
         patchButton.setAttribute('disabled', '');
