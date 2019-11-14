@@ -10,18 +10,63 @@ const { remote } = parent.require('electron');
 
 const { ipcMain } = parent.require('electron').remote;
 
-// Return the array of playlist elements found in the current show's metadata
-// file 'show.json'
-function getUpdatedPlaylistElements() {
+function getShowDataPath() {
     // directory of the current show contained in the iframe.value attribute
     const showDir = window.parent.document.getElementById('frame').value;
 
-    const showDataPath = path.join(showDir, 'show.json');
+    return path.join(showDir, 'show.json');
+}
+
+function getShowData() {
+    const showDataPath = getShowDataPath();
 
     // the json file containing the playlist of the show
-    const showData = JSON.parse(fse.readFileSync(showDataPath));
+    return JSON.parse(fse.readFileSync(showDataPath));
+}
 
-    return showData.Playlist;
+// Return the array of playlist elements found in the current show's metadata
+// file 'show.json'
+function getUpdatedPlaylistElements() {
+    return getShowData().Playlist;
+}
+
+// Returns an HTML button that, upon being clicked, will remove the row from
+// the table of show elements and will remove the element from the show's
+// metadata and deletes the element's sequence data off disk, completely
+// removing all traces of the element from the show
+function makeDeleteButton() {
+    const deleteRowButton = document.createElement('button');
+
+    deleteRowButton.innerText = 'X';
+
+    // deletes the row the button is in from the table
+    deleteRowButton.addEventListener('click', (event) => {
+        // event.target will be the input element.
+        const td = event.target.parentNode;
+        const tr = td.parentNode; // the row to be removed
+
+        const path = tr.getAttribute('sequencePath');
+
+        // remove the sequence from the show's playlist object
+        const playlist = getUpdatedPlaylistElements();
+        const index = playlist.indexOf(path);
+        playlist.splice(index, 1);
+
+        const showData = getShowData();
+        showData.Playlist = playlist;
+
+        const showDataPath = getShowDataPath();
+
+        // write the updated playlist back to disk
+        fse.writeFileSync(showDataPath, JSON.stringify(showData, null, 2));
+
+        // remove the sequence data file from disk
+        fse.remove(path);
+
+        tr.parentNode.removeChild(tr);
+    });
+
+    return deleteRowButton;
 }
 
 // Create and return a checkbox that will grey out a row in the table that the
@@ -57,6 +102,15 @@ function makeShouldPlayCol() {
     return shouldPlay;
 }
 
+function makeEditRowCol() {
+    const col = document.createElement('td');
+    const deleteButton = makeDeleteButton();
+
+    col.appendChild(deleteButton);
+
+    return col;
+}
+
 // Create a return a table cell containing the basename of the given filepath
 // argument
 function makeCellWithText(filepath) {
@@ -75,10 +129,12 @@ function makeRow(sequencePath, audioPath) {
     const shouldPlay = makeShouldPlayCol();
     const sequence   = makeCellWithText(sequencePath);
     const audio      = makeCellWithText(audioPath);
+    const editCol    = makeEditRowCol();
 
     row.appendChild(shouldPlay);
     row.appendChild(sequence);
     row.appendChild(audio);
+    row.appendChild(editCol);
 
     return row;
 }
@@ -104,6 +160,8 @@ function makeInitialTable() {
         } else {
             row = makeRow(name, audioPath);
         }
+
+        row.setAttribute('sequencePath', sequencePath);
 
         table.appendChild(row);
     }
@@ -151,7 +209,11 @@ ipcMain.on('newElement', (event, arg) => {
 
         const row = makeRow(sequencePath, audioPath);
 
-        createSequenceJson(sequencePath, audioPath, timeFrameLength, currentShowPath);
+        const sequenceJsonPath = createSequenceJson(sequencePath,
+            audioPath,
+            timeFrameLength,
+            currentShowPath);
+        row.setAttribute('sequencePath', sequenceJsonPath);
 
         table.appendChild(row);
     } else if (arg.type === 'tim') {
@@ -176,7 +238,8 @@ ipcMain.on('newElement', (event, arg) => {
 
         const row = makeRow(null, audioPath);
 
-        createSequenceJsonAudioOnly(audioPath, currentShowPath);
+        const sequenceJsonPath = createSequenceJsonAudioOnly(audioPath, currentShowPath);
+        row.setAttribute('sequencePath', sequenceJsonPath);
 
         table.appendChild(row);
     } else {

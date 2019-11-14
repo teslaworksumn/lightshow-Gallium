@@ -23,6 +23,8 @@ function array2DToJson(array) {
 /*
  * Makes a sequence JSON file for only audio files
  * Leaves the JSON key 'Sequence Data Json' blank because it is only an audio file
+ *
+ * Returns the file path of the JSON file created for this audio element.
  */
 function createSequenceJsonAudioOnly(audioPath, showPath) {
     const audioFilePathSplit = audioPath.split(path.sep);
@@ -44,11 +46,15 @@ function createSequenceJsonAudioOnly(audioPath, showPath) {
     const showJson = JSON.parse(fse.readFileSync(showJsonPath));
     showJson.Playlist.push(newSequencePath);
     fse.writeFileSync(showJsonPath, JSON.stringify(showJson, null, 2));
+
+    return newSequencePath;
 }
 
 /*
  * Makes a sequence JSON file for sequences
  * Includes the path to associated audio (if any)
+ *
+ * Returns the file path of the JSON file created for this sequence.
  */
 function createSequenceJson(csvFilePath, audioFilePath, timeFrameLength, showPath) {
     const csv = fse.readFileSync(csvFilePath, 'utf8');
@@ -83,4 +89,6 @@ function createSequenceJson(csvFilePath, audioFilePath, timeFrameLength, showPat
     const showJson = JSON.parse(fse.readFileSync(showJsonPath));
     showJson.Playlist.push(newSequencePath);
     fse.writeFileSync(showJsonPath, JSON.stringify(showJson, null, 2));
+
+    return newSequencePath;
 }
