@@ -71,6 +71,14 @@ function refresh(event) {
 
     // Byron level bad code, but its the best I can do right now
     client.on('frame', parent.universe.update);
+    
+    client.on('allOn', () => {
+        parent.parent.universe.updateAll(255);
+    });
+
+    client.on('allOff', () => {
+        parent.parent.universe.updateAll(0);
+    });
 }
 
 
