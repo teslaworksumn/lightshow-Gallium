@@ -1,69 +1,112 @@
 const table = document.getElementById('tableBody');
 table.value = [];
 const playButton = document.getElementById('runShow');
+const addElementButton = document.getElementById('addElement');
 const ShowElementConstructor = parent.require('./js/showElement.js');
+const url = parent.require('url');
 let showElements = [];
 
+const { remote } = parent.require('electron');
 
-// directory of the current show contained in the iframe.value attribute
-const showDir = window.parent.document.getElementById('frame').value;
-const showDataPath = path.join(showDir, 'show.json');
+const { ipcMain } = parent.require('electron').remote;
 
-// the json file containing the playlist of the show
-const showData = JSON.parse(fse.readFileSync(showDataPath));
+// Return the array of playlist elements found in the current show's metadata
+// file 'show.json'
+function getUpdatedPlaylistElements() {
+    // directory of the current show contained in the iframe.value attribute
+    const showDir = window.parent.document.getElementById('frame').value;
 
-const playlistElements = showData.Playlist;
+    const showDataPath = path.join(showDir, 'show.json');
 
-// push all playlist items (and associated audio if applicable)
-// names onto table to be rendered for each show
-for (let i = 0; i < playlistElements.length; i += 1) {
-    let filename = playlistElements[i].split(path.sep);
-    filename = filename[filename.length - 1];
+    // the json file containing the playlist of the show
+    const showData = JSON.parse(fse.readFileSync(showDataPath));
 
-    const tableItem   = document.createElement('tr');
-    const elementName = document.createElement('td');
-    const shouldPlay  = document.createElement('td');
+    return showData.Playlist;
+}
 
-    const checkboxCell = document.createElement('input');
-    checkboxCell.type  = 'checkbox';
+// Create and return a checkbox that will grey out a row in the table that the
+// checkbox is in if it is checked
+function makeCheckbox() {
+    const checkbox = document.createElement('input');
+    checkbox.type  = 'checkbox';
 
     // Default should play checkboxes to true. If an element should not be
     // played, the box should be unchecked.
-    checkboxCell.checked = true;
-
-    elementName.innerText = filename;
-
-    shouldPlay.appendChild(checkboxCell);
-
-    tableItem.appendChild(shouldPlay);
-    tableItem.appendChild(elementName);
+    checkbox.checked = true;
 
     // grey out a row if the show play checkbox is not checked
-    checkboxCell.addEventListener('change', (event) => {
+    checkbox.addEventListener('change', (event) => {
+        const row = event.target.parentNode.parentNode;
         if (event.target.checked) {
-            tableItem.classList.remove('greyout');
+            row.classList.remove('greyout');
         } else {
-            tableItem.classList.add('greyout');
+            row.classList.add('greyout');
         }
     });
 
-    const sequencePath = path.join(showDir, filename);
-    const sequence = JSON.parse(fse.readFileSync(sequencePath));
-    let audioPath = sequence['Audio File'];
-    table.value.push(sequencePath);
-    // value will contain an array of file paths for each element in the show
+    return checkbox;
+}
 
-    // only add audio filename if there is associated audio
-    if (audioPath) {
-        audioPath = audioPath.split(path.sep);
-        audioPath = audioPath[audioPath.length - 1];
+// Create and return a table cell containing a checkbox
+function makeShouldPlayCol() {
+    const shouldPlay = document.createElement('td');
+    const checkbox = makeCheckbox();
 
-        audioColumn = document.createElement('td');
-        audioColumn.innerText = audioPath;
-        tableItem.appendChild(audioColumn);
+    shouldPlay.appendChild(checkbox);
+
+    return shouldPlay;
+}
+
+// Create a return a table cell containing the basename of the given filepath
+// argument
+function makeCellWithText(filepath) {
+    const cell = document.createElement('td');
+
+    if (filepath) {
+        const filename = path.basename(filepath);
+        cell.innerText = filename;
     }
 
-    table.appendChild(tableItem);
+    return cell;
+}
+
+function makeRow(sequencePath, audioPath) {
+    const row        = document.createElement('tr');
+    const shouldPlay = makeShouldPlayCol();
+    const sequence   = makeCellWithText(sequencePath);
+    const audio      = makeCellWithText(audioPath);
+
+    row.appendChild(shouldPlay);
+    row.appendChild(sequence);
+    row.appendChild(audio);
+
+    return row;
+}
+
+function makeInitialTable() {
+    const playlistElements = getUpdatedPlaylistElements();
+
+    // push all playlist items (and associated audio if applicable)
+    // names onto table to be rendered for each show
+    for (let i = 0; i < playlistElements.length; i += 1) {
+        const sequencePath = playlistElements[i];
+        const sequence = JSON.parse(fse.readFileSync(sequencePath));
+
+        const name = sequence.Name;
+        const audioPath = sequence['Audio File'];
+
+        let row;
+
+        // if the show element is just an audio file, only populate the audio
+        // column in the table
+        if (audioPath && name === path.basename(audioPath)) {
+            row = makeRow(null, audioPath);
+        } else {
+            row = makeRow(name, audioPath);
+        }
+
+        table.appendChild(row);
+    }
 }
 
 function stopAllShowElements() {
@@ -71,6 +114,75 @@ function stopAllShowElements() {
         stopPlaying(showElements[j]);
     }
 }
+
+function openModal() {
+    let win = new remote.BrowserWindow({
+        parent: remote.getCurrentWindow(),
+        modal: true,
+        height: 400,
+        width: 800,
+        frame: false,
+    });
+
+    const currentDir = path.resolve();
+
+    const modalHtml = url.format({
+        protocol: 'file',
+        slashes: true,
+        pathname: path.join(currentDir, 'app/html/addElement.html'),
+    });
+
+    win.setMenu(null); // remove menu bar
+
+    win.loadURL(modalHtml);
+
+    win.on('closed', () => {
+        win = null;
+    });
+}
+
+ipcMain.on('newElement', (event, arg) => {
+    const currentShowPath = iframe.value;
+
+    if (arg.type === 'csv') {
+        const sequencePath = arg.sequencePath;
+        const audioPath = arg.audioPath;
+        const timeFrameLength = arg.timeFrameLength;
+
+        const row = makeRow(sequencePath, audioPath);
+
+        createSequenceJson(sequencePath, audioPath, timeFrameLength, currentShowPath);
+
+        table.appendChild(row);
+    } else if (arg.type === 'tim') {
+        const sequencePath = arg.sequencePath;
+        const audioPath = arg.audioPath;
+        const timeFrameLength = arg.timeFrameLength;
+        const subTimFiles = JSON.parse(arg.subTimFiles);
+
+        // TODO add support for adding tim files
+        // If subfiles are specified, they will have to be combined into the
+        // large tim file specified. Add support for creating the large tim
+        // file if one does not already exist.  Once the sub tim files are
+        // combined, they will need to be converted to csv with the tim
+        // combination logic.
+        //
+        // Something like create sequenceJsonFromTim(put the args here)
+        // Then append it to the table with
+        // const row = makeRow(sequencePath, audioPath);
+        // table.appendChild(row);
+    } else if (arg.type === 'audio') {
+        const audioPath = arg.audioPath;
+
+        const row = makeRow(null, audioPath);
+
+        createSequenceJsonAudioOnly(audioPath, currentShowPath);
+
+        table.appendChild(row);
+    } else {
+        // error: received unsupported type
+    }
+});
 
 playButton.onclick = async function () {
     // value property contains the boolean isPlaying
@@ -82,6 +194,8 @@ playButton.onclick = async function () {
         // create show elements with sequence json path
         showElements = [];
 
+        const playlistElements = getUpdatedPlaylistElements();
+
         for (let i = 0; i < table.rows.length; i += 1) {
             // only add this row to be played if the should play checkbox is checked
             if (!table.rows[i].cells[0].children[0].checked) {
@@ -90,7 +204,7 @@ playButton.onclick = async function () {
             }
 
             const showElement = new ShowElementConstructor();
-            showElement.setSequenceJson(table.value[i]);
+            showElement.setSequenceJson(playlistElements[i]);
 
             // TODO make this a promise or something, so we can set up all asyncronously
             // eslint-disable-next-line no-await-in-loop
@@ -111,4 +225,15 @@ playButton.onclick = async function () {
         stopAllShowElements();
     }
 };
+
+addElementButton.onclick = function () {
+    const row         = document.createElement('tr');
+    const elementName = document.createElement('td');
+    const shouldPlay  = document.createElement('td');
+
+    openModal();
+};
+
 window.parent.document.getElementById('frame').onload = stopAllShowElements;
+
+makeInitialTable();
