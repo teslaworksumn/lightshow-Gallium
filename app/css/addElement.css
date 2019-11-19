@@ -1,0 +1,13 @@
+.centeredDiv {
+    display: flex;
+    justify-content: center; /* horizontal centering */
+    margin: 20px;
+}
+
+span {
+    margin-right: 10px;
+}
+
+label {
+    margin-left: 10px;
+}

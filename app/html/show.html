@@ -14,8 +14,8 @@
             <caption>Show Files:</caption>
             <tr>
                 <th>Should Play?</th>
-                <th>Element</th>
-                <th>Audio</th>
+                <th>Sequence File</th>
+                <th>Audio File</th>
             </tr>
         </thead>
         <tbody id="tableBody">
@@ -48,11 +48,9 @@
 <script type="text/javascript" src="../js/addShow.js"></script>
 <script>
     const iframe           = window.parent.document.getElementById('frame');
-    const addElementButton = document.getElementById('addElement');
     const header           = document.getElementById('header');
     const patchButton      = document.getElementById('patchShow');
 
-    addElementButton.onclick = function () {addNewElement()};
     patchButton.onclick      = function () {patchShow()};
 
     var onlyShowName = iframe.value.split(path.sep);
@@ -63,5 +61,6 @@
 <script type="text/javascript" src="../js/sendDMX.js"></script>
 <script type="text/javascript" src="../js/show.js"></script>
 <script type="text/javascript" src="../js/modifyPatchUrl.js"></script>
+<script type="text/javascript" src="../js/createSequenceJson.js"></script>
 
 </html>
