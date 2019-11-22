@@ -1,69 +1,80 @@
 
 var fs = require('fs');
-var xmlReader = require('xml2js');
+// var xmlReader = require('xml2js');
 const { convertArrayToCSV } = require('convert-array-to-csv');
-const hexRgb = require('hex-rgb');
+// const hexRgb = require('hex-rgb');
 const rgbHex = require('rgb-hex');
 
-// var timeInterval = 100; // HARDCODE 
-var timeInterval = 25; // HARDCODE 
+var parser = require('fast-xml-parser');
+var he = require('he');
 
 var arguments = process.argv.slice(2);
 var timFile = arguments[0];
 var configFile = arguments[1];
 var modulesFile = arguments[2];
+var timeInterval = arguments[3]
+
+
+
+var options = {
+    ignoreAttributes: false,
+};
 
 // Get data from timFile and system config file
-var data = fs.readFileSync(timFile);
-var sequenceData;
-xmlReader.Parser().parseString(data, function (err, result) {
-    sequenceData = JSON.stringify(result, null, 2);
-});
-var sequenceDataJson = JSON.parse(sequenceData);
-
-var config = fs.readFileSync(configFile);
-var configData;
-xmlReader.Parser().parseString(config, function (err, result) {
-    configData = JSON.stringify(result, null, 2);
-});
-var configDataJson = JSON.parse(configData);
+var sequenceData = fs.readFileSync(timFile).toString();
+var sequenceDataJson = parser.parse(sequenceData,options);
 
 
-var modules = fs.readFileSync(modulesFile);
-var modulesData;
-xmlReader.Parser().parseString(modules, function (err, result) {
-    modulesData = JSON.stringify(result, null, 2);
-});
-var modulesDataJson = JSON.parse(modulesData);
+var config = fs.readFileSync(configFile).toString();
+var configDataJson = parser.parse(config,options);
 
-//<Name>Rings</Name>
+
+var modulesData = fs.readFileSync(modulesFile).toString();
+var modulesDataJson = parser.parse(modulesData,options);
+
+
 var modulesArray = [];
 var singleColorDict = {};
 var moduleColorInstanceId = getModuleColorInstanceIdAndSingleColorMap(modulesDataJson,singleColorDict)
+
+console.log("here")
+
 // console.log(singleColorDict)
+// console.log(moduleColorInstanceId)
 getColorModules(modulesDataJson, modulesArray, singleColorDict)
 
+console.log("here1")
+
+
+// console.dir(modulesArray);
 var nodes = [];
 getNodes(configDataJson, nodes, modulesArray, moduleColorInstanceId);
-patchBullshit(configDataJson, nodes);
+console.log("here2")
 
-// console.log(parentNodes);
+patchBullshit(configDataJson, nodes);
+console.log("here3")
+
 // console.dir(nodes);
 
-var events = [];
-getEvents(sequenceDataJson, events, nodes);
-addEventsToChildren(nodes);
+getEvents(sequenceDataJson, nodes);
+console.log("here4")
 
-// console.log(events);
-// console.dir(events, {maxArrayLength: null});
+addEventsToChildren(nodes);
+console.log("here5")
+
+
 
 // console.dir(nodes);
 
 // console.dir(nodes, {maxArrayLength: null});
 
 var csvArray = [];
-makeBlankCSVArray(sequenceDataJson, nodes, csvArray);
-writeEventsToCSV(events, nodes, csvArray)
+makeBlankCSVArray(sequenceDataJson, csvArray);
+console.log("here6")
+
+writeEventsToCSV(nodes, csvArray)
+console.log("here7")
+
 saveCSV("test.csv", csvArray );
 
 
@@ -98,19 +109,20 @@ function Event(nodeId, startTime, endTime, type, attributes, eventNumber) {
 
 // Modules
 function getModuleColorInstanceIdAndSingleColorMap(modulesDataJson, singleColorDict) { // rename
-    var modules = modulesDataJson.ModuleStore.ModuleData[0].Module;
+    var modules = modulesDataJson["ModuleStore"]["ModuleData"][0]["Module"];
     for (let i = 0; i < modules.length; i++) {
-        if (modules[i].$.dataModelType == "VixenModules.Property.Color.ColorStaticData, Color") {
-            var colorSets = modules[i].ColorStaticData[0].ColorSets[0]['a:KeyValueOfstringArrayOfColor3odnvp_PE'];
-
-            for (let j = 0; j < colorSets.length; j++) {
-                var colors = colorSets[j]['a:Key'][0].split("");
-                for (var k = 0; k < colors.length; k++ ) {
-                    singleColorDict[colors[k]] = colorSets[j]['a:Value'][0]['b:Color'][k]['b:value'][0];
+        if (modules[i]["ColorStaticData"]) {
+            var colorSets = modules[i]["ColorStaticData"]["ColorSets"]['a:KeyValueOfstringArrayOfColor3odnvp_PE'];
+            if (colorSets) {
+                for (let j = 0; j < colorSets.length; j++) {
+                    var colors = colorSets[j]['a:Key'].split("");
+                    for (var k = 0; k < colors.length; k++ ) {
+                        singleColorDict[colors[k]] = colorSets[j]['a:Value']['b:Color'][k]['b:value'];
+                    }
                 }
-            }
 
-            return modules[i].$.moduleType;
+                return modules[i]["ColorStaticData"]["ModuleInstanceId"]['#text'];
+            }
         }
     }
 
@@ -118,16 +130,17 @@ function getModuleColorInstanceIdAndSingleColorMap(modulesDataJson, singleColorD
 }
 
 function getColorModules(modulesDataJson, modulesArray, singleColorDict ) {
-    var colorModules = modulesDataJson.ModuleStore.ModuleData[1].Module;
+    var colorModules = modulesDataJson["ModuleStore"]["ModuleData"][1]["Module"];
 
     for (let i = 0; i < colorModules.length; i++) {
-        if (colorModules[i].$.dataModelType == "VixenModules.Property.Color.ColorData, Color") {
-            if (colorModules[i].ColorData[0].ElementColorType[0] == 'MultipleDiscreteColors') { 
-                var colors = colorModules[i].ColorData[0].ColorSetName[0].split("").map(x => singleColorDict[x])
-                var newColorModule = new Modules(colorModules[i].$.moduleInstance, colors )
+        // console.log("colorModules[i]", colorModules[i])
+        if (colorModules[i]["ColorData"]) {
+            if (colorModules[i]["ColorData"]["ElementColorType"] == 'MultipleDiscreteColors') { 
+                var colors = colorModules[i]["ColorData"]["ColorSetName"].split("").map(x => singleColorDict[x])
+                var newColorModule = new Modules(colorModules[i]["@_moduleInstance"], colors )
                 modulesArray.push(newColorModule);
             } else {
-                var newColorModule = new Modules(colorModules[i].$.moduleInstance, [colorModules[i].ColorData[0].SingleColor[0]['a:value'][0]] )
+                var newColorModule = new Modules(colorModules[i]["@_moduleInstance"], [colorModules[i]["ColorData"]["SingleColor"]['a:value']] )
                 modulesArray.push(newColorModule);
             }
         }
@@ -138,12 +151,18 @@ function getColorModules(modulesDataJson, modulesArray, singleColorDict ) {
 // CSV Functions
 
 
-function writeEventsToCSV(events, nodes, csvArray) {
+function writeEventsToCSV(nodes, csvArray) {
     for (let i = 0; i < nodes.length; i++) {
         if (nodes[i].channelId) {
+
             nodes[i].events.sort(function(a,b) {
                 return a.attributes.intensity - b.attributes.intensity;
             })
+            // console.log(nodes[i].events)
+            // if (nodes[i].channelId == "af9461b2-5429-4ba0-9292-93a744db6afe") {
+            //     console.log(nodes[i].events)
+            // }
+
             for (let j = 0; j < nodes[i].events.length; j++) {
                 if (nodes[i].events[j].type == 'd2p1:SetLevelData') {
                     for (let k = nodes[i].events[j].startTime; k < nodes[i].events[j].endTime; k++) {
@@ -170,8 +189,8 @@ function saveCSV(filename, csvArray) {
 }
 
 
-function makeBlankCSVArray(sequenceDataJson, nodes, csvArray) {
-    var songLength = sequenceDataJson.TimedSequenceData.Length[0]._;  //Way to parse song length of .tim file
+function makeBlankCSVArray(sequenceDataJson, csvArray) {
+    var songLength = sequenceDataJson["TimedSequenceData"]["Length"]["#text"];  //Way to parse song length of .tim file
 
     var songTimeArray = convertXMLTimeToTimeArray(songLength); // Rename variable
     var numberTimeFrames = convertTimeArrayToFrameStart(songTimeArray, timeInterval); // Rename variable
@@ -207,25 +226,25 @@ function addEventsToChildren(nodes) {
 }
 
 
-function getEvents(sequenceDataJson, events, nodes) {
-    var dataModels = sequenceDataJson.TimedSequenceData._dataModels[0]['d1p1:anyType'] //data models
-    var nodeEvents = sequenceDataJson.TimedSequenceData._effectNodeSurrogates[0]['EffectNodeSurrogate']; //timing events
+function getEvents(sequenceDataJson, nodes) {
+    var dataModels = sequenceDataJson["TimedSequenceData"]["_dataModels"]["d1p1:anyType"] //data models
+    var nodeEvents = sequenceDataJson["TimedSequenceData"]["_effectNodeSurrogates"]['EffectNodeSurrogate']; //timing events
 
     for (let i = 0; i < nodeEvents.length; i++) {
         var currentNode = nodeEvents[i];
-        var instanceId = currentNode.InstanceId[0];
-        var nodeId = currentNode.TargetNodes[0].ChannelNodeReferenceSurrogate[0].NodeId[0]; //get Node Id
+        var instanceId = currentNode["InstanceId"];
+        var nodeId = currentNode["TargetNodes"]["ChannelNodeReferenceSurrogate"]["NodeId"]; //get Node Id
 
-        var startTimeArray = convertXMLTimeToTimeArray(currentNode.StartTime[0]); // Rename Variables
+        var startTimeArray = convertXMLTimeToTimeArray(currentNode["StartTime"]); // Rename Variables
         var startTimeFrame = convertTimeArrayToFrameStart(startTimeArray, timeInterval);
-        var endTimeArray = convertXMLTimeToTimeArray(currentNode.TimeSpan[0])
+        var endTimeArray = convertXMLTimeToTimeArray(currentNode["TimeSpan"])
         var endFrames = convertTimeArrayToFrameEnd(endTimeArray,startTimeArray, timeInterval);
 
         for (let j = 0; j < dataModels.length; j++) {
-            if (dataModels[j].ModuleInstanceId == instanceId) {
+            if (dataModels[j]["ModuleInstanceId"] == instanceId) {
                 var event;
-                if (dataModels[j].$['i:type'] === 'd2p1:SetLevelData') {
-                    event = setLevel(nodeId, dataModels[j],startTimeFrame, endFrames, i)
+                if (dataModels[j]['@_i:type'] === 'd2p1:SetLevelData') {
+                    event = setLevel(nodeId, dataModels[j], startTimeFrame, endFrames, i)
 
                 }
 
@@ -237,7 +256,7 @@ function getEvents(sequenceDataJson, events, nodes) {
                             }
                         } else  {
                             nodes[k].events.splice(0, 0, event);
-                        }s
+                        }
                     }
                 }
             }
@@ -246,24 +265,20 @@ function getEvents(sequenceDataJson, events, nodes) {
 }
 
 function setLevel(nodeId, dataModel, startTimeFrame, endFrame, eventNumber) {
-
-    var hexValue = rgbHex(dataModel["d2p1:color"][0]["d3p1:_r"][0] * 255, dataModel["d2p1:color"][0]["d3p1:_g"][0] * 255 ,dataModel["d2p1:color"][0]["d3p1:_b"][0] * 255 );
+    var hexValue = rgbHex(dataModel["d2p1:color"]["d3p1:_r"] * 255, dataModel["d2p1:color"]["d3p1:_g"] * 255 ,dataModel["d2p1:color"]["d3p1:_b"] * 255 );
     var decimalValue = parseInt("ff" + hexValue, 16);
-    var attributes = {"intensity": dataModel['d2p1:level'][0], "color": decimalValue };
-    return new Event(nodeId, startTimeFrame, endFrame, dataModel.$['i:type'], attributes, eventNumber);
-    
-    
-
+    var attributes = {"intensity": dataModel['d2p1:level'], "color": decimalValue };
+    return new Event(nodeId, startTimeFrame, endFrame, dataModel['@_i:type'], attributes, eventNumber);
     
 }
 
 // patch
 function patchBullshit(configDataJson, nodes) {
-    var outputs = configDataJson.SystemConfig.Controllers[0].Controller[0].Outputs[0].Output; // this will probably need to be changed for more than 512 channels... maybe
-    var patches = configDataJson.SystemConfig.Patches[0].Patch; 
+    var outputs = configDataJson["SystemConfig"]["Controllers"]["Controller"]["Outputs"]["Output"]; // this will probably need to be changed for more than 512 channels... maybe
+    var patches = configDataJson["SystemConfig"]["Patches"]["Patch"]; 
 
     for (var i = 0; i < outputs.length; i++) {
-        var output_id = outputs[i].$.id;
+        var output_id = outputs[i]["@_id"];
         patchBullshitPart2ElectricAss(patches, output_id, nodes, i, 0);
     }
 }
@@ -271,10 +286,10 @@ function patchBullshit(configDataJson, nodes) {
 
 function patchBullshitPart2ElectricAss(patches, id, nodes, outputNumber, channel_output) {
     for (var i = 0; i < patches.length; i++) {
-        if (patches[i].$.componentId == id) {
+        if (patches[i]["@_componentId"] == id) {
             var foundCheck = false; //rename
             for (var j = 0; j < nodes.length; j++) {
-                if (nodes[j].channelId == patches[i].$.sourceId) {
+                if (nodes[j].channelId == patches[i]["@_sourceId"]) {
                     foundCheck = true;
                     var counter = 0; // rename
                     var notFound = true; // rename
@@ -290,7 +305,7 @@ function patchBullshitPart2ElectricAss(patches, id, nodes, outputNumber, channel
             }
 
             if (!foundCheck) {
-                patchBullshitPart2ElectricAss(patches, patches[i].$.sourceId, nodes, outputNumber, patches[i].$.output);
+                patchBullshitPart2ElectricAss(patches, patches[i]["@_sourceId"], nodes, outputNumber, patches[i]["@_output"]);
             }
         }
     }
@@ -299,14 +314,12 @@ function patchBullshitPart2ElectricAss(patches, id, nodes, outputNumber, channel
 
 // Nodes/channels
 function getNodes(configDataJson, node_array, moduleArray, moduleColorInstanceId ) {
-    var nodes = configDataJson.SystemConfig.Nodes[0]; // rename
+    var nodes = configDataJson["SystemConfig"]["Nodes"]; // rename
 
-    for (let i = 0; i < nodes.Node.length; i++) {
-        var newNode = new Node(nodes.Node[i].$.name, nodes.Node[i].$.id);
-        var parentNodes = [];
+    for (let i = 0; i < nodes["Node"].length; i++) {
+        var newNode = new Node(nodes["Node"][i]["@_name"], nodes["Node"][i]["@_id"]);
         node_array.push(newNode);
-
-        addChildNodes(newNode, nodes.Node[i].Node, node_array, parentNodes, moduleArray, moduleColorInstanceId);
+        addChildNodes(newNode, nodes["Node"][i]["Node"], node_array, moduleArray, moduleColorInstanceId);
     }
 }
 
@@ -314,17 +327,23 @@ function getNodes(configDataJson, node_array, moduleArray, moduleColorInstanceId
 function addChildNodes(parent_node, childNodes, node_array, moduleArray, moduleColorInstanceId) {
     if (childNodes) {
         for (let i = 0; i < childNodes.length; i++) {
-            if (childNodes[i].Properties) {
-                for (let j = 0; j < childNodes[i].Properties[0].Property.length; j++) {
-                    if (childNodes[i].Properties[0].Property[j].$.typeId == moduleColorInstanceId) {
+            if (childNodes[i]["Properties"]) {
+                for (let j = 0; j < childNodes[i]["Properties"]["Property"].length; j++) {
+                    // console.log('childNodes[i]["Properties"]["Property"][j]["@_typeId"]', childNodes[i]["Properties"]["Property"][j]["@_typeId"]);
+                    // console.log('moduleColorInstanceId', moduleColorInstanceId);
+                    if (childNodes[i]["Properties"]["Property"][j]["@_typeId"] == moduleColorInstanceId) {
+  
                         for (var k = 0; k < moduleArray.length; k++) {
-                            if (modulesArray[k].instanceId == childNodes[i].Properties[0].Property[j].$.instanceId) {
+                            // console.log("modulesArray[k].instanceId: ", modulesArray[k].instanceId);
+                            // console.log('childNodes[i]["Properties"]["Property"][j]["@_instanceId"] ', childNodes[i]["Properties"]["Property"][j]["@_instanceId"]);
+
+                            if (modulesArray[k].instanceId == childNodes[i]["Properties"]["Property"][j]["@_instanceId"]) {
                                 for (var l = 0; l < modulesArray[k].colors.length; l++) {
-                                    var child = new Node(childNodes[i].$.name, childNodes[i].$.id, modulesArray[k].colors[l]);
-                                    child.channelId = childNodes[i].$.channelId;
+                                    var child = new Node(childNodes[i]["@_name"], childNodes[i]["@_id"], modulesArray[k].colors[l]);
+                                    child.channelId = childNodes[i]["@_channelId"];
                                     parent_node.children.push(child);
                                     node_array.push(child);
-                                    addChildNodes(child, childNodes[i].Node, node_array, moduleArray, moduleColorInstanceId);
+                                    addChildNodes(child, childNodes[i]["Node"], node_array, moduleArray, moduleColorInstanceId);
 
                                 }
                             }
@@ -334,12 +353,10 @@ function addChildNodes(parent_node, childNodes, node_array, moduleArray, moduleC
                 }
 
             } else {
-                var child = new Node(childNodes[i].$.name, childNodes[i].$.id);
+                var child = new Node(childNodes[i]["@_name"], childNodes[i]["@_id"]);
                 parent_node.children.push(child);
                 node_array.push(child);
-                addChildNodes(child, childNodes[i].Node, node_array, moduleArray, moduleColorInstanceId);
-
-
+                addChildNodes(child, childNodes[i]["Node"], node_array, moduleArray, moduleColorInstanceId);
             }
         }
     }
@@ -362,8 +379,7 @@ function convertXMLTimeToTimeArray(XMLTimeString) {
 }
 
 function convertTimeArrayToFrameEnd(endArray, startArray, interval) { // rename
-    var frameLength = 1000 / interval ;
-
+    var frameLength = Number( 1000 / interval) ;
 
     var startMinutesToSeconds = (startArray[0] * 60);
     var startSeconds = (startArray[1]);
@@ -375,7 +391,13 @@ function convertTimeArrayToFrameEnd(endArray, startArray, interval) { // rename
 
     var totalEndSeconds = Number(endMinutesToSeconds) + Number(endSeconds);
 
-    var totalSeconds = (totalStartSeconds + totalEndSeconds) * frameLength; // rename
+    var totalStartFrames = totalStartSeconds * frameLength;
+    var totalEndFrames = totalEndSeconds * frameLength;
+    var totalSeconds = ( totalStartFrames + totalEndFrames) ; // rename
+    // console.log(totalSeconds)
+    // if (totalStartSeconds == 48 && totalEndSeconds == 66) {
+    //     console.log("herewerfasd")
+    // }
     if (Number.isInteger(totalSeconds)) {
         return Math.ceil(totalSeconds) + 1;
     } else {
