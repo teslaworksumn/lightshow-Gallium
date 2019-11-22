@@ -5,7 +5,8 @@ const { convertArrayToCSV } = require('convert-array-to-csv');
 const hexRgb = require('hex-rgb');
 const rgbHex = require('rgb-hex');
 
-var timeInterval = 100; // HARDCODE 
+// var timeInterval = 100; // HARDCODE 
+var timeInterval = 25; // HARDCODE 
 
 var arguments = process.argv.slice(2);
 var timFile = arguments[0];
@@ -43,25 +44,27 @@ var moduleColorInstanceId = getModuleColorInstanceIdAndSingleColorMap(modulesDat
 getColorModules(modulesDataJson, modulesArray, singleColorDict)
 
 var nodes = [];
-var parentNodes = [];
-getNodes(configDataJson, nodes, parentNodes, modulesArray, moduleColorInstanceId);
+getNodes(configDataJson, nodes, modulesArray, moduleColorInstanceId);
 patchBullshit(configDataJson, nodes);
 
 // console.log(parentNodes);
-// console.dir(nodes, {maxArrayLength: null});
 // console.dir(nodes);
 
 var events = [];
-getEvents(sequenceDataJson, events, nodes, parentNodes);
+getEvents(sequenceDataJson, events, nodes);
+addEventsToChildren(nodes);
 
 // console.log(events);
 // console.dir(events, {maxArrayLength: null});
 
+// console.dir(nodes);
+
+// console.dir(nodes, {maxArrayLength: null});
+
 var csvArray = [];
 makeBlankCSVArray(sequenceDataJson, nodes, csvArray);
-writeEventsToCSV(events, nodes, csvArray);
-saveCSV("test.csv", csvArray);
-
+writeEventsToCSV(events, nodes, csvArray)
+saveCSV("test.csv", csvArray );
 
 
 // Data Structures
@@ -73,6 +76,7 @@ function Node(name, id, color) {
     this.children = [];
     this.instanceId;
     this.color = color;
+    this.events = [];
 }
 
 function Modules(instanceId, colors) {
@@ -80,10 +84,12 @@ function Modules(instanceId, colors) {
     this.colors = colors;
 }
 
-function Event(nodeId, startTime, duration, type, attributes) {
+function Event(nodeId, startTime, endTime, type, attributes, eventNumber) {
     this.nodeId = nodeId;
+    this.eventNumber = eventNumber;
+    //this.name;
     this.startTime = startTime;
-    this.duration = duration;
+    this.endTime = endTime;
     this.type = type;
     this.attributes = attributes;
     this.instanceId;
@@ -101,8 +107,6 @@ function getModuleColorInstanceIdAndSingleColorMap(modulesDataJson, singleColorD
                 var colors = colorSets[j]['a:Key'][0].split("");
                 for (var k = 0; k < colors.length; k++ ) {
                     singleColorDict[colors[k]] = colorSets[j]['a:Value'][0]['b:Color'][k]['b:value'][0];
-                    // singleColorDict[colorSets[j]['a:Value'][0]['b:Color'][k]['b:value'][0]] = colors[k];
-
                 }
             }
 
@@ -122,9 +126,7 @@ function getColorModules(modulesDataJson, modulesArray, singleColorDict ) {
                 var colors = colorModules[i].ColorData[0].ColorSetName[0].split("").map(x => singleColorDict[x])
                 var newColorModule = new Modules(colorModules[i].$.moduleInstance, colors )
                 modulesArray.push(newColorModule);
-            } else { // Add case for 'SingleColor' Correct who knows? Update you fuck face: You are wrong like always.
-                // console.log(colorModules[i].ColorData[0].SingleColor[0]['a:value'][0])
-                // console.log(singleColorDict[colorModules[i].ColorData[0].SingleColor[0]['a:value'][0]]);
+            } else {
                 var newColorModule = new Modules(colorModules[i].$.moduleInstance, [colorModules[i].ColorData[0].SingleColor[0]['a:value'][0]] )
                 modulesArray.push(newColorModule);
             }
@@ -134,19 +136,20 @@ function getColorModules(modulesDataJson, modulesArray, singleColorDict ) {
 
 
 // CSV Functions
-// function writeEventsToCSV(events, nodes, csvArray) {
+
 
 function writeEventsToCSV(events, nodes, csvArray) {
-    for (let i = 0; i < events.length; i++) {
-        for (let j = 0; j < nodes.length; j++) {
-            if (events[i].nodeId == nodes[j].id) {
-                if (events[i].type == 'd2p1:SetLevelData') {
-                    // console.log("events[i].attributes.color: ", events[i].attributes.color);
-                    // console.log("nodes[j].color: ", nodes[j].color);
-                    if (events[i].attributes.color == nodes[j].color) {
-                        for (let k = events[i].startTime; k < events[i].startTime + events[i].duration; k++) {
-                            addValueForChildren(nodes[j], k, events[i].attributes.intensity[0] * 255, csvArray)
-                        }
+    for (let i = 0; i < nodes.length; i++) {
+        if (nodes[i].channelId) {
+            nodes[i].events.sort(function(a,b) {
+                return a.attributes.intensity - b.attributes.intensity;
+            })
+            for (let j = 0; j < nodes[i].events.length; j++) {
+                if (nodes[i].events[j].type == 'd2p1:SetLevelData') {
+                    for (let k = nodes[i].events[j].startTime; k < nodes[i].events[j].endTime; k++) {
+                        if (k < csvArray.length) { // why need?
+                            csvArray[k][nodes[i].csv_row] = String(Math.floor(nodes[i].events[j].attributes.intensity * 255)).padStart(3, '0');
+                        }                            
                     }
                 }
             }
@@ -154,30 +157,7 @@ function writeEventsToCSV(events, nodes, csvArray) {
     }
 }
 
-function addValueForChildren(node, time, value, csvArray) { // rename
-    if (node) {
-        if (node.channelId) {
-            if (time < csvArray.length) { // why need?
-                // console.log("hererer");
-                // console.log(csvArray);
-                // console.log(node)
-                // console.log(time)
-                // console.log(value)
-                // console.log(csvArray.length);
-                // console.log(csvArray[0].length);
-                csvArray[time][node.csv_row] = String(Math.floor(value)).padStart(3, '0');
-          }
-        } //else {
-        //     console.log(node)
-        //     for (let i = 0; i < node.children.length; i++) {
-        //             addValueForChildren(node.children[i], time, value, csvArray);
-        //     }
-        // }
-    }
-}
-
 function saveCSV(filename, csvArray) {
-    // console.log(csvArray);
     const csv = convertArrayToCSV(csvArray);
     fs.writeFile(filename, csv, function(err) {
     
@@ -207,7 +187,27 @@ function makeBlankCSVArray(sequenceDataJson, nodes, csvArray) {
 
 
 // Events
-function getEvents(sequenceDataJson, events, nodes, parentNodes) {
+
+function addEventsToChildren(nodes) {
+    for (var i = 0; i < nodes.length; i++) {
+        if (!nodes[i].channelId) {
+            for (var j = 0; j < nodes[i].children.length; j++ ){
+                for (var k = 0; k < nodes[i].events.length; k++) {
+                    if (nodes[i].children[j].channelId) {
+                        if (nodes[i].events[k].attributes.color == nodes[i].children[j].color) {
+                            nodes[i].children[j].events.splice(0, 0, nodes[i].events[k]);
+                        }
+                    } else {
+                        nodes[i].children[j].events.splice(0, 0, nodes[i].events[k]);
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+function getEvents(sequenceDataJson, events, nodes) {
     var dataModels = sequenceDataJson.TimedSequenceData._dataModels[0]['d1p1:anyType'] //data models
     var nodeEvents = sequenceDataJson.TimedSequenceData._effectNodeSurrogates[0]['EffectNodeSurrogate']; //timing events
 
@@ -218,91 +218,40 @@ function getEvents(sequenceDataJson, events, nodes, parentNodes) {
 
         var startTimeArray = convertXMLTimeToTimeArray(currentNode.StartTime[0]); // Rename Variables
         var startTimeFrame = convertTimeArrayToFrameStart(startTimeArray, timeInterval);
-        var durationTimeArray = convertXMLTimeToTimeArray(currentNode.TimeSpan[0])
-        var durationFrames = convertTimeArrayToFrameDuration(durationTimeArray,startTimeArray, timeInterval);
-
+        var endTimeArray = convertXMLTimeToTimeArray(currentNode.TimeSpan[0])
+        var endFrames = convertTimeArrayToFrameEnd(endTimeArray,startTimeArray, timeInterval);
 
         for (let j = 0; j < dataModels.length; j++) {
             if (dataModels[j].ModuleInstanceId == instanceId) {
-                var isParent = false;
-                for (var k = 0; k < parentNodes.length; k++){
-                    if (nodeId == parentNodes[k].id) {
-                        isParent = true;
-                        addEventsToChildren(nodeId, dataModels[j], events, nodes, startTimeFrame, durationFrames);
-                        break;
+                var event;
+                if (dataModels[j].$['i:type'] === 'd2p1:SetLevelData') {
+                    event = setLevel(nodeId, dataModels[j],startTimeFrame, endFrames, i)
+
+                }
+
+                for (var k = 0; k < nodes.length; k++) {
+                    if (nodes[k].id == nodeId) {
+                        if (nodes[k].channelId) {
+                            if (event.attributes.color == nodes[k].color) {
+                                nodes[k].events.push(event);
+                            }
+                        } else  {
+                            nodes[k].events.splice(0, 0, event);
+                        }s
                     }
-                }
-
-                if (!isParent) {
-                    if (dataModels[j].$['i:type'] === 'd2p1:SetLevelData') {
-                        setLevel(nodeId, dataModels[j], events, startTimeFrame, durationFrames)
-                    }
-                }
-                
-            }
-        }
-    }
-}
-
-function addEventsToChildren(nodeId, dataModel, events, nodes, startTimeFrame, durationFrames) {
-    // console.log("herre")
-    // console.log(nodes.length);
-    for (var i = 0; i < nodes.length; i++) {
-        if (nodes[i].id == nodeId) {
-
-            if (nodes[i].channelId) {
-                if (dataModel.$['i:type'] === 'd2p1:SetLevelData') {
-                    setLevel(nodeId, dataModel, events, startTimeFrame, durationFrames)
-                }
-            } else {
-                // console.log("nodes[i].name: ", nodes[i].name)
-                // console.log("nodes[i].id: ", nodes[i].id)
-                // console.log("nodes[i].children.length: ", nodes[i].children.length)
-                for (var j = 0; j < nodes[i].children.length; j++) {
-                    // console.log("nodes[i].children[j].id: ", nodes[i].children[j].id);
-                    addEventsToChildren(nodes[i].children[j].id, dataModel, events, nodes, startTimeFrame, durationFrames);
                 }
             }
         }
     }
 }
 
-function setLevel(nodeId, dataModel, events, startTimeFrame, durationFrames) {
-    // console.log("whatsup")
+function setLevel(nodeId, dataModel, startTimeFrame, endFrame, eventNumber) {
 
-
-    // toString(radix)
     var hexValue = rgbHex(dataModel["d2p1:color"][0]["d3p1:_r"][0] * 255, dataModel["d2p1:color"][0]["d3p1:_g"][0] * 255 ,dataModel["d2p1:color"][0]["d3p1:_b"][0] * 255 );
     var decimalValue = parseInt("ff" + hexValue, 16);
-    // console.log("decimalValue ", decimalValue);
-    var attributes = {"intensity": dataModel['d2p1:level'], "color": decimalValue };
-    var newEvent = new Event(nodeId, startTimeFrame, durationFrames, dataModel.$['i:type'], attributes);
-    events.push(newEvent);
-
-
-    // if (dataModel["d2p1:color"][0]["d3p1:_r"][0] == 1 && dataModel["d2p1:color"][0]["d3p1:_g"][0] == 1 && dataModel["d2p1:color"][0]["d3p1:_b"][0] == 1) {
-    //     var attributes = {"intensity": dataModel['d2p1:level'], "color": "W" };
-    //     var newEvent = new Event(nodeId, startTimeFrame, durationFrames, dataModel.$['i:type'], attributes);
-    //     events.push(newEvent);
-    // } else {
-    //     if (dataModel["d2p1:color"][0]["d3p1:_b"][0] != 0) {
-    //         var attributes = {"intensity": dataModel['d2p1:level'], "color": "B" };
-    //         var newEvent = new Event(nodeId, startTimeFrame, durationFrames, dataModel.$['i:type'], attributes);
-    //         events.push(newEvent);
-    //     }
+    var attributes = {"intensity": dataModel['d2p1:level'][0], "color": decimalValue };
+    return new Event(nodeId, startTimeFrame, endFrame, dataModel.$['i:type'], attributes, eventNumber);
     
-    //     if (dataModel["d2p1:color"][0]["d3p1:_g"][0] != 0) {
-    //         var attributes = {"intensity": dataModel['d2p1:level'], "color": "G" };
-    //         var newEvent = new Event(nodeId, startTimeFrame, durationFrames, dataModel.$['i:type'], attributes);
-    //         events.push(newEvent);
-    //     }
-    
-    //     if (dataModel["d2p1:color"][0]["d3p1:_r"][0] != 0) {
-    //         var attributes = {"intensity": dataModel['d2p1:level'], "color": "R" };
-    //         var newEvent = new Event(nodeId, startTimeFrame, durationFrames, dataModel.$['i:type'], attributes);
-    //         events.push(newEvent);
-    //     }
-    // }
     
 
     
@@ -349,19 +298,20 @@ function patchBullshitPart2ElectricAss(patches, id, nodes, outputNumber, channel
 }
 
 // Nodes/channels
-function getNodes(configDataJson, node_array, parentNodes, moduleArray, moduleColorInstanceId ) {
+function getNodes(configDataJson, node_array, moduleArray, moduleColorInstanceId ) {
     var nodes = configDataJson.SystemConfig.Nodes[0]; // rename
 
     for (let i = 0; i < nodes.Node.length; i++) {
         var newNode = new Node(nodes.Node[i].$.name, nodes.Node[i].$.id);
-        addChildNodes(newNode, nodes.Node[i].Node, node_array, parentNodes, moduleArray, moduleColorInstanceId);
-        parentNodes.push(newNode);
+        var parentNodes = [];
         node_array.push(newNode);
+
+        addChildNodes(newNode, nodes.Node[i].Node, node_array, parentNodes, moduleArray, moduleColorInstanceId);
     }
 }
 
 
-function addChildNodes(parent_node, childNodes, node_array, parentNodes, moduleArray, moduleColorInstanceId) {
+function addChildNodes(parent_node, childNodes, node_array, moduleArray, moduleColorInstanceId) {
     if (childNodes) {
         for (let i = 0; i < childNodes.length; i++) {
             if (childNodes[i].Properties) {
@@ -374,7 +324,8 @@ function addChildNodes(parent_node, childNodes, node_array, parentNodes, moduleA
                                     child.channelId = childNodes[i].$.channelId;
                                     parent_node.children.push(child);
                                     node_array.push(child);
-                                    addChildNodes(child, childNodes[i].Node, node_array, parentNodes, moduleArray, moduleColorInstanceId);
+                                    addChildNodes(child, childNodes[i].Node, node_array, moduleArray, moduleColorInstanceId);
+
                                 }
                             }
                         }
@@ -386,8 +337,9 @@ function addChildNodes(parent_node, childNodes, node_array, parentNodes, moduleA
                 var child = new Node(childNodes[i].$.name, childNodes[i].$.id);
                 parent_node.children.push(child);
                 node_array.push(child);
-                parentNodes.push(child);
-                addChildNodes(child, childNodes[i].Node, node_array, parentNodes, moduleArray, moduleColorInstanceId);
+                addChildNodes(child, childNodes[i].Node, node_array, moduleArray, moduleColorInstanceId);
+
+
             }
         }
     }
@@ -409,19 +361,26 @@ function convertXMLTimeToTimeArray(XMLTimeString) {
     return [songMinutes, songSeconds];
 }
 
-function convertTimeArrayToFrameDuration(timeArray, startTime, interval) { // rename
-    var minutesToSeconds = (timeArray[0] * 60);
+function convertTimeArrayToFrameEnd(endArray, startArray, interval) { // rename
     var frameLength = 1000 / interval ;
-    var seconds;
-    if (Number.isInteger(Number(startTime[1]) * frameLength)) {
-        seconds = Number(timeArray[1]) + .00001;
+
+
+    var startMinutesToSeconds = (startArray[0] * 60);
+    var startSeconds = (startArray[1]);
+
+    var totalStartSeconds = Number(startMinutesToSeconds) + Number(startSeconds);
+
+    var endMinutesToSeconds = (endArray[0] * 60);
+    var endSeconds = (endArray[1]);
+
+    var totalEndSeconds = Number(endMinutesToSeconds) + Number(endSeconds);
+
+    var totalSeconds = (totalStartSeconds + totalEndSeconds) * frameLength; // rename
+    if (Number.isInteger(totalSeconds)) {
+        return Math.ceil(totalSeconds) + 1;
     } else {
-        seconds = Number(timeArray[1]);
+        return Math.ceil(totalSeconds);
     }
-
-    var totalSeconds = Number(minutesToSeconds) +  seconds;
-
-    return Math.ceil(totalSeconds * frameLength);
 }
 
 function convertTimeArrayToFrameStart(timeArray, interval) { // rename
