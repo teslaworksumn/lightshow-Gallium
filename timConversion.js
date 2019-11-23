@@ -33,25 +33,28 @@ var modulesDataJson = parser.parse(modulesData,options);
 var modulesArray = [];
 var singleColorDict = {};
 var moduleColorInstanceId = getModuleColorInstanceIdAndSingleColorMap(modulesDataJson,singleColorDict)
+
 getColorModules(modulesDataJson, modulesArray, singleColorDict)
 
 // node functions
 var nodes = [];
 getNodes(configDataJson, nodes, modulesArray, moduleColorInstanceId);
+
 patchBullshit(configDataJson, nodes);
 
 //event functions
 getEvents(sequenceDataJson, nodes);
+
 addEventsToChildren(nodes);
 
 
 //csv functions
 var csvArray = [];
 makeBlankCSVArray(sequenceDataJson, csvArray);
+
 writeEventsToCSV(nodes, csvArray)
+
 saveCSV("test.csv", csvArray );
-
-
 
 
 // Data Structures
@@ -80,9 +83,12 @@ function Event(nodeId, startTime, endTime, type, attributes, eventNumber) {
     this.type = type;
     this.attributes = attributes;
     this.instanceId;
-    this.colors; // RGBW??
+    this.colors;
 }
 
+function dataModel() {
+
+}
 // Modules
 
 // Get predefined colors from ModuleStore.xml and get InstanceId for the rest of the color elements
@@ -128,12 +134,10 @@ function getColorModules(modulesDataJson, modulesArray, singleColorDict) {
 
 
 // CSV Functions
-
-
 function writeEventsToCSV(nodes, csvArray) {
     for (let i = 0; i < nodes.length; i++) {
+        // only pay attention to that are not a parent
         if (nodes[i].channelId) {
-
             nodes[i].events.sort(function(a,b) {
                 return a.attributes.intensity - b.attributes.intensity;
             })
@@ -152,15 +156,16 @@ function writeEventsToCSV(nodes, csvArray) {
 }
 
 function saveCSV(filename, csvArray) {
-    const csv = convertArrayToCSV(csvArray);
-    fs.writeFile(filename, csv, function(err) {
-    
-        if(err) {
-            return console.log(err);
-        }
-    
-        console.log("The file was saved!");
-    }); 
+    fs.writeFileSync(filename, "");
+
+    for (var i = 0; i < csvArray.length; i++) {
+        var csvRow = csvArray[i].reduce(function (accumulator, currentValue) {
+            return accumulator + "," + currentValue;
+        }, "");
+        
+        csvRow += "\n";
+        fs.writeFileSync(filename, csvRow.slice(1), {flag: 'a'});
+    }
 }
 
 
@@ -182,7 +187,7 @@ function makeBlankCSVArray(sequenceDataJson, csvArray) {
 
 
 // Events
-function addEventsToChildren(nodes) {
+function addEventsToChildren(nodes) { //rename
     for (var i = 0; i < nodes.length; i++) {
         if (!nodes[i].channelId) {
             for (var j = 0; j < nodes[i].children.length; j++ ){
@@ -204,6 +209,12 @@ function addEventsToChildren(nodes) {
 function getEvents(sequenceDataJson, nodes) {
     var dataModels = sequenceDataJson["TimedSequenceData"]["_dataModels"]["d1p1:anyType"] //data models
     var nodeEvents = sequenceDataJson["TimedSequenceData"]["_effectNodeSurrogates"]['EffectNodeSurrogate']; //timing events
+    var events = [];
+
+    var dataModelsDict = {};
+    for (let j = 0; j < dataModels.length; j++) {
+        dataModelsDict[dataModels[j]["ModuleInstanceId"]] = dataModels[j];
+    }
 
     for (let i = 0; i < nodeEvents.length; i++) {
         var currentNode = nodeEvents[i];
@@ -215,25 +226,22 @@ function getEvents(sequenceDataJson, nodes) {
         var startTimeFrame = convertTimeArrayToFrameStart(startTimeArray, timeInterval);
         var endTimeArray = convertXMLTimeToTimeArray(currentNode["TimeSpan"])
         var endFrames = convertTimeArrayToFrameEnd(endTimeArray,startTimeArray, timeInterval);
+        if (dataModelsDict[instanceId]['@_i:type'] === 'd2p1:SetLevelData') {
+            // event = setLevel(nodeId, dataModels[j], startTimeFrame, endFrames, i)
+            events.push(setLevel(nodeId, dataModelsDict[instanceId], startTimeFrame, endFrames, i));
+        }
 
-        for (let j = 0; j < dataModels.length; j++) {
-            if (dataModels[j]["ModuleInstanceId"] == instanceId) {
-                var event;
-                if (dataModels[j]['@_i:type'] === 'd2p1:SetLevelData') {
-                    event = setLevel(nodeId, dataModels[j], startTimeFrame, endFrames, i)
+    }
 
-                }
-
-                for (var k = 0; k < nodes.length; k++) {
-                    if (nodes[k].id == nodeId) {
-                        if (nodes[k].channelId) {
-                            if (event.attributes.color == nodes[k].color) {
-                                nodes[k].events.push(event);
-                            }
-                        } else  {
-                            nodes[k].events.splice(0, 0, event);
-                        }
+    for (let i = 0; i < events.length; i++) {
+        for (var k = 0; k < nodes.length; k++) {
+            if (nodes[k].id == events[i].nodeId) {
+                if (nodes[k].channelId) {
+                    if (events[i].attributes.color == nodes[k].color) {
+                        nodes[k].events.push(events[i]);
                     }
+                } else  {
+                    nodes[k].events.splice(0, 0, events[i]);
                 }
             }
         }
@@ -267,16 +275,25 @@ function patchBullshitPart2ElectricAss(patches, id, nodes, outputNumber, channel
             for (var j = 0; j < nodes.length; j++) {
                 if (nodes[j].channelId == patches[i]["@_sourceId"]) {
                     foundCheck = true;
-                    var counter = 0; // rename
-                    var notFound = true; // rename
-                    while(notFound) {
-                        if (nodes[j+ Number(channel_output)+ counter].channelId) {
-                            nodes[j+ Number(channel_output) + counter ].csv_row = outputNumber;
-                            notFound = false;
-                        }
-                        counter++;
+                    // var counter = 0; // rename
+                    // var notFound = true; // rename
+                    // while(notFound) {
+                        // if (nodes[j+ Number(channel_output)+ counter].channelId) {
+                            nodes[j+ Number(channel_output)].csv_row = outputNumber;
+                        //     notFound = false;
+                        // }
+                        // counter++;
 
-                    }
+                    //}
+
+                    // while(notFound) {
+                        // if (nodes[j+ Number(channel_output)+ counter].channelId) {
+                            // nodes[j+ Number(channel_output) + counter ].csv_row = outputNumber;
+                        //     notFound = false;
+                        // }
+                        // counter++;
+
+                    //}
                 }
             }
 
@@ -314,7 +331,6 @@ function addChildNodes(parent_node, childNodes, node_array, moduleArray, moduleC
                                     parent_node.children.push(child);
                                     node_array.push(child);
                                     addChildNodes(child, childNodes[i]["Node"], node_array, moduleArray, moduleColorInstanceId);
-
                                 }
                             }
                         }
