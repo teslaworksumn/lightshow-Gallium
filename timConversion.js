@@ -1,12 +1,9 @@
 
 var fs = require('fs');
-// var xmlReader = require('xml2js');
 const { convertArrayToCSV } = require('convert-array-to-csv');
-// const hexRgb = require('hex-rgb');
 const rgbHex = require('rgb-hex');
 
 var parser = require('fast-xml-parser');
-var he = require('he');
 
 var arguments = process.argv.slice(2);
 var timFile = arguments[0];
@@ -15,67 +12,46 @@ var modulesFile = arguments[2];
 var timeInterval = arguments[3]
 
 
-
 var options = {
     ignoreAttributes: false,
 };
 
-// Get data from timFile and system config file
+// Get data from .tim file
 var sequenceData = fs.readFileSync(timFile).toString();
 var sequenceDataJson = parser.parse(sequenceData,options);
 
-
+// Get data from SystemConfig.xml file
 var config = fs.readFileSync(configFile).toString();
 var configDataJson = parser.parse(config,options);
 
-
+// Get data from ModuleStore.xml file
 var modulesData = fs.readFileSync(modulesFile).toString();
 var modulesDataJson = parser.parse(modulesData,options);
 
 
+// module functions
 var modulesArray = [];
 var singleColorDict = {};
 var moduleColorInstanceId = getModuleColorInstanceIdAndSingleColorMap(modulesDataJson,singleColorDict)
-
-console.log("here")
-
-// console.log(singleColorDict)
-// console.log(moduleColorInstanceId)
 getColorModules(modulesDataJson, modulesArray, singleColorDict)
 
-console.log("here1")
-
-
-// console.dir(modulesArray);
+// node functions
 var nodes = [];
 getNodes(configDataJson, nodes, modulesArray, moduleColorInstanceId);
-console.log("here2")
-
 patchBullshit(configDataJson, nodes);
-console.log("here3")
 
-// console.dir(nodes);
-
+//event functions
 getEvents(sequenceDataJson, nodes);
-console.log("here4")
-
 addEventsToChildren(nodes);
-console.log("here5")
 
 
-
-// console.dir(nodes);
-
-// console.dir(nodes, {maxArrayLength: null});
-
+//csv functions
 var csvArray = [];
 makeBlankCSVArray(sequenceDataJson, csvArray);
-console.log("here6")
-
 writeEventsToCSV(nodes, csvArray)
-console.log("here7")
-
 saveCSV("test.csv", csvArray );
+
+
 
 
 // Data Structures
@@ -108,6 +84,8 @@ function Event(nodeId, startTime, endTime, type, attributes, eventNumber) {
 }
 
 // Modules
+
+// Get predefined colors from ModuleStore.xml and get InstanceId for the rest of the color elements
 function getModuleColorInstanceIdAndSingleColorMap(modulesDataJson, singleColorDict) { // rename
     var modules = modulesDataJson["ModuleStore"]["ModuleData"][0]["Module"];
     for (let i = 0; i < modules.length; i++) {
@@ -129,11 +107,12 @@ function getModuleColorInstanceIdAndSingleColorMap(modulesDataJson, singleColorD
 
 }
 
-function getColorModules(modulesDataJson, modulesArray, singleColorDict ) {
+// Use map obtained from getModuleColorInstanceIdAndSingleColorMap and add all instances of color modules that
+// mapped to RGBW and are single colors
+function getColorModules(modulesDataJson, modulesArray, singleColorDict) {
     var colorModules = modulesDataJson["ModuleStore"]["ModuleData"][1]["Module"];
 
     for (let i = 0; i < colorModules.length; i++) {
-        // console.log("colorModules[i]", colorModules[i])
         if (colorModules[i]["ColorData"]) {
             if (colorModules[i]["ColorData"]["ElementColorType"] == 'MultipleDiscreteColors') { 
                 var colors = colorModules[i]["ColorData"]["ColorSetName"].split("").map(x => singleColorDict[x])
@@ -158,10 +137,6 @@ function writeEventsToCSV(nodes, csvArray) {
             nodes[i].events.sort(function(a,b) {
                 return a.attributes.intensity - b.attributes.intensity;
             })
-            // console.log(nodes[i].events)
-            // if (nodes[i].channelId == "af9461b2-5429-4ba0-9292-93a744db6afe") {
-            //     console.log(nodes[i].events)
-            // }
 
             for (let j = 0; j < nodes[i].events.length; j++) {
                 if (nodes[i].events[j].type == 'd2p1:SetLevelData') {
@@ -189,6 +164,7 @@ function saveCSV(filename, csvArray) {
 }
 
 
+// Make a csv array of length of song by 512 channels
 function makeBlankCSVArray(sequenceDataJson, csvArray) {
     var songLength = sequenceDataJson["TimedSequenceData"]["Length"]["#text"];  //Way to parse song length of .tim file
 
@@ -206,7 +182,6 @@ function makeBlankCSVArray(sequenceDataJson, csvArray) {
 
 
 // Events
-
 function addEventsToChildren(nodes) {
     for (var i = 0; i < nodes.length; i++) {
         if (!nodes[i].channelId) {
@@ -233,6 +208,7 @@ function getEvents(sequenceDataJson, nodes) {
     for (let i = 0; i < nodeEvents.length; i++) {
         var currentNode = nodeEvents[i];
         var instanceId = currentNode["InstanceId"];
+
         var nodeId = currentNode["TargetNodes"]["ChannelNodeReferenceSurrogate"]["NodeId"]; //get Node Id
 
         var startTimeArray = convertXMLTimeToTimeArray(currentNode["StartTime"]); // Rename Variables
@@ -329,14 +305,8 @@ function addChildNodes(parent_node, childNodes, node_array, moduleArray, moduleC
         for (let i = 0; i < childNodes.length; i++) {
             if (childNodes[i]["Properties"]) {
                 for (let j = 0; j < childNodes[i]["Properties"]["Property"].length; j++) {
-                    // console.log('childNodes[i]["Properties"]["Property"][j]["@_typeId"]', childNodes[i]["Properties"]["Property"][j]["@_typeId"]);
-                    // console.log('moduleColorInstanceId', moduleColorInstanceId);
                     if (childNodes[i]["Properties"]["Property"][j]["@_typeId"] == moduleColorInstanceId) {
-  
                         for (var k = 0; k < moduleArray.length; k++) {
-                            // console.log("modulesArray[k].instanceId: ", modulesArray[k].instanceId);
-                            // console.log('childNodes[i]["Properties"]["Property"][j]["@_instanceId"] ', childNodes[i]["Properties"]["Property"][j]["@_instanceId"]);
-
                             if (modulesArray[k].instanceId == childNodes[i]["Properties"]["Property"][j]["@_instanceId"]) {
                                 for (var l = 0; l < modulesArray[k].colors.length; l++) {
                                     var child = new Node(childNodes[i]["@_name"], childNodes[i]["@_id"], modulesArray[k].colors[l]);
@@ -348,7 +318,6 @@ function addChildNodes(parent_node, childNodes, node_array, moduleArray, moduleC
                                 }
                             }
                         }
-                        
                     }
                 }
 
@@ -365,7 +334,6 @@ function addChildNodes(parent_node, childNodes, node_array, moduleArray, moduleC
 
 
 // Time functions
-
 function convertXMLTimeToTimeArray(XMLTimeString) {
     if (XMLTimeString.includes('M')) {
         var songMinutes = XMLTimeString.split('PT')[1].split('M')[0];
@@ -394,11 +362,7 @@ function convertTimeArrayToFrameEnd(endArray, startArray, interval) { // rename
     var totalStartFrames = totalStartSeconds * frameLength;
     var totalEndFrames = totalEndSeconds * frameLength;
     var totalSeconds = ( totalStartFrames + totalEndFrames) ; // rename
-    // console.log(totalSeconds)
-    // if (totalStartSeconds == 48 && totalEndSeconds == 66) {
-    //     console.log("herewerfasd")
-    // }
-    if (Number.isInteger(totalSeconds)) {
+    if (Number.isInteger(totalSeconds) || totalSeconds > Math.ceil(totalSeconds) - 0.0001) {
         return Math.ceil(totalSeconds) + 1;
     } else {
         return Math.ceil(totalSeconds);
