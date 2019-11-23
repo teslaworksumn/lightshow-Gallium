@@ -13,7 +13,7 @@
 html {
     position:relative;
     animation: animatebottom 0.4s;
-    overflow: auto;
+    overflow: hidden;
     background-color: var(--page-bg-color);
 }
 html {
@@ -286,3 +286,6 @@ button:disabled {
     flex: 1 1 auto;
 }
 
+.greyout {
+    opacity: 0.2;
+}

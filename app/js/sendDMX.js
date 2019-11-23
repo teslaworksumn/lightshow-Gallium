@@ -15,7 +15,11 @@ function stopCanPlay() {
 }
 
 function stopPlaying(showElement) {
-    showElement.getAudio().stop();
+    const audio = showElement.getAudio();
+    if (audio) {
+        audio.stop();
+    }
+
     showElement.getTimer().clearInterval();
 }
 
