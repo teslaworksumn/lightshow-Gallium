@@ -50,28 +50,27 @@ function refresh(event) {
     // Game server disconnected
     client.on('disconnect', () => {
         setStatus('Server disconnected.');
-        setClients('-');
-        setCurrentGame('-');
-        setServerStatus('-');
+        processUpdate(null);
     });
 
     // Game server connection error handling
     client.on('connect_error', (error) => {
         setStatus(`Unable to connect to ${serverHostname}. ${error}`);
+        console.error(error);
     });
     client.on('connect_timeout', (error) => {
         setStatus('Connection timed out');
-    });
-    client.on('connect_timeout', (error) => {
-        setStatus('Reconnected!');
+        console.error(error);
     });
 
     // Listen for status updates (current game, number of clients)
     client.on('statusUpdate', processUpdate);
 
     // Byron level bad code, but its the best I can do right now
-    client.on('frame', parent.universe.update);
-    
+    client.on('frame', function(payload) {
+        parent.parent.universe.update(payload);
+    });
+
     client.on('allOn', () => {
         parent.parent.universe.updateAll(255);
     });
