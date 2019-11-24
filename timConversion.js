@@ -243,8 +243,8 @@ function getEvents(sequenceDataJson, nodes) {
         if (dataModelsDict[instanceId]['@_i:type'] === 'd2p1:SetLevelData') {
             setLevel(nodeId, dataModelsDict[instanceId], startTimeFrame, endFrames, i, events);
         } else if (dataModelsDict[instanceId]['@_i:type'] === 'd2p1:PulseData') {
-            // if (nodeId == "22dbb260-e7ea-49c7-b158-b60b4202fdf1") {8a9d52a4-229a-4134-a76e-90ef0d0fdfd1   19661895-c29c-446d-98b1-224bb343843c
-            // if (nodeId == "22dbb260-e7ea-49c7-b158-b60b4202fdf1") {
+            // if (nodeId == "22dbb260-e7ea-49c7-b158-b60b4202fdf1") {8a9d52a4-229a-4134-a76e-90ef0d0fdfd1   19661895-c29c-446d-98b1-224bb343843c  963a9e61-66a3-46ef-850e-a9385265ba16
+            // if (nodeId == "963a9e61-66a3-46ef-850e-a9385265ba16") {
 
                 setPulse(nodeId, dataModelsDict[instanceId], startTimeFrame, endFrames, i, events, startTimeArray, endTimeArray);
             //}
@@ -311,8 +311,11 @@ function setPulse(nodeId, dataModel, startTimeFrame, endFrame, eventNumber, even
     var startTime = convertTimeArrayToFrameStartNoCiel(startTimeArray, timeInterval);
 
     var duration = convertTimeArrayToFrameStartNoCiel(endTimeArray, timeInterval);
-    // console.log("pointsX: ", pointsX);
-    // console.log("pointsY: ", pointsY);
+    console.log("pointsX: ", pointsX);
+    console.log("pointsY: ", pointsY);
+
+    console.log("pointsXLength: ", pointsX.length);
+    console.log("pointsYLength: ", pointsY.length);
 
 
     // const spline = new Spline(pointsX, pointsY);
@@ -339,11 +342,16 @@ function setPulse(nodeId, dataModel, startTimeFrame, endFrame, eventNumber, even
     var start =  1 - (startTime % 1);
     console.log("startTime: ", startTime)
     console.log("start: ", start)
+
+    console.log("InterpolateX(0, pointsX, pointsY): ", InterpolateX(0, pointsX, pointsY))
     if (start == 1) {
-        testpoints.push(InterpolateX(0, pointsX, pointsY))
-        testpoints.push(InterpolateX(0, pointsX, pointsY))
+        testpoints.push(0)
+        testpoints.push(0)
+        // testpoints.push(InterpolateX(0, pointsX, pointsY))
+        // testpoints.push(InterpolateX(0, pointsX, pointsY))
     } else {
-        testpoints.push(InterpolateX(0, pointsX, pointsY))
+        testpoints.push(0)
+        // testpoints.push(InterpolateX(0, pointsX, pointsY))
     }
     
     for (var i = 0; ((start + i) * scale) <= 100 ; i++) {
@@ -355,7 +363,7 @@ function setPulse(nodeId, dataModel, startTimeFrame, endFrame, eventNumber, even
         testpoints.push(InterpolateX(x, pointsX, pointsY))
     }
 
-    // console.log("testpoints: ", testpoints);
+    console.log("testpoints: ", testpoints);
 
     var interpolatedPointsMapped = testpoints.map(x => Number(x * 2.55) );
     // // var interpolatedPointsMapped1st = testpoints.map(x => x /100 );
@@ -442,42 +450,72 @@ function setPulse(nodeId, dataModel, startTimeFrame, endFrame, eventNumber, even
 }
 
 function InterpolateX(x, pointsX, pointsY){
-			var lo, mid, hi;
+            var lo, mid, hi;
+            
+
+            // console.log()
 
             // var lo = 0;
             // var hi = 1;
 			// if (this.Count < 2)
 			// 	throw new Exception("Error: Not enough points in curve to interpolate");
 
-			// if (xTarget <= this[0].X) {
-			// 	lo = 0;
-			// 	hi = 1;
-			// }
-			// else if (xTarget >= this[this.Count - 1].X) {
-			// 	lo = this.Count - 2;
-			// 	hi = this.Count - 1;
-			// }
+            // console.log("x <= pointsX[0]:  ", () )
+
+			if (x <= pointsX[0]) {
+				lo = 0;
+				hi = 1;
+            } else if (x >= pointsX[pointsX.length - 1]) {
+                lo = pointsX.length - 2;
+				hi = pointsX.length - 1;
+            } else {
+
 			// else {
 				// if x is within the bounds of the x table, then do a binary search
-				// in the x table to find table entries that bound the x value
+                // in the x table to find table entries that bound the x value
 				lo = 0;
-				hi = pointsX.length - 1;
+                hi = pointsX.length - 1;
+                // console.log("x: ", x);
+                // console.log("start lo", lo);
+                // console.log("start hi", hi);
 
 				// limit to 1000 loops to avoid an infinite loop problem
-				// int j;
+                // int j;
 				for (var j = 0; j < 1000 && hi > lo + 1; j++) {
-					mid = (hi + lo)/2;
+                    mid = Math.round((hi + lo)/2);
+                    // console.log("lo", lo);
+                    // console.log("hi", hi);
+                    // console.log("mid: ", mid);
+                    // console.log("pointsX[mid]: ", pointsX[mid]);
 					if (x > pointsX[mid])
 						lo = mid;
 					else
 						hi = mid;
 				}
 
+                console.log("j: ", j)
+
 				// if (j >= 1000)
 				// 	throw new Exception("Error: Infinite loop in interpolation");
-			// }
+            // }
+            
+            // console.log("lo", lo);
+            // console.log("hi", hi);
+            // console.log("pointsX[lo]", pointsX[lo]);
+            // console.log("pointsX[hi]", pointsX[hi]);
+            // console.log("(x - pointsX[lo]): ", (x - pointsX[lo]))
+            // console.log("(pointsX[hi] - pointsX[lo]): ", pointsX[hi] - pointsX[lo])
+            // console.log("(x - pointsX[lo])/(pointsX[hi] - pointsX[lo]): ", (x - pointsX[lo])/(pointsX[hi] - pointsX[lo]))
+            // console.log("(pointsY[hi] - pointsY[lo]) + pointsY[lo]): ", (pointsY[hi] - pointsY[lo]) + pointsY[lo])
 
-			return (x - pointsX[lo])/(pointsX[hi] - pointsX[lo]) * (pointsY[hi] - pointsY[lo]) + pointsY[lo];
+
+            }
+
+
+            var y = (x - pointsX[lo])/(pointsX[hi] - pointsX[lo]) * (pointsY[hi] - pointsY[lo]) + pointsY[lo];
+
+            // console.log("y: ", y)
+			return y;
 		}
 // patch
 function patchBullshit(configDataJson, nodes) {
