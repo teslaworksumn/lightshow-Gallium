@@ -244,10 +244,10 @@ function getEvents(sequenceDataJson, nodes) {
             setLevel(nodeId, dataModelsDict[instanceId], startTimeFrame, endFrames, i, events);
         } else if (dataModelsDict[instanceId]['@_i:type'] === 'd2p1:PulseData') {
             // if (nodeId == "22dbb260-e7ea-49c7-b158-b60b4202fdf1") {8a9d52a4-229a-4134-a76e-90ef0d0fdfd1   19661895-c29c-446d-98b1-224bb343843c
-            if (nodeId == "22dbb260-e7ea-49c7-b158-b60b4202fdf1") {
+            // if (nodeId == "22dbb260-e7ea-49c7-b158-b60b4202fdf1") {
 
                 setPulse(nodeId, dataModelsDict[instanceId], startTimeFrame, endFrames, i, events, startTimeArray, endTimeArray);
-            }
+            //}
         }
 
     }
@@ -308,13 +308,14 @@ function setPulse(nodeId, dataModel, startTimeFrame, endFrame, eventNumber, even
         pointsY.push(dataModel["d2p1:LevelCurve"]["d3p1:Points"]["d4p1:PointPair"][i]["Y"]["#text"]);
     }
 
+    var startTime = convertTimeArrayToFrameStartNoCiel(startTimeArray, timeInterval);
 
     var duration = convertTimeArrayToFrameStartNoCiel(endTimeArray, timeInterval);
     // console.log("pointsX: ", pointsX);
     // console.log("pointsY: ", pointsY);
 
 
-    const spline = new Spline(pointsX, pointsY);
+    // const spline = new Spline(pointsX, pointsY);
     // console.log("spline: ", spline);
 
     // var scale = 100 / ((endFrame - startTimeFrame));
@@ -327,7 +328,7 @@ function setPulse(nodeId, dataModel, startTimeFrame, endFrame, eventNumber, even
     // console.log()
 
     console.log("scale: ", scale);
-    // console.log("duration: ", duration);
+    console.log("duration: ", duration);
 
     // console.log(InterpolateX(24.8* scale, pointsX, pointsY))
 
@@ -335,17 +336,26 @@ function setPulse(nodeId, dataModel, startTimeFrame, endFrame, eventNumber, even
     // var testpoints = [InterpolateX(.4* scale, pointsX, pointsY), InterpolateX(1.4* scale, pointsX, pointsY), InterpolateX(24.3* scale, pointsX, pointsY)]
     var testpoints = []
 
-    var start = .4;
-    for (var i = 0; ((start + i) * scale) < 100 ; i++) {
+    var start =  1 - (startTime % 1);
+    console.log("startTime: ", startTime)
+    console.log("start: ", start)
+    if (start == 1) {
+        testpoints.push(InterpolateX(0, pointsX, pointsY))
+        testpoints.push(InterpolateX(0, pointsX, pointsY))
+    } else {
+        testpoints.push(InterpolateX(0, pointsX, pointsY))
+    }
+    
+    for (var i = 0; ((start + i) * scale) <= 100 ; i++) {
         // console.log("scale * i: ", scale * i);
         // console.log("spline.at(scale * i ): ",spline.at(scale * i));
         var x = (start + i) * scale;
-        console.log((start + i))
-        console.log(x)
+        // console.log((start + i))
+        // console.log(x)
         testpoints.push(InterpolateX(x, pointsX, pointsY))
     }
 
-    console.log("testpoints: ", testpoints);
+    // console.log("testpoints: ", testpoints);
 
     var interpolatedPointsMapped = testpoints.map(x => Number(x * 2.55) );
     // // var interpolatedPointsMapped1st = testpoints.map(x => x /100 );
@@ -355,7 +365,14 @@ function setPulse(nodeId, dataModel, startTimeFrame, endFrame, eventNumber, even
     // // var interpolatedPointsMappedCiel = interpolatedPointsMapped2.map(x => Math.ceil(x) );
 
     // var interpolatedPointsMappedCiel = interpolatedPointsMapped.map(x => Math.round(x) );
-    var interpolatedPointsMappedCiel = interpolatedPointsMapped.map(x => Math.floor(x) );
+    var interpolatedPointsMappedCiel = interpolatedPointsMapped.map(function (x) {
+        if (x > Math.ceil(x) - 0.0001) {
+            return Math.ceil(x);
+        } else {
+            return Math.floor(x);
+        }
+
+    }  );
 
 
     // // var interpolatedPointsMapped2Test = interpolatedPointsMapped2nd.map(x => x - 2 );
@@ -411,11 +428,11 @@ function setPulse(nodeId, dataModel, startTimeFrame, endFrame, eventNumber, even
     // // console.log(endFrame-startTimeFrame)
     // // console.log(interpolatedPointsMapped);
     for (var i = 0; i < colors.length; i++) {
-            for ( var j = 0; j <= endFrame-startTimeFrame; j++) {
+            for ( var j = 0; j <= interpolatedPointsMappedCiel.length -1 ; j++) {
                 // console.log(interpolatedPointsMappedRounded[j][0])
                 // console.log(interpolatedPointsMappedCiel[j])
                 var attributes = {"intensity": interpolatedPointsMappedCiel[j], "color": colors[i]};
-                events.push(new Event(nodeId, startTimeFrame + j - 1, startTimeFrame + j, dataModel['@_i:type'], attributes, eventNumber));
+                events.push(new Event(nodeId, startTimeFrame + j -1, startTimeFrame + j, dataModel['@_i:type'], attributes, eventNumber));
 
             }
     }
