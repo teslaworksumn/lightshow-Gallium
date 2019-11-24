@@ -38,7 +38,9 @@
   "dependencies": {
     "ajv": "^6.5.5",
     "chromedriver": "^2.42.0",
+    "color-convert": "^2.0.1",
     "convert-array-to-csv": "^1.0.9",
+    "cubic-spline": "^3.0.0",
     "dmx": "^0.1.1",
     "electron-first-run": "^2.0.0",
     "fast-xml-parser": "^3.14.0",
@@ -46,6 +48,7 @@
     "he": "^1.2.0",
     "hex-rgb": "^4.1.0",
     "howler": "^2.0.15",
+    "line-interpolate-points": "^1.0.5",
     "nanotimer": "^0.3.15",
     "rgb-hex": "^3.0.0",
     "serialport": "^7.0.2",

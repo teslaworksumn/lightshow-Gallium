@@ -1,15 +1,29 @@
 
 var fs = require('fs');
 const { convertArrayToCSV } = require('convert-array-to-csv');
-const rgbHex = require('rgb-hex');
-
+// const rgbHex = require('rgb-hex');
+var convert = require('color-convert');
 var parser = require('fast-xml-parser');
-
+var interpolateLineRange = require( 'line-interpolate-points' )
 var arguments = process.argv.slice(2);
 var timFile = arguments[0];
 var configFile = arguments[1];
 var modulesFile = arguments[2];
 var timeInterval = arguments[3]
+
+const Spline = require('cubic-spline');
+ 
+// const xs = [0, 100];
+// const ys = [0, 100];
+ 
+// // new a Spline object
+//  const spline = new Spline(xs, ys);
+
+// get Y at arbitrary X
+// for
+
+// 100
+// console.log(spline.at(8));
 
 
 var options = {
@@ -143,13 +157,13 @@ function writeEventsToCSV(nodes, csvArray) {
             })
 
             for (let j = 0; j < nodes[i].events.length; j++) {
-                if (nodes[i].events[j].type == 'd2p1:SetLevelData') {
+                // if (nodes[i].events[j].type == 'd2p1:SetLevelData') { // maybe remove
                     for (let k = nodes[i].events[j].startTime; k < nodes[i].events[j].endTime; k++) {
                         if (k < csvArray.length) { // why need?
-                            csvArray[k][nodes[i].csv_row] = String(Math.floor(nodes[i].events[j].attributes.intensity * 255)).padStart(3, '0');
+                            csvArray[k][nodes[i].csv_row] = String(Math.floor(nodes[i].events[j].attributes.intensity)).padStart(3, '0');
                         }                            
                     }
-                }
+               // }
             }
         }
     }
@@ -227,8 +241,13 @@ function getEvents(sequenceDataJson, nodes) {
         var endTimeArray = convertXMLTimeToTimeArray(currentNode["TimeSpan"])
         var endFrames = convertTimeArrayToFrameEnd(endTimeArray,startTimeArray, timeInterval);
         if (dataModelsDict[instanceId]['@_i:type'] === 'd2p1:SetLevelData') {
-            // event = setLevel(nodeId, dataModels[j], startTimeFrame, endFrames, i)
-            events.push(setLevel(nodeId, dataModelsDict[instanceId], startTimeFrame, endFrames, i));
+            setLevel(nodeId, dataModelsDict[instanceId], startTimeFrame, endFrames, i, events);
+        } else if (dataModelsDict[instanceId]['@_i:type'] === 'd2p1:PulseData') {
+            // if (nodeId == "22dbb260-e7ea-49c7-b158-b60b4202fdf1") {8a9d52a4-229a-4134-a76e-90ef0d0fdfd1   19661895-c29c-446d-98b1-224bb343843c
+            if (nodeId == "22dbb260-e7ea-49c7-b158-b60b4202fdf1") {
+
+                setPulse(nodeId, dataModelsDict[instanceId], startTimeFrame, endFrames, i, events, startTimeArray, endTimeArray);
+            }
         }
 
     }
@@ -248,14 +267,201 @@ function getEvents(sequenceDataJson, nodes) {
     }
 }
 
-function setLevel(nodeId, dataModel, startTimeFrame, endFrame, eventNumber) {
+function setLevel(nodeId, dataModel, startTimeFrame, endFrame, eventNumber, events) {
     var hexValue = rgbHex(dataModel["d2p1:color"]["d3p1:_r"] * 255, dataModel["d2p1:color"]["d3p1:_g"] * 255 ,dataModel["d2p1:color"]["d3p1:_b"] * 255 );
     var decimalValue = parseInt("ff" + hexValue, 16);
     var attributes = {"intensity": dataModel['d2p1:level'], "color": decimalValue };
-    return new Event(nodeId, startTimeFrame, endFrame, dataModel['@_i:type'], attributes, eventNumber);
+    events.push(new Event(nodeId, startTimeFrame, endFrame, dataModel['@_i:type'] * 255, attributes, eventNumber));
     
 }
 
+function setPulse(nodeId, dataModel, startTimeFrame, endFrame, eventNumber, events, startTimeArray, endTimeArray ) {
+
+// console.log(interpolateLineRange( [[0,4.5477733554022608], [5.6309179920740853,4.5477733554022608], [11.050143192926628,40.344012320884417], [16.695168582452045,44.368441553690104], [21.888592733269064,44.792065683459128], [27.082016884086084,40.767636450653441], [32.501242084938625,31.024281465965984], [37.694666235755648,16.409248988934809], [42.888090386572664,11.113947366822066], [48.75891768749625,16.409248988934809]], 21)
+
+    var colors = [];
+    if (dataModel["d2p1:ColorGradient"]["d3p1:_colors"]["d3p1:ColorPoint"].length > 0) {
+        for (var i = 0; i < dataModel["d2p1:ColorGradient"]["d3p1:_colors"]["d3p1:ColorPoint"].length; i++){
+            var x = dataModel["d2p1:ColorGradient"]["d3p1:_colors"]["d3p1:ColorPoint"][i]["d3p1:_color"]["d6p1:_x"];
+            var y = dataModel["d2p1:ColorGradient"]["d3p1:_colors"]["d3p1:ColorPoint"][i]["d3p1:_color"]["d6p1:_y"];
+            var z = dataModel["d2p1:ColorGradient"]["d3p1:_colors"]["d3p1:ColorPoint"][i]["d3p1:_color"]["d6p1:_z"];
+            var rgb = convert.xyz.rgb(x,y,z);
+            var hexValue = convert.rgb.hex(rgb[0], rgb[1], rgb[2])
+            var decimalValue = parseInt("ff" + hexValue, 16);
+            colors.push(decimalValue);
+        }
+    } else {
+        var x = dataModel["d2p1:ColorGradient"]["d3p1:_colors"]["d3p1:ColorPoint"]["d3p1:_color"]["d6p1:_x"]
+        var y = dataModel["d2p1:ColorGradient"]["d3p1:_colors"]["d3p1:ColorPoint"]["d3p1:_color"]["d6p1:_y"]
+        var z = dataModel["d2p1:ColorGradient"]["d3p1:_colors"]["d3p1:ColorPoint"]["d3p1:_color"]["d6p1:_z"]
+        var rgb = convert.xyz.rgb(x,y,z);
+        var hexValue = convert.rgb.hex(rgb[0], rgb[1], rgb[2])
+        var decimalValue = parseInt("ff" + hexValue, 16);
+        colors.push(decimalValue);
+    }
+
+    var pointsX = [];
+    var pointsY = [];
+    // console.log(dataModel["d2p1:LevelCurve"]["d3p1:Points"]["d4p1:PointPair"])
+    for (var i = 0; i < dataModel["d2p1:LevelCurve"]["d3p1:Points"]["d4p1:PointPair"].length; i++) {
+        pointsX.push(dataModel["d2p1:LevelCurve"]["d3p1:Points"]["d4p1:PointPair"][i]["X"]["#text"]);
+        pointsY.push(dataModel["d2p1:LevelCurve"]["d3p1:Points"]["d4p1:PointPair"][i]["Y"]["#text"]);
+    }
+
+
+    var duration = convertTimeArrayToFrameStartNoCiel(endTimeArray, timeInterval);
+    // console.log("pointsX: ", pointsX);
+    // console.log("pointsY: ", pointsY);
+
+
+    const spline = new Spline(pointsX, pointsY);
+    // console.log("spline: ", spline);
+
+    // var scale = 100 / ((endFrame - startTimeFrame));
+    // var scale = 3.9;
+    var scale = (100 / (duration));
+    // var scale = (100 / 24.1);
+                // var scale = (100 / 25);
+
+    // var scale = 4;
+    // console.log()
+
+    console.log("scale: ", scale);
+    // console.log("duration: ", duration);
+
+    // console.log(InterpolateX(24.8* scale, pointsX, pointsY))
+
+    // var testpoints = [InterpolateX(.9* scale, pointsX, pointsY), InterpolateX(2* scale, pointsX, pointsY), InterpolateX(24.8* scale, pointsX, pointsY)]
+    // var testpoints = [InterpolateX(.4* scale, pointsX, pointsY), InterpolateX(1.4* scale, pointsX, pointsY), InterpolateX(24.3* scale, pointsX, pointsY)]
+    var testpoints = []
+
+    var start = .4;
+    for (var i = 0; ((start + i) * scale) < 100 ; i++) {
+        // console.log("scale * i: ", scale * i);
+        // console.log("spline.at(scale * i ): ",spline.at(scale * i));
+        var x = (start + i) * scale;
+        console.log((start + i))
+        console.log(x)
+        testpoints.push(InterpolateX(x, pointsX, pointsY))
+    }
+
+    console.log("testpoints: ", testpoints);
+
+    var interpolatedPointsMapped = testpoints.map(x => Number(x * 2.55) );
+    // // var interpolatedPointsMapped1st = testpoints.map(x => x /100 );
+    // // var interpolatedPointsMapped2nd = interpolatedPointsMapped1st.map(x => x * 255 );
+
+    // // var interpolatedPointsMapped2 = interpolatedPointsMapped.map(x => Number(x) - 2 );
+    // // var interpolatedPointsMappedCiel = interpolatedPointsMapped2.map(x => Math.ceil(x) );
+
+    // var interpolatedPointsMappedCiel = interpolatedPointsMapped.map(x => Math.round(x) );
+    var interpolatedPointsMappedCiel = interpolatedPointsMapped.map(x => Math.floor(x) );
+
+
+    // // var interpolatedPointsMapped2Test = interpolatedPointsMapped2nd.map(x => x - 2 );
+    // // var interpolatedPointsMappedCielTest = interpolatedPointsMapped2Test.map(x => Math.ceil(x) );
+
+    console.log("interpolatedPointsMapped: ", interpolatedPointsMapped)
+    console.log("interpolatedPointsMappedCiel: ", interpolatedPointsMappedCiel)
+
+
+    // console.log("interpolatedPointsMapped2Test: ", interpolatedPointsMapped2Test)
+    // console.log("interpolatedPointsMappedCielTest: ", interpolatedPointsMappedCielTest)
+
+// get Y at arbitrary X
+// for
+
+// 100
+// console.log(spline.at(8));
+
+
+
+
+
+
+
+    // var points = [];
+    // // console.log(dataModel["d2p1:LevelCurve"]["d3p1:Points"]["d4p1:PointPair"])
+    // for (var i = 0; i < dataModel["d2p1:LevelCurve"]["d3p1:Points"]["d4p1:PointPair"].length; i++) {
+    //     points.push([dataModel["d2p1:LevelCurve"]["d3p1:Points"]["d4p1:PointPair"][i]["X"]["#text"], dataModel["d2p1:LevelCurve"]["d3p1:Points"]["d4p1:PointPair"][i]["Y"]["#text"]])
+    // }
+    // console.log("colors: ", colors);
+    console.log("startTimeFrame: ", startTimeFrame)
+    console.log("endFrame: ", endFrame)
+
+    // var temp = convertTimeArrayToFrameStart(startTimeArray, timeInterval);
+    // var temp1 = convertTimeArrayToFrameStart(endTimeArray, timeInterval);
+    // console.log(temp1)
+    // console.log((endFrame - startTimeFrame))
+
+
+    // console.log("points: ", points);
+    // var interpolatedPoints = interpolateLineRange(points, (endFrame - startTimeFrame)+1);
+    // // var interpolatedPoints = interpolateLineRange(points, (endFrame - startTimeFrame) + 4);
+
+    // // var interpolatedPoints = interpolateLineRange(points, (temp1 - temp)+6);
+
+    // console.log("interpolatedPoints: ", interpolatedPoints);
+    // var interpolatedPointsMapped = interpolatedPoints.map( subarray => subarray.map(x => x * 255/100 ));
+    // console.log("interpolatedPointsMapped: ", interpolatedPointsMapped);
+    // var interpolatedPointsMappedRounded = interpolatedPointsMapped.map( subarray => subarray.map( x => Math.round(x)));
+    // console.log("interpolatedPointsMappedRounded: ", interpolatedPointsMappedRounded);
+
+    // // console.log(interpolatedPointsMappedRounded.length)
+    // // console.log(endFrame-startTimeFrame)
+    // // console.log(interpolatedPointsMapped);
+    for (var i = 0; i < colors.length; i++) {
+            for ( var j = 0; j <= endFrame-startTimeFrame; j++) {
+                // console.log(interpolatedPointsMappedRounded[j][0])
+                // console.log(interpolatedPointsMappedCiel[j])
+                var attributes = {"intensity": interpolatedPointsMappedCiel[j], "color": colors[i]};
+                events.push(new Event(nodeId, startTimeFrame + j - 1, startTimeFrame + j, dataModel['@_i:type'], attributes, eventNumber));
+
+            }
+    }
+    // var attributes = {"intensity": dataModel['d2p1:level'], "color": decimalValue};
+    // events.push(new Event(nodeId, startTimeFrame, endFrame, dataModel['@_i:type'], attributes, eventNumber));
+    
+}
+
+function InterpolateX(x, pointsX, pointsY){
+			var lo, mid, hi;
+
+            // var lo = 0;
+            // var hi = 1;
+			// if (this.Count < 2)
+			// 	throw new Exception("Error: Not enough points in curve to interpolate");
+
+			// if (xTarget <= this[0].X) {
+			// 	lo = 0;
+			// 	hi = 1;
+			// }
+			// else if (xTarget >= this[this.Count - 1].X) {
+			// 	lo = this.Count - 2;
+			// 	hi = this.Count - 1;
+			// }
+			// else {
+				// if x is within the bounds of the x table, then do a binary search
+				// in the x table to find table entries that bound the x value
+				lo = 0;
+				hi = pointsX.length - 1;
+
+				// limit to 1000 loops to avoid an infinite loop problem
+				// int j;
+				for (var j = 0; j < 1000 && hi > lo + 1; j++) {
+					mid = (hi + lo)/2;
+					if (x > pointsX[mid])
+						lo = mid;
+					else
+						hi = mid;
+				}
+
+				// if (j >= 1000)
+				// 	throw new Exception("Error: Infinite loop in interpolation");
+			// }
+
+			return (x - pointsX[lo])/(pointsX[hi] - pointsX[lo]) * (pointsY[hi] - pointsY[lo]) + pointsY[lo];
+		}
 // patch
 function patchBullshit(configDataJson, nodes) {
     var outputs = configDataJson["SystemConfig"]["Controllers"]["Controller"]["Outputs"]["Output"]; // this will probably need to be changed for more than 512 channels... maybe
@@ -275,25 +481,7 @@ function patchBullshitPart2ElectricAss(patches, id, nodes, outputNumber, channel
             for (var j = 0; j < nodes.length; j++) {
                 if (nodes[j].channelId == patches[i]["@_sourceId"]) {
                     foundCheck = true;
-                    // var counter = 0; // rename
-                    // var notFound = true; // rename
-                    // while(notFound) {
-                        // if (nodes[j+ Number(channel_output)+ counter].channelId) {
-                            nodes[j+ Number(channel_output)].csv_row = outputNumber;
-                        //     notFound = false;
-                        // }
-                        // counter++;
-
-                    //}
-
-                    // while(notFound) {
-                        // if (nodes[j+ Number(channel_output)+ counter].channelId) {
-                            // nodes[j+ Number(channel_output) + counter ].csv_row = outputNumber;
-                        //     notFound = false;
-                        // }
-                        // counter++;
-
-                    //}
+                    nodes[j+ Number(channel_output)].csv_row = outputNumber;
                 }
             }
 
@@ -394,6 +582,17 @@ function convertTimeArrayToFrameStart(timeArray, interval) { // rename
     var totalSeconds = Number(minutesToSeconds) +  seconds;
 
     return Math.ceil(totalSeconds * frameLength);
+}
+
+function convertTimeArrayToFrameStartNoCiel(timeArray, interval) { // rename
+    var minutesToSeconds = (timeArray[0] * 60);
+    var frameLength = 1000 / interval ;
+
+    var seconds = Number(timeArray[1]);
+
+    var totalSeconds = Number(minutesToSeconds) +  seconds;
+
+    return totalSeconds * frameLength;
 }
 
 
