@@ -127,7 +127,7 @@ function setBox(value) {
     }
 
     const startIdx = boxIdx * 16;
-    const endIdx = startIdx + 15;
+    const endIdx = startIdx + 16;
     setRange(startIdx, endIdx, value);
 }
 
