@@ -31,10 +31,9 @@ function setAll(value) {
     try {
         parent.parent.universe.updateAll(value);
     } catch (error) {
-        alert('Error: No DMX device selected')
-        isFading = false
+        alert('Error: No DMX device selected');
+        isFading = false;
     }
-    
 }
 
 // Updates the current fade amount. Only changes if isFading is set
@@ -70,9 +69,8 @@ function setRange(channelStart, channelEnd, value) {
     try {
         parent.parent.universe.update(channels);
     } catch (error) {
-        alert('Error: No DMX device selected')
+        alert('Error: No DMX device selected');
     }
-    
 }
 
 
