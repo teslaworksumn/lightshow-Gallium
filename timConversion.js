@@ -4,27 +4,11 @@ const { convertArrayToCSV } = require('convert-array-to-csv');
 // const rgbHex = require('rgb-hex');
 var convert = require('color-convert');
 var parser = require('fast-xml-parser');
-var interpolateLineRange = require( 'line-interpolate-points' )
 var arguments = process.argv.slice(2);
 var timFile = arguments[0];
 var configFile = arguments[1];
 var modulesFile = arguments[2];
 var timeInterval = arguments[3]
-
-const Spline = require('cubic-spline');
- 
-// const xs = [0, 100];
-// const ys = [0, 100];
- 
-// // new a Spline object
-//  const spline = new Spline(xs, ys);
-
-// get Y at arbitrary X
-// for
-
-// 100
-// console.log(spline.at(8));
-
 
 var options = {
     ignoreAttributes: false,
@@ -160,6 +144,14 @@ function writeEventsToCSV(nodes, csvArray) {
                 // if (nodes[i].events[j].type == 'd2p1:SetLevelData') { // maybe remove
                     for (let k = nodes[i].events[j].startTime; k < nodes[i].events[j].endTime; k++) {
                         if (k < csvArray.length) { // why need?
+                            // console.log("k: ", k);
+                            // console.log("csvArray.length: ", csvArray.length)
+                            // console.log("csvArray[0].length: ", csvArray[0].length)
+
+                            // console.log("nodes[i]: ", nodes[i])
+                            // console.log("nodes[i].csv_row: ", nodes[i].csv_row);
+                            // // console.log("nodes[i].events: ", nodes[i].events);
+                            // console.log("nodes[i].events[j].attributes.intensity: ", nodes[i].events[j].attributes.intensity)
                             csvArray[k][nodes[i].csv_row] = String(Math.floor(nodes[i].events[j].attributes.intensity)).padStart(3, '0');
                         }                            
                     }
@@ -243,11 +235,12 @@ function getEvents(sequenceDataJson, nodes) {
         if (dataModelsDict[instanceId]['@_i:type'] === 'd2p1:SetLevelData') {
             setLevel(nodeId, dataModelsDict[instanceId], startTimeFrame, endFrames, i, events);
         } else if (dataModelsDict[instanceId]['@_i:type'] === 'd2p1:PulseData') {
+            setPulse(nodeId, dataModelsDict[instanceId], startTimeFrame, endFrames, i, events, startTimeArray, endTimeArray);
+        } else if (dataModelsDict[instanceId]['@_i:type'] === 'd2p1:ChaseData') {
             // if (nodeId == "22dbb260-e7ea-49c7-b158-b60b4202fdf1") {8a9d52a4-229a-4134-a76e-90ef0d0fdfd1   19661895-c29c-446d-98b1-224bb343843c  963a9e61-66a3-46ef-850e-a9385265ba16
-            // if (nodeId == "963a9e61-66a3-46ef-850e-a9385265ba16") {
-
-                setPulse(nodeId, dataModelsDict[instanceId], startTimeFrame, endFrames, i, events, startTimeArray, endTimeArray);
-            //}
+            if (nodeId == "19661895-c29c-446d-98b1-224bb343843c") {
+                setChase(nodeId, dataModelsDict[instanceId], startTimeFrame, endFrames, i, events, startTimeArray, endTimeArray);
+            }
         }
 
     }
@@ -275,9 +268,7 @@ function setLevel(nodeId, dataModel, startTimeFrame, endFrame, eventNumber, even
     
 }
 
-function setPulse(nodeId, dataModel, startTimeFrame, endFrame, eventNumber, events, startTimeArray, endTimeArray ) {
-
-// console.log(interpolateLineRange( [[0,4.5477733554022608], [5.6309179920740853,4.5477733554022608], [11.050143192926628,40.344012320884417], [16.695168582452045,44.368441553690104], [21.888592733269064,44.792065683459128], [27.082016884086084,40.767636450653441], [32.501242084938625,31.024281465965984], [37.694666235755648,16.409248988934809], [42.888090386572664,11.113947366822066], [48.75891768749625,16.409248988934809]], 21)
+function setChase(nodeId, dataModel, startTimeFrame, endFrame, eventNumber, events, startTimeArray, endTimeArray ) {
 
     var colors = [];
     if (dataModel["d2p1:ColorGradient"]["d3p1:_colors"]["d3p1:ColorPoint"].length > 0) {
@@ -302,7 +293,6 @@ function setPulse(nodeId, dataModel, startTimeFrame, endFrame, eventNumber, even
 
     var pointsX = [];
     var pointsY = [];
-    // console.log(dataModel["d2p1:LevelCurve"]["d3p1:Points"]["d4p1:PointPair"])
     for (var i = 0; i < dataModel["d2p1:LevelCurve"]["d3p1:Points"]["d4p1:PointPair"].length; i++) {
         pointsX.push(dataModel["d2p1:LevelCurve"]["d3p1:Points"]["d4p1:PointPair"][i]["X"]["#text"]);
         pointsY.push(dataModel["d2p1:LevelCurve"]["d3p1:Points"]["d4p1:PointPair"][i]["Y"]["#text"]);
@@ -311,142 +301,113 @@ function setPulse(nodeId, dataModel, startTimeFrame, endFrame, eventNumber, even
     var startTime = convertTimeArrayToFrameStartNoCiel(startTimeArray, timeInterval);
 
     var duration = convertTimeArrayToFrameStartNoCiel(endTimeArray, timeInterval);
-    console.log("pointsX: ", pointsX);
-    console.log("pointsY: ", pointsY);
-
-    console.log("pointsXLength: ", pointsX.length);
-    console.log("pointsYLength: ", pointsY.length);
-
-
-    // const spline = new Spline(pointsX, pointsY);
-    // console.log("spline: ", spline);
-
-    // var scale = 100 / ((endFrame - startTimeFrame));
-    // var scale = 3.9;
     var scale = (100 / (duration));
-    // var scale = (100 / 24.1);
-                // var scale = (100 / 25);
 
-    // var scale = 4;
-    // console.log()
-
-    console.log("scale: ", scale);
-    console.log("duration: ", duration);
-
-    // console.log(InterpolateX(24.8* scale, pointsX, pointsY))
-
-    // var testpoints = [InterpolateX(.9* scale, pointsX, pointsY), InterpolateX(2* scale, pointsX, pointsY), InterpolateX(24.8* scale, pointsX, pointsY)]
-    // var testpoints = [InterpolateX(.4* scale, pointsX, pointsY), InterpolateX(1.4* scale, pointsX, pointsY), InterpolateX(24.3* scale, pointsX, pointsY)]
     var testpoints = []
 
     var start =  1 - (startTime % 1);
-    console.log("startTime: ", startTime)
-    console.log("start: ", start)
 
-    console.log("InterpolateX(0, pointsX, pointsY): ", InterpolateX(0, pointsX, pointsY))
     if (start == 1) {
         testpoints.push(0)
         testpoints.push(0)
-        // testpoints.push(InterpolateX(0, pointsX, pointsY))
-        // testpoints.push(InterpolateX(0, pointsX, pointsY))
     } else {
         testpoints.push(0)
-        // testpoints.push(InterpolateX(0, pointsX, pointsY))
     }
     
     for (var i = 0; ((start + i) * scale) <= 100 ; i++) {
-        // console.log("scale * i: ", scale * i);
-        // console.log("spline.at(scale * i ): ",spline.at(scale * i));
         var x = (start + i) * scale;
-        // console.log((start + i))
-        // console.log(x)
         testpoints.push(InterpolateX(x, pointsX, pointsY))
     }
 
-    console.log("testpoints: ", testpoints);
-
     var interpolatedPointsMapped = testpoints.map(x => Number(x * 2.55) );
-    // // var interpolatedPointsMapped1st = testpoints.map(x => x /100 );
-    // // var interpolatedPointsMapped2nd = interpolatedPointsMapped1st.map(x => x * 255 );
-
-    // // var interpolatedPointsMapped2 = interpolatedPointsMapped.map(x => Number(x) - 2 );
-    // // var interpolatedPointsMappedCiel = interpolatedPointsMapped2.map(x => Math.ceil(x) );
-
-    // var interpolatedPointsMappedCiel = interpolatedPointsMapped.map(x => Math.round(x) );
     var interpolatedPointsMappedCiel = interpolatedPointsMapped.map(function (x) {
         if (x > Math.ceil(x) - 0.0001) {
             return Math.ceil(x);
         } else {
             return Math.floor(x);
-        }
 
+        }
     }  );
 
-
-    // // var interpolatedPointsMapped2Test = interpolatedPointsMapped2nd.map(x => x - 2 );
-    // // var interpolatedPointsMappedCielTest = interpolatedPointsMapped2Test.map(x => Math.ceil(x) );
-
-    console.log("interpolatedPointsMapped: ", interpolatedPointsMapped)
-    console.log("interpolatedPointsMappedCiel: ", interpolatedPointsMappedCiel)
-
-
-    // console.log("interpolatedPointsMapped2Test: ", interpolatedPointsMapped2Test)
-    // console.log("interpolatedPointsMappedCielTest: ", interpolatedPointsMappedCielTest)
-
-// get Y at arbitrary X
-// for
-
-// 100
-// console.log(spline.at(8));
-
-
-
-
-
-
-
-    // var points = [];
-    // // console.log(dataModel["d2p1:LevelCurve"]["d3p1:Points"]["d4p1:PointPair"])
-    // for (var i = 0; i < dataModel["d2p1:LevelCurve"]["d3p1:Points"]["d4p1:PointPair"].length; i++) {
-    //     points.push([dataModel["d2p1:LevelCurve"]["d3p1:Points"]["d4p1:PointPair"][i]["X"]["#text"], dataModel["d2p1:LevelCurve"]["d3p1:Points"]["d4p1:PointPair"][i]["Y"]["#text"]])
-    // }
-    // console.log("colors: ", colors);
-    console.log("startTimeFrame: ", startTimeFrame)
-    console.log("endFrame: ", endFrame)
-
-    // var temp = convertTimeArrayToFrameStart(startTimeArray, timeInterval);
-    // var temp1 = convertTimeArrayToFrameStart(endTimeArray, timeInterval);
-    // console.log(temp1)
-    // console.log((endFrame - startTimeFrame))
-
-
-    // console.log("points: ", points);
-    // var interpolatedPoints = interpolateLineRange(points, (endFrame - startTimeFrame)+1);
-    // // var interpolatedPoints = interpolateLineRange(points, (endFrame - startTimeFrame) + 4);
-
-    // // var interpolatedPoints = interpolateLineRange(points, (temp1 - temp)+6);
-
-    // console.log("interpolatedPoints: ", interpolatedPoints);
-    // var interpolatedPointsMapped = interpolatedPoints.map( subarray => subarray.map(x => x * 255/100 ));
-    // console.log("interpolatedPointsMapped: ", interpolatedPointsMapped);
-    // var interpolatedPointsMappedRounded = interpolatedPointsMapped.map( subarray => subarray.map( x => Math.round(x)));
-    // console.log("interpolatedPointsMappedRounded: ", interpolatedPointsMappedRounded);
-
-    // // console.log(interpolatedPointsMappedRounded.length)
-    // // console.log(endFrame-startTimeFrame)
-    // // console.log(interpolatedPointsMapped);
     for (var i = 0; i < colors.length; i++) {
-            for ( var j = 0; j <= interpolatedPointsMappedCiel.length -1 ; j++) {
-                // console.log(interpolatedPointsMappedRounded[j][0])
-                // console.log(interpolatedPointsMappedCiel[j])
-                var attributes = {"intensity": interpolatedPointsMappedCiel[j], "color": colors[i]};
+        for ( var j = 0; j <= interpolatedPointsMappedCiel.length -1 ; j++) {
+            var attributes = {"intensity": interpolatedPointsMappedCiel[j], "color": colors[i]};
+            if (startTimeFrame + j -1 > 0 ) {
                 events.push(new Event(nodeId, startTimeFrame + j -1, startTimeFrame + j, dataModel['@_i:type'], attributes, eventNumber));
-
             }
+        }
+    }  
+}
+
+function setPulse(nodeId, dataModel, startTimeFrame, endFrame, eventNumber, events, startTimeArray, endTimeArray ) {
+
+    var colors = [];
+    if (dataModel["d2p1:ColorGradient"]["d3p1:_colors"]["d3p1:ColorPoint"].length > 0) {
+        for (var i = 0; i < dataModel["d2p1:ColorGradient"]["d3p1:_colors"]["d3p1:ColorPoint"].length; i++){
+            var x = dataModel["d2p1:ColorGradient"]["d3p1:_colors"]["d3p1:ColorPoint"][i]["d3p1:_color"]["d6p1:_x"];
+            var y = dataModel["d2p1:ColorGradient"]["d3p1:_colors"]["d3p1:ColorPoint"][i]["d3p1:_color"]["d6p1:_y"];
+            var z = dataModel["d2p1:ColorGradient"]["d3p1:_colors"]["d3p1:ColorPoint"][i]["d3p1:_color"]["d6p1:_z"];
+            var rgb = convert.xyz.rgb(x,y,z);
+            var hexValue = convert.rgb.hex(rgb[0], rgb[1], rgb[2])
+            var decimalValue = parseInt("ff" + hexValue, 16);
+            colors.push(decimalValue);
+        }
+    } else {
+        var x = dataModel["d2p1:ColorGradient"]["d3p1:_colors"]["d3p1:ColorPoint"]["d3p1:_color"]["d6p1:_x"]
+        var y = dataModel["d2p1:ColorGradient"]["d3p1:_colors"]["d3p1:ColorPoint"]["d3p1:_color"]["d6p1:_y"]
+        var z = dataModel["d2p1:ColorGradient"]["d3p1:_colors"]["d3p1:ColorPoint"]["d3p1:_color"]["d6p1:_z"]
+        var rgb = convert.xyz.rgb(x,y,z);
+        var hexValue = convert.rgb.hex(rgb[0], rgb[1], rgb[2])
+        var decimalValue = parseInt("ff" + hexValue, 16);
+        colors.push(decimalValue);
     }
-    // var attributes = {"intensity": dataModel['d2p1:level'], "color": decimalValue};
-    // events.push(new Event(nodeId, startTimeFrame, endFrame, dataModel['@_i:type'], attributes, eventNumber));
+
+    var pointsX = [];
+    var pointsY = [];
+    for (var i = 0; i < dataModel["d2p1:LevelCurve"]["d3p1:Points"]["d4p1:PointPair"].length; i++) {
+        pointsX.push(dataModel["d2p1:LevelCurve"]["d3p1:Points"]["d4p1:PointPair"][i]["X"]["#text"]);
+        pointsY.push(dataModel["d2p1:LevelCurve"]["d3p1:Points"]["d4p1:PointPair"][i]["Y"]["#text"]);
+    }
+
+    var startTime = convertTimeArrayToFrameStartNoCiel(startTimeArray, timeInterval);
+
+    var duration = convertTimeArrayToFrameStartNoCiel(endTimeArray, timeInterval);
+    var scale = (100 / (duration));
+
+    var testpoints = []
+
+    var start =  1 - (startTime % 1);
+
+    if (start == 1) {
+        testpoints.push(0)
+        testpoints.push(0)
+    } else {
+        testpoints.push(0)
+    }
     
+    for (var i = 0; ((start + i) * scale) <= 100 ; i++) {
+        var x = (start + i) * scale;
+        testpoints.push(InterpolateX(x, pointsX, pointsY))
+    }
+
+    var interpolatedPointsMapped = testpoints.map(x => Number(x * 2.55) );
+    var interpolatedPointsMappedCiel = interpolatedPointsMapped.map(function (x) {
+        if (x > Math.ceil(x) - 0.0001) {
+            return Math.ceil(x);
+        } else {
+            return Math.floor(x);
+
+        }
+    }  );
+
+    for (var i = 0; i < colors.length; i++) {
+        for ( var j = 0; j <= interpolatedPointsMappedCiel.length -1 ; j++) {
+            var attributes = {"intensity": interpolatedPointsMappedCiel[j], "color": colors[i]};
+            if (startTimeFrame + j -1 > 0 ) {
+                events.push(new Event(nodeId, startTimeFrame + j -1, startTimeFrame + j, dataModel['@_i:type'], attributes, eventNumber));
+            }
+        }
+    }  
 }
 
 function InterpolateX(x, pointsX, pointsY){
@@ -482,7 +443,7 @@ function InterpolateX(x, pointsX, pointsY){
 				// limit to 1000 loops to avoid an infinite loop problem
                 // int j;
 				for (var j = 0; j < 1000 && hi > lo + 1; j++) {
-                    mid = Math.round((hi + lo)/2);
+                    mid = Math.trunc((hi + lo)/2);
                     // console.log("lo", lo);
                     // console.log("hi", hi);
                     // console.log("mid: ", mid);
@@ -493,7 +454,7 @@ function InterpolateX(x, pointsX, pointsY){
 						hi = mid;
 				}
 
-                console.log("j: ", j)
+                // console.log("j: ", j)
 
 				// if (j >= 1000)
 				// 	throw new Exception("Error: Infinite loop in interpolation");
@@ -657,10 +618,6 @@ function convertTimeArrayToFrameStartNoCiel(timeArray, interval) { // rename
 
 
 // function chase(sequenceArray, startTime, stopTime, startIntensity, stopIntensity) {
-
-// }
-
-// function pulse(sequenceArray, startTime, stopTime, startIntensity, stopIntensity) {
 
 // }
 

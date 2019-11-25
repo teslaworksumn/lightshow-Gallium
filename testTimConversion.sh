@@ -23,8 +23,30 @@
 
 
 
-node timConversion.js ../gallium-test-files/basicEffects/basic_pulse.tim ../gallium-test-files/basicEffects/SystemConfig.xml ../gallium-test-files/basicEffects/ModuleStore.xml 100
-diff ./test.csv ../gallium-test-files/basicEffects/basic_pulse_100.csv --strip-trailing-cr | wc -l
+# node timConversion.js ../gallium-test-files/basicEffects/basic_pulse.tim ../gallium-test-files/basicEffects/SystemConfig.xml ../gallium-test-files/basicEffects/ModuleStore.xml 100
+# diff ./test.csv ../gallium-test-files/basicEffects/basic_pulse_100.csv --strip-trailing-cr | wc -l
 
 # node timConversion.js ../gallium-test-files/basicEffects/basic_pulse.tim ../gallium-test-files/basicEffects/SystemConfig.xml ../gallium-test-files/basicEffects/ModuleStore.xml 25
 # diff ./test.csv ../gallium-test-files/basicEffects/basic_pulse_25.csv --strip-trailing-cr | wc -l
+
+
+# node timConversion.js ../gallium-test-files/basicEffects/complicated_pulse.tim ../gallium-test-files/basicEffects/SystemConfig.xml ../gallium-test-files/basicEffects/ModuleStore.xml 100
+# diff ./test.csv ../gallium-test-files/basicEffects/complicated_pulse_100.csv --strip-trailing-cr | wc -l
+
+# node timConversion.js ../gallium-test-files/basicEffects/complicated_pulse.tim ../gallium-test-files/basicEffects/SystemConfig.xml ../gallium-test-files/basicEffects/ModuleStore.xml 25
+# diff ./test.csv ../gallium-test-files/basicEffects/complicated_pulse_25.csv --strip-trailing-cr | wc -l
+
+
+node timConversion.js ../gallium-test-files/basicEffects/basic_chase.tim ../gallium-test-files/basicEffects/SystemConfig.xml ../gallium-test-files/basicEffects/ModuleStore.xml 100
+diff ./test.csv ../gallium-test-files/basicEffects/basic_chase_100.csv --strip-trailing-cr | wc -l
+
+
+# node timConversion.js ../gallium-test-files/basicEffects/basic_chase.tim ../gallium-test-files/basicEffects/SystemConfig.xml ../gallium-test-files/basicEffects/ModuleStore.xml 25
+# diff ./test.csv ../gallium-test-files/basicEffects/basic_chase_25.csv --strip-trailing-cr | wc -l
+
+
+# node timConversion.js ../gallium-test-files/basicEffects/basic_spin.tim ../gallium-test-files/basicEffects/SystemConfig.xml ../gallium-test-files/basicEffects/ModuleStore.xml 100
+# diff ./test.csv ../gallium-test-files/basicEffects/basic_spin_100.csv --strip-trailing-cr | wc -l
+
+# node timConversion.js ../gallium-test-files/basicEffects/basic_spin.tim ../gallium-test-files/basicEffects/SystemConfig.xml ../gallium-test-files/basicEffects/ModuleStore.xml 25
+# diff ./test.csv ../gallium-test-files/basicEffects/basic_spin_25.csv --strip-trailing-cr | wc -l
