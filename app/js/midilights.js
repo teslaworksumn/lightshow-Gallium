@@ -563,10 +563,9 @@ function mapChannelsAuto() {
                 validChannels.push(currentChannelNum);
                 totalChannels += 1;
                 currentChannelNum += 1;
-        if (totalChannels == numChannels) {
-            alert('Successful Channel Mapping')
-        }
-                
+                if (totalChannels === numChannels) {
+                    alert('Successful Channel Mapping');
+                }
             }
         }
 
