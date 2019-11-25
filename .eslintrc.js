@@ -15,6 +15,10 @@ module.exports = {
                 "VariableDeclaration": true
             }
         }],
+        'no-restricted-syntax': [
+          'error',
+          'ForInStatement',
+        ],
     },
     "globals": {
         "document": true,
