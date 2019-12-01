@@ -13,14 +13,6 @@ function setStatus(status) {
     document.getElementById('status').textContent = status;
 }
 
-// Process and update the display with the game server's status update
-function processUpdate(update) {
-    document.getElementById('lastUpdated').textContent = new Date();
-    document.getElementById('serverStatus').textContent = update.status || '-';
-    document.getElementById('clients').textContent = update.clients || '-';
-    document.getElementById('currentGame').textContent = update.game || '-';
-}
-
 // Refresh the socket client
 function refresh(event) {
     // Gets the hostname entered
@@ -50,7 +42,6 @@ function refresh(event) {
     // Game server disconnected
     client.on('disconnect', () => {
         setStatus('Server disconnected.');
-        processUpdate(null);
     });
 
     // Game server connection error handling
@@ -63,20 +54,39 @@ function refresh(event) {
         console.error(error);
     });
 
-    // Listen for status updates (current game, number of clients)
-    client.on('statusUpdate', processUpdate);
-
     // Byron level bad code, but its the best I can do right now
     client.on('frame', function(payload) {
-        parent.parent.universe.update(payload);
+        if (parent.parent.universe) {
+            parent.parent.universe.update(payload);
+        } else {
+            console.log("Universe doesn't exist");
+        }
+
+        for (const [channel, value] of Object.entries(payload)) {
+            const indicator = document.getElementById('channel_' + channel);
+            if (value > 0) {
+                indicator.classList.add('lit');
+            } else {
+                indicator.classList.remove('lit');
+            }
+        }
     });
 
     client.on('allOn', () => {
-        parent.parent.universe.updateAll(255);
+        if (parent.parent.universe) {
+            parent.parent.universe.updateAll(255);
+        } else {
+            console.log("Universe doesn't exist");
+        }
+        
     });
 
     client.on('allOff', () => {
-        parent.parent.universe.updateAll(0);
+        if (parent.parent.universe) {
+            parent.parent.universe.updateAll(0);
+        } else {
+            console.log("Universe doesn't exist");
+        }
     });
 }
 
@@ -92,6 +102,15 @@ function setup() {
     const authTokenInput = document.getElementById('authToken');
     authTokenInput.value = authToken;
     authTokenInput.oninput = refresh;
+
+    const lastFrame = document.getElementById('lastFrame');
+    for (var i = 0; i < 512; i++) {
+        var channel = document.createElement("div");
+        channel.className = "channel";
+        channel.id = "channel_" + i;
+        channel.innerHTML = i;
+        lastFrame.appendChild(channel)
+    }
 
     document.getElementById('reconnect').onclick = refresh;
     setStatus('Ready to connect');
