@@ -50,7 +50,6 @@ module.exports = {
             baseData = JSON.parse(JSON.stringify(result, null, 2));
         });
 
-
         for (let i = 2; i < files.length; i += 1) {
             const additionalDataXML = fs.readFileSync(files[i]);
             let additionalData;
@@ -59,8 +58,17 @@ module.exports = {
                 additionalData = JSON.parse(JSON.stringify(result, null, 2));
             });
 
+            // console.log(files[1], additionalData);
+
             const additionalDataModels = additionalData.TimedSequenceData._dataModels[0]['d1p1:anyType'];
             const additionalDataNodes = additionalData.TimedSequenceData._effectNodeSurrogates[0].EffectNodeSurrogate;
+
+            // skip empty sequences
+            if (!additionalDataModels || ! additionalDataNodes) {
+                // console.log(files[i]);
+                continue;
+            }
+
 
             for (let j = 1; j < additionalDataModels.length; j += 1) {
                 baseData.TimedSequenceData._dataModels[0]['d1p1:anyType'].push(additionalDataModels[j]);
