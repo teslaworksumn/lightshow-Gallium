@@ -3,9 +3,9 @@ const DMX = parent.require('dmx');
 /* Fading setup */
 let isFading = false;
 let currentFade = 0;
-const fadeDuration = 5000;
-const fadeInterval = 50;
-let fadeChange = 255.0 * fadeInterval / fadeDuration;
+let fadeDelta = 1;
+
+const fadeInterval = 25; // (ms), the maximum(ish) framerate of DMX
 
 // Limits
 const MAX_CHANNEL = 512; // Inclusive
@@ -39,15 +39,14 @@ function setAll(value) {
 // Updates the current fade amount. Only changes if isFading is set
 function updateFade() {
     if (isFading) {
-        currentFade += fadeChange;
+        currentFade += Number(fadeDelta);
 
         if (currentFade < 0) {
             currentFade = 0;
-            fadeChange = -fadeChange;
-        }
-        if (currentFade > 255) {
+            fadeDelta = -fadeDelta;
+        } else if (currentFade > 255) {
             currentFade = 255;
-            fadeChange = -fadeChange;
+            fadeDelta = -fadeDelta;
         }
 
         // Divide by 1 to make it an int
@@ -173,6 +172,10 @@ function setupButtons() {
     document.getElementById('rangeStart').oninput = function rangeStartOnChange() { onInputChange('rangeStart'); };
     document.getElementById('rangeEnd').oninput = function rangeEndOnChange() { onInputChange('rangeEnd'); };
     document.getElementById('boxNumber').oninput = function boxNumberOnChange() { onInputChange('boxNumber'); };
+
+    document.getElementById('fadeDuration').oninput = function fadeDurationChange() {
+        fadeDelta = document.getElementById('fadeDuration').value * Math.sign(fadeDelta);
+    };
 }
 
 // Sets up the page
