@@ -1,0 +1,3 @@
+[submodule "test/gallium-test-files"]
+	path = test/gallium-test-files
+	url = ../gallium-test-files.git
