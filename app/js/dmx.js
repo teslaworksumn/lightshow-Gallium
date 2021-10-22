@@ -5,7 +5,8 @@ let isFading = false;
 let currentFade = 0;
 const fadeDuration = 5000;
 const fadeInterval = 50;
-let fadeChange = (255.0 * fadeInterval) / fadeDuration; // Parentheses might go around fadeInterval and fadeDuration possibly. Unsure as of this time
+let fadeChange = (255.0 * fadeInterval) / fadeDuration;
+// Parentheses above might go around fadeInterval and fadeDuration possibly
 
 // Limits
 const MAX_CHANNEL = 512; // Inclusive
