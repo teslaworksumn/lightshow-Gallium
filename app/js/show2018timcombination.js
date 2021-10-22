@@ -13,7 +13,7 @@ async function combine(sequences) {
         allSequences[i][0] = path.join(finalShowFolder, allSequences[i][0]);
 
         // eslint-disable-next-line max-len
-        fullPathSequences.push(allSequences[i].map(sequencePath => path.join(fullDirectoryPath, sequencePath)));
+        fullPathSequences.push(allSequences[i].map((sequencePath) => path.join(fullDirectoryPath, sequencePath)));
         timCombination.combineTimFiles(fullPathSequences[i]);
     }
 

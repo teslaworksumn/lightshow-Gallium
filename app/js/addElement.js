@@ -128,7 +128,7 @@ function addNewSubTimFileSelect(div) {
 
                 // put the array into an HTML attribute, making sure to wrap
                 // the filepaths in quotes
-                subTimSelect.setAttribute('filepath', `[${filepaths.map(x => `"${x}"`)}]`);
+                subTimSelect.setAttribute('filepath', `[${filepaths.map((x) => `"${x}"`)}]`);
             }
         });
     });
@@ -262,7 +262,6 @@ form.addEventListener('submit', (e) => {
     const window = remote.getCurrentWindow();
     window.close();
 });
-
 
 cancelButton.addEventListener('click', () => {
     const window = remote.getCurrentWindow();

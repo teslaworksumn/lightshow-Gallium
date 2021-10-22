@@ -33,7 +33,6 @@ function onShowClick(newActiveShow) {
     iframe.src = 'html/show.html';
 }
 
-
 // Scan through the shows/ directory to see if there are any shows that already
 // exist and add them to app/config so they are also displayed on the show page
 function scanForShows() {
