@@ -95,6 +95,7 @@ We are using a modified version of the [Airbnb JavaScript Style Guide](https://g
 * [**Mitali Naigaonkar**](https://github.com/metallical)
 * [**Zachary Guldberg**](https://github.com/Laserrpg999)
 * [**Brooke Bear**](https://github.com/bear0224)
+* [**Jack Struck**](https://github.com/Struc2025)
 * [**Soumya Khandelwal**](https://github.com/soumyakhandelwalsk)
 
 ## License
