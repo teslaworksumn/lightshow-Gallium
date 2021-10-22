@@ -73,7 +73,6 @@ function refresh(event) {
     client.on('frame', parent.universe.update);
 }
 
-
 // Sets up all of the button hooks for the DMX page
 function setup() {
     setStatus('Setting up');

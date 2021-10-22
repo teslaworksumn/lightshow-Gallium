@@ -1,7 +1,7 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
 const firstRun = require('electron-first-run');
-const group = require('./app/js/linuxAddUserToDialoutGroup.js');
+const group = require('./app/js/linuxAddUserToDialoutGroup');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -17,10 +17,9 @@ function createWindow() {
         minWidth: 800,
         icon: path.join(__dirname, 'app/img/tesla_gear.png'),
         webPreferences: {
-            nodeIntegration: true
-        }
+            nodeIntegration: true,
+        },
     });
-
 
     // and load the index.html of the app.
     win.loadFile('./app/index.html');
@@ -68,4 +67,4 @@ app.allowRendererProcessReuse = false;
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
-//process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
+// process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';

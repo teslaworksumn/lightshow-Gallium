@@ -583,7 +583,6 @@ function mapChannelsAuto() {
     }
 }
 
-
 function mapChannelsManual() {
     const table = document.getElementById('manualTable');
 

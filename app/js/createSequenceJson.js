@@ -1,7 +1,7 @@
 function csvToArray(csv) {
     rows = csv.split('\n');
 
-    return rows.map(row => row.split(','));
+    return rows.map((row) => row.split(','));
 }
 
 function array2DToJson(array) {

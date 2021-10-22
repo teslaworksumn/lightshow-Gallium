@@ -21,10 +21,10 @@ function associateAudio(element, tableItem) {
             { name: 'Audio', extensions: ['mp3', 'wav', 'flac', 'ogg'] },
             { name: 'All Files', extensions: ['*'] },
         ],
-    }).then(result => {
-      console.log(result.canceled)
-      console.log(result.filePaths)
-      // make sure an audio file is selected
+    }).then((result) => {
+        console.log(result.canceled);
+        console.log(result.filePaths);
+        // make sure an audio file is selected
         if (result.filePaths !== undefined) {
             // add selected audio file to the table of elements
             let audioFilename = result.filePaths[0].split(path.sep);
@@ -34,13 +34,10 @@ function associateAudio(element, tableItem) {
             domElement.innerText = audioFilename;
             tableItem.value.push(result.filePaths[0]);
         }
-    }).catch(err => {
-      console.log(err)
-    })
-};
-
-
-
+    }).catch((err) => {
+        console.log(err);
+    });
+}
 
 // // function associateAudio(element, tableItem) {
 // //     dialog.showOpenDialog({
@@ -63,7 +60,6 @@ function associateAudio(element, tableItem) {
 // //     });
 // // }
 
-
 document.getElementById('chooseCSV').addEventListener('click', () => {
     dialog.showOpenDialog({
         title: 'Choose a CSV Sequence',
@@ -74,11 +70,11 @@ document.getElementById('chooseCSV').addEventListener('click', () => {
             // sense to only allow the selection of CSV files in this dialog
             // { name: 'All Files', extensions: ['*'] },
         ],
-    }).then(result => {
-      console.log(result.canceled)
-      console.log(result.filePaths)
-      console.log("JOshing me", result.filePaths);
-      // make sure a CSV file is selected
+    }).then((result) => {
+        console.log(result.canceled);
+        console.log(result.filePaths);
+        console.log('JOshing me', result.filePaths);
+        // make sure a CSV file is selected
         if (result.filePaths !== undefined) {
             // add selected file to the table of elements
             const tableItem = document.createElement('tr');
@@ -124,7 +120,6 @@ document.getElementById('chooseCSV').addEventListener('click', () => {
                 tableItem.appendChild(newColumn);
                 tableItem.appendChild(timeFrameLength);
 
-
                 /*
                  * value will contain array of paths either containing 1 element
                  * (the csv path name) or 2 (the csv path and associated audio)
@@ -134,9 +129,9 @@ document.getElementById('chooseCSV').addEventListener('click', () => {
                 table.appendChild(tableItem);
             }
         }
-    }).catch(err => {
-      console.log(err)
-    })
+    }).catch((err) => {
+        console.log(err);
+    });
 });
 // document.getElementById('chooseCSV').addEventListener('click', () => {
 //     dialog.showOpenDialog({
@@ -197,7 +192,6 @@ document.getElementById('chooseCSV').addEventListener('click', () => {
 //                 tableItem.appendChild(newColumn);
 //                 tableItem.appendChild(timeFrameLength);
 
-
 //                 /*
 //                  * value will contain array of paths either containing 1 element
 //                  * (the csv path name) or 2 (the csv path and associated audio)
@@ -210,7 +204,6 @@ document.getElementById('chooseCSV').addEventListener('click', () => {
 //     });
 // }, false);
 
-
 document.getElementById('chooseAudio').addEventListener('click', () => {
     dialog.showOpenDialog({
         title: 'Choose an Audio File',
@@ -219,32 +212,32 @@ document.getElementById('chooseAudio').addEventListener('click', () => {
             // Add if all files need to be seen when browsing
             // { name: 'All Files', extensions: ['*'] },
         ],
-    }).then(result => {
-      console.log(result.canceled)
-      console.log(result.filePaths)
-      // ensure audio file is selected
-      if (result.filePaths !== undefined) {
+    }).then((result) => {
+        console.log(result.canceled);
+        console.log(result.filePaths);
+        // ensure audio file is selected
+        if (result.filePaths !== undefined) {
         // add selected file to the table of elements
-        const tableItem = document.createElement('tr');
-        const elementName = document.createElement('td');
-        let audioFilename = result.filePaths[0].split(path.sep);
+            const tableItem = document.createElement('tr');
+            const elementName = document.createElement('td');
+            let audioFilename = result.filePaths[0].split(path.sep);
 
-        audioFilename = result.filePaths[0].split(path.sep)[audioFilename.length - 1];
-        elementName.innerText = audioFilename;
+            audioFilename = result.filePaths[0].split(path.sep)[audioFilename.length - 1];
+            elementName.innerText = audioFilename;
 
-        if (rowIsUnique(table.rows, audioFilename)) {
-            tableItem.appendChild(elementName);
-            table.appendChild(tableItem);
+            if (rowIsUnique(table.rows, audioFilename)) {
+                tableItem.appendChild(elementName);
+                table.appendChild(tableItem);
 
-            // add the audio path to the value attribute for later saving
-            // the show json later
-            tableItem.value = [];
-            tableItem.value.push(result.filePaths[0]);
+                // add the audio path to the value attribute for later saving
+                // the show json later
+                tableItem.value = [];
+                tableItem.value.push(result.filePaths[0]);
+            }
         }
-    }
-    }).catch(err => {
-      console.log(err)
-    })
+    }).catch((err) => {
+        console.log(err);
+    });
 });
 
 // document.getElementById('chooseAudio').addEventListener('click', () => {
@@ -278,7 +271,6 @@ document.getElementById('chooseAudio').addEventListener('click', () => {
 //         }
 //     });
 // }, false);
-
 
 function isCSVSequence(filename) {
     const csv = '.csv';
