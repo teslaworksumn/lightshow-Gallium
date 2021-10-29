@@ -98,6 +98,7 @@ We are using a modified version of the [Airbnb JavaScript Style Guide](https://g
 * [**Jack Struck**](https://github.com/Struc2025)
 * [**Soumya Khandelwal**](https://github.com/soumyakhandelwalsk)
 * [**Jasjit Kaur A Singh**](https://github.com/jks24)
+* [**Jimena Jimenez**](https://github.com/jimenajmz)
 
 ## License
 
