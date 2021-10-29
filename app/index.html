@@ -5,21 +5,24 @@
 <head>
     <meta charset="UTF-8">
     <title>Gallium</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <link href="css/materialize.min.css" rel="stylesheet"/>
-    <link href="./css/style.css" rel="stylesheet"/>
-    <link href="./css/icono.min.css" rel="stylesheet"/>
-    <link href="../node_modules/@fortawesome/fontawesome-free/css/all.css" rel="stylesheet"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="css/materialize.min.css" rel="stylesheet" />
+    <link href="./css/style.css" rel="stylesheet" />
+    <link href="./css/icono.min.css" rel="stylesheet" />
+    <link href="../node_modules/@fortawesome/fontawesome-free/css/all.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
 </head>
 
 <body>
+
+
+
     <div class="sidenav-iframe-wrapper">
         <div class="nav-wrapper">
             <div class="sidenavs-wrapper">
                 <ul class="sidenav sidenav-fixed">
                     <li class="logo-container">
-                        <img id="logo" class="logo" src="img/tesla_gear.png"/>
+                        <img id="logo" class="logo" src="img/tesla_gear.png" />
                     </li>
                     <li>
                         <i class="far fa-lightbulb icon" onclick='changeFrame("html/shows.html")' title="Shows"></i>
@@ -28,7 +31,8 @@
                         <i class="fas fa-bug icon" onclick='changeFrame("html/dmx.html")' title="DMX Controls"></i>
                     </li>
                     <li>
-                        <i class="icono-piano icon" onclick='changeFrame("html/midilights.html")' title="MIDILights"></i>
+                        <i class="icono-piano icon" onclick='changeFrame("html/midilights.html")'
+                            title="MIDILights"></i>
                     </li>
                     <li>
                         <i class="fas fa-gamepad icon" onclick='changeFrame("html/games.html")' title="Games"></i>
@@ -42,7 +46,8 @@
                 <div class="dmx-wrapper">
                     <div class="dmx-device-wrapper">
                         <label for='changeDevice'>Current DMX device: <span id="currentDeviceText">None</span></label>
-                        <select id="dmxDeviceSelection" onmousemove="settings.refreshDmxDevices();" onchange="settings.dmxDeviceOnChange();"></select>
+                        <select id="dmxDeviceSelection" onmousemove="settings.refreshDmxDevices();"
+                            onchange="settings.dmxDeviceOnChange();"></select>
                         <button id="dmx-button" onclick="settingsLoaded()">Set</button>
                     </div>
                 </div>
@@ -56,43 +61,44 @@
 </body>
 <script type="text/javascript" src="../setupRepo.js"></script>
 <script type="text/javascript" src="./js/materialize.min.js"></script>
-
 <script type="text/javascript">
 
     let isCollapsed = false;
 
-    var DMX = parent.require('dmx');
+    const DMX = require('dmx');
     const dmx = new DMX();
     const DRIVER = 'enttec-usb-dmx-pro';
-    var universe;
+    let universe;
+
+    const Settings = require('./js/settings.js');
+    // let settings = new Settings(settingsLoaded);
+    let settings = new Settings();
+
 
     function settingsLoaded() {
         if (settings.getCurrentDmxDevice() === null) {
             document.getElementById('currentDeviceText').innerHTML = 'None';
         } else {
             document.getElementById('currentDeviceText').innerHTML = `${settings.getCurrentDmxDevice().location}`;
-            if(universe) {
-            universe.close();
+            if (universe) {
+                universe.close();
             }
             universe = dmx.addUniverse("dmx", DRIVER, settings.getCurrentDmxDevice().location);
         }
     }
 
-    const Settings = require('./js/settings');
-    settings = new Settings(settingsLoaded);
-
-
     function changeFrame(src) {
-        var frame = document.getElementById("frame");
+        let frame = document.getElementById("frame");
         frame.src = src;
     }
 
-    var logo = document.getElementById('logo');
+    let logo = document.getElementById('logo');
 
     logo.onclick = function () {
         changeFrame("html/default.html");
     }
 
 </script>
+
 
 </html>

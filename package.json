@@ -25,10 +25,10 @@
   "license": "MIT",
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.15.4",
-    "electron": "^9.4.4",
+    "electron": "^15.3.0",
     "electron-builder": "^22.13.1",
     "electron-packager": "^15.4.0",
-    "electron-rebuild": "^2.3.5",
+    "electron-rebuild": "^3.2.3",
     "eslint": "^7.32.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.25.2",
@@ -38,6 +38,7 @@
   },
   "dependencies": {
     "ajv": "^6.12.6",
+    "browserify": "^17.0.0",
     "chromedriver": "^84.0.1",
     "dmx": "^0.2.5",
     "electron-first-run": "^3.0.0",
