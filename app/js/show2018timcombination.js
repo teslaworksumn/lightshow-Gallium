@@ -21,11 +21,12 @@ async function combine(sequences) {
 }
 
 async function combineTimFiles2021() {
-    const Collide = ['1_ Collide.tim', 'Collide_AdamBarsness.tim', 'Collide_JackStruck.tim', 'Collide_JoshHeinrich.tim', 'Collide_AdamBarsness_end.tim'];
+    // const Collide = ['1_Collide.tim', 'Collide_AdamBarsness.tim', 'Collide_AdamBarsness2ElectricBoogaloo.tim', 'Collide_JackStruck.tim', 'Collide_JoshHeinrich.tim', 'Collide_AdamBarsness_end.tim'];
     const Arctic = ['2_Arctic_Sunrise.tim', '1_ArcticSunrise_HunterSimard.tim'];
     const Aurora = ['3_Aurora.tim', '2_Aurora_BengtSymstad.tim', '2_Aurora_AbbieFriessen.tim'];
-    const Glory = ['4_Glory_to_the_Bells.tim', '5_GloryToTheBells_BrianaHerzog.tim', '5_GloryToTheBells_BengtSymstad.tim'];
-    const sequences = [Collide, Arctic, Aurora, Glory];
+    const Glory = ['4_Glory_to_the_Bells.tim', '5_GloryToTheBells_BengtSymstad.tim', '5_GloryToTheBells_BrianaHerzog.tim'];
+    const sequences = [Arctic, Aurora, Glory];
+    // const sequences = [Collide, Arctic, Aurora, Glory];
 
     const paths = await combine(sequences);
     message = `Finished combining sequences.\nCombined sequences are located in '${paths[0]}/${paths[1]}'`;
