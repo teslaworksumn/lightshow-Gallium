@@ -7,7 +7,7 @@ async function combine(sequences) {
     const allSequences = sequences;
     const fullPathSequences = [];
     const fullDirectoryPath = document.getElementById('SelectedDirectory').innerHTML;
-    const finalShowFolder = 'SHOW 2018 DO NOT EDIT';
+    const finalShowFolder = 'SHOW 2021 DO NOT EDIT';
 
     for (let i = 0; i < allSequences.length; i += 1) {
         allSequences[i][0] = path.join(finalShowFolder, allSequences[i][0]);
@@ -20,13 +20,12 @@ async function combine(sequences) {
     return [fullDirectoryPath, finalShowFolder];
 }
 
-async function combineTimFiles2018() {
-    const ClearSky = ['1_Clear_Sky.tim', '1_Clear_Sky_Bengt.tim', '1_Clear_Sky_Chris_Walaszek.tim', '1_Clear_Sky_Eileen_Campbell.tim'];
-    const Unicorn = ['2_Unicorn_Adventure.tim', '2_Unicorn_Adventure_Kayla_Engelstad.tim', '2_Unicorn_Adventure_Kailey_Pierce.tim'];
-    const Dragons = ['3_Dragons_and_Dragons.tim', '3_Dragons_and_Dragons_Adam_Barsness.tim', '3_Dragons_and_Dragons_Leyla_Soykan.tim'];
-    const Artic = ['4_Artic_Sunrise.tim', '4_Arctic_Sunrise_Jacob_Diethert.tim', '4_Arctic_Sunrise_Jacqueline_Sorenson.tim'];
-    const Glory = ['5_Glory_to_the_Bells.tim', '5_Glory_to_the_Bells_Haley Carrero.tim', '5_Glory_to_the_Bells_Ian_Smith.tim'];
-    const sequences = [ClearSky, Unicorn, Dragons, Artic, Glory];
+async function combineTimFiles2021() {
+    const Collide = ['1_ Collide.tim', 'Collide_AdamBarsness.tim', 'Collide_JackStruck.tim', 'Collide_JoshHeinrich.tim', 'Collide_AdamBarsness_end.tim'];
+    const Arctic = ['2_Arctic_Sunrise.tim', '1_ArcticSunrise_HunterSimard.tim'];
+    const Aurora = ['3_Aurora.tim', '2_Aurora_BengtSymstad.tim', '2_Aurora_AbbieFriessen.tim'];
+    const Glory = ['4_Glory_to_the_Bells.tim', '5_GloryToTheBells_BrianaHerzog.tim', '5_GloryToTheBells_BengtSymstad.tim'];
+    const sequences = [Collide, Arctic, Aurora, Glory];
 
     const paths = await combine(sequences);
     message = `Finished combining sequences.\nCombined sequences are located in '${paths[0]}/${paths[1]}'`;
