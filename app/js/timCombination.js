@@ -47,6 +47,7 @@ module.exports = {
         const baseXML = fs.readFileSync(files[1]);
         let baseData;
         xmlReader.Parser().parseString(baseXML, (err, result) => {
+            console.log(result);
             baseData = JSON.parse(JSON.stringify(result, null, 2));
         });
 
