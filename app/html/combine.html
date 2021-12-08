@@ -7,7 +7,7 @@
     <span class="headertext"> Combine </span>
     <br>
     <br>
-    <p>Choose Directory of Sequences for 2018 show to combine each sequencers .tim files</p>
+    <p>Choose Directory of Sequences for 2021 show to combine each sequencers .tim files</p>
     <button type="button" id="directory">Choose Directory</button>
     <span id="SelectedDirectory"></span>
 
@@ -26,11 +26,15 @@ var directorySelector = document.getElementById('directory');
 var submit = document.getElementById('submit');
 
 directorySelector.onclick = function openSelectedDirectory() {
-    document.getElementById('SelectedDirectory').innerHTML = dialog.showOpenDialog({ properties: ['openDirectory'] })[0];
+    // console.log(dialog.showOpenDialog({ properties: ['openDirectory'] })[0]);
+    // document.getElementById('SelectedDirectory').innerHTML = dialog.showOpenDialog({ properties: ['openDirectory'] })[0];
+    dialog.showOpenDialog({ properties: ['openDirectory'] }).then((data) => {
+        document.getElementById('SelectedDirectory').innerHTML = data.filePaths[0];
+    })
 };
 
 submit.onclick = function combineFiles() {
-    combineTimFiles2018()
+    combineTimFiles2021()
 }
 </script>
 
